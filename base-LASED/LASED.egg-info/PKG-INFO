@@ -1,0 +1,17 @@
+Metadata-Version: 1.1
+Name: LASED
+Version: 0.1
+Summary: LASED
+Home-page: UNKNOWN
+Author: Manish Patel
+Author-email: <mvpmanish@gmail.com>
+License: UNKNOWN
+Description: A Laser-Atom Interaction Simulator using Quantum Electrodynamics
+Keywords: python,laser-atom,simulation,quantum,quantum electrodynamics,physics
+Platform: UNKNOWN
+Classifier: Development Status :: 1
+Classifier: Intended Audience :: Education/Research
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: Linux :: Ubuntu
+Classifier: Operating System :: Microsoft :: Windows
