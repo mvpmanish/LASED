@@ -9,9 +9,10 @@ License: UNKNOWN
 Description: A Laser-Atom Interaction Simulator using Quantum Electrodynamics
 Keywords: python,laser-atom,simulation,quantum,quantum electrodynamics,physics
 Platform: UNKNOWN
-Classifier: Development Status :: 1
-Classifier: Intended Audience :: Education/Research
+Classifier: Development Status :: 1 - Planning
+Classifier: Intended Audience :: Science/Research
 Classifier: Programming Language :: Python :: 2
 Classifier: Programming Language :: Python :: 3
-Classifier: Operating System :: Linux :: Ubuntu
+Classifier: Operating System :: POSIX :: Linux
 Classifier: Operating System :: Microsoft :: Windows
+Classifier: Natural Language :: English

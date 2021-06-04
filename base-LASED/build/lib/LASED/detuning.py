@@ -5,7 +5,7 @@ from state import *
 
 # Detunings
 # Input: e is a State object, g is a State object
-def detuning(e, g):
+def Delta(e, g):
     return e.w - g.w
     
 # Doppler detuning.

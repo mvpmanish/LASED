@@ -9,17 +9,17 @@ import numpy as np
 import math
 
 def wigner_D(J, alpha, beta, gamma):
-'''
-Calculates the Wigner D-matrix for rotation by Eueler angles (alpha, beta, gamma).
-Inputs:
-    J: total angular momentum quantum number of the state which will be rotated with the 
-    resulting D-matrix
-    alpha: rotation around z-axis
-    beta: rotation about the y'-axis
-    gamma: rotation about the z''-axis
-Returns:
-    A square matrix of size 2J+1
-'''
+    '''
+    Calculates the Wigner D-matrix for rotation by Eueler angles (alpha, beta, gamma).
+    Inputs:
+        J: total angular momentum quantum number of the state which will be rotated with the 
+        resulting D-matrix
+        alpha: rotation around z-axis
+        beta: rotation about the y'-axis
+        gamma: rotation about the z''-axis
+    Returns:
+        A square matrix of size 2J+1
+    '''
     size = 2*J+1  # Number of sub-states
     m = np.linspace(-J, J, size, dtype=int)  # Projections of J
     D = np.zeros((size, size), dtype = np.complex)  # Set up D-matrix
@@ -33,9 +33,9 @@ Returns:
     return D
 
 def small_Wigner_D(J, beta, mp, m):
-'''
-Calculates the small Wigner D-matrix elements for rotation by Euler angles (alpha, beta, gamma)
-'''
+    '''
+    Calculates the small Wigner D-matrix elements for rotation by Euler angles (alpha, beta, gamma)
+    '''
     const = np.sqrt((math.factorial(J+mp))*math.factorial(J-mp)*math.factorial(J+m)*math.factorial(J-m))
     print(const)
     d_sum = 0
@@ -93,14 +93,12 @@ Inputs:
     - n: number of states in total laser-coupled system
     - sub-states: a list of the excited or ground states
     - density_rho: either the excited or ground state density matrix with the convention that the 
-                   upper left-hand of the matrix is state population for m_J = +J if the state has angular momentum J 
+                   upper left-hand of the matrix is state population for m_J = -J if the state has angular momentum J 
 ''' 
 def appendDensityMatrixToFlatCoupledMatrix(flatrho, density_rho, sub_states, n):
-    # Need to flip the density matrix to make it easier to append
-    flipped_density_rho = np.flip(copy.deepcopy(density_rho))  # Preserve original matrix
     for i, sub_state in enumerate(sub_states):
         for j, sub_state_p in enumerate(sub_states):
-            flatrho[index(sub_state, sub_state_p, n), 0] = flipped_density_rho[i, j]         
+            flatrho[index(sub_state, sub_state_p, n), 0] = density_rho[i, j]         
 
 '''
 Rotate the excited and ground state populations by the Euler angles alpha, beta, gamma

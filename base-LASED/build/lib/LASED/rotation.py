@@ -9,17 +9,17 @@ import numpy as np
 import math
 
 def wigner_D(J, alpha, beta, gamma):
-    '''
-    Calculates the Wigner D-matrix for rotation by Eueler angles (alpha, beta, gamma).
-    Inputs:
-        J: total angular momentum quantum number of the state which will be rotated with the 
-        resulting D-matrix
-        alpha: rotation around z-axis
-        beta: rotation about the y'-axis
-        gamma: rotation about the z''-axis
-    Returns:
-        A square matrix of size 2J+1
-    '''
+'''
+Calculates the Wigner D-matrix for rotation by Eueler angles (alpha, beta, gamma).
+Inputs:
+    J: total angular momentum quantum number of the state which will be rotated with the 
+    resulting D-matrix
+    alpha: rotation around z-axis
+    beta: rotation about the y'-axis
+    gamma: rotation about the z''-axis
+Returns:
+    A square matrix of size 2J+1
+'''
     size = 2*J+1  # Number of sub-states
     m = np.linspace(-J, J, size, dtype=int)  # Projections of J
     D = np.zeros((size, size), dtype = np.complex)  # Set up D-matrix
@@ -33,9 +33,9 @@ def wigner_D(J, alpha, beta, gamma):
     return D
 
 def small_Wigner_D(J, beta, mp, m):
-    '''
-    Calculates the small Wigner D-matrix elements for rotation by Euler angles (alpha, beta, gamma)
-    '''
+'''
+Calculates the small Wigner D-matrix elements for rotation by Euler angles (alpha, beta, gamma)
+'''
     const = np.sqrt((math.factorial(J+mp))*math.factorial(J-mp)*math.factorial(J+m)*math.factorial(J-m))
     print(const)
     d_sum = 0

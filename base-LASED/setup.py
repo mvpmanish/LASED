@@ -19,11 +19,12 @@ setup(
         
         keywords=['python', 'laser-atom', 'simulation', 'quantum', 'quantum electrodynamics', 'physics'],
         classifiers= [
-            "Development Status :: 1",
-            "Intended Audience :: Education/Research",
+            "Development Status :: 1 - Planning",
+            "Intended Audience :: Science/Research",
             "Programming Language :: Python :: 2",
             "Programming Language :: Python :: 3",
-            "Operating System :: Linux :: Ubuntu",
+            "Operating System :: POSIX :: Linux",
             "Operating System :: Microsoft :: Windows",
+            "Natural Language :: English"
         ]
 )
