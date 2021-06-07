@@ -12,13 +12,13 @@ from half_rabi_freq import *
 from index import *
 
 
-def symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f):
+def symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, laser_wavelength, atomic_velocity):
     """Prints the equations of motion of the laser-atom system in full using Sympy.
     """
     symbolicPrintRhogg(n, E, G, Q, Q_decay)
     symbolicPrintRhoee(n, E, G, Q, Q_decay, tau_f)
-    symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f)
-    symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f)
+    symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, laser_wavelength, atomic_velocity)
+    symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f, laser_wavelength, atomic_velocity)
     
     
 def symbolicPrintRhogg(n, E, G, Q, Q_decay):
@@ -74,7 +74,7 @@ def symbolicPrintRhoee(n, E, G, Q, Q_decay, tau_f):
                             rho_dot += S('-I*Omega({}, {}, {})*rho_{}{}'.format(e.label, g.label, q, g.label, epp.label))
                 display(Eq(S('rhodot_{}{}'.format(e.label, epp.label)), rho_dot))
                 
-def symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f):
+def symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, laser_wavelength, atomic_velocity):
         """Prints the density matrix elements rho_ge for the motion of the laser-atom system using Sympy.
         """ 
         # rho_ge
@@ -95,7 +95,7 @@ def symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f):
                             rho_dot += S('-I*Omega({}, {}, {})*rho_{}{}'.format(e.label, gp.label, q, g.label, gp.label))
                 display(Eq(S('rhodot_{}{}'.format(g.label, e.label)), rho_dot))
                 
-def symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f):
+def symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f, laser_wavelength, atomic_velocity):
         """Prints the density matrix elements rho_eg for the motion of the laser-atom system using Sympy.
         """ 
         # rho_eg

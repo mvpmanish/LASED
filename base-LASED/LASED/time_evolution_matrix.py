@@ -40,7 +40,7 @@ def timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intens
     # Symbolic Printing
     if(symbolic_print == True):
         init_printing()
-        symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f)
+        symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, laser_wavelength, atomic_velocity)
     
     return A
 
