@@ -56,7 +56,7 @@ Rotates a density matrix by the wigner D-matrix determined by Euler angles (alph
 then beta rotates around the new y-axis, and gamma rotates around the new z-axis
 '''
 def rotation(rho, J, alpha, beta, gamma):
-    D_matrix = wigner_D(J, alpha, beta, gamma)
+    D_matrix = np.transpose(wigner_D(J, alpha, beta, gamma))
     D_conj = np.transpose(np.conj(D_matrix))
     return np.dot(D_matrix, np.dot(rho, D_conj))
 
