@@ -61,7 +61,7 @@ def rotation(rho, J, alpha, beta, gamma):
     return np.dot(D_matrix, np.dot(rho, D_conj))
 
 '''
-Obtain an angular momentum state matrix from the flattened coupled state density rho vector
+Obtain an angular momentum state density matrix from the flattened coupled state density rho vector
 Inputs:
     flat_rho : array of arrays with one column of all density matrix elements of coupled E & G states
     n : number of states in total laser-coupled system
