@@ -71,6 +71,11 @@ class LaserAtomSystem:
                 new_rho[i, 0] = rho[i]
             rho_et.append(dm.getSingleStateMatrix(new_rho, self.n, self.G))
         return rho_et
+    
+    def __repr__(self):
+        E_str = [e.label for e in self.E]
+        G_str = [g.label for g in self.G]
+        return f"LaserAtomSystem({E_str}, {G_str}, {self.tau}, {self.Q}, {self.Q_decay}, {self.laser_wavelength}, {self.tau_f}, {self.laser_intensity}, {self.laser_power})"
         
     
     def Rho_0(self, i, j):
@@ -131,21 +136,22 @@ class LaserAtomSystem:
     def rotateRho_t(self, alpha, beta, gamma):
         """ Rotate rho_0 by the Euler angles alpha, beta, and gamma.
         """
-        print("Optical coherences cannot be rotated. To obtain these in a new reference frame, rotate rho_0 and then evolve in the new reference frame with the correct polarisation.")
+        print("Optical coherences are preserved under rotation. To obtain these in a new reference frame, rotate rho_0 and then evolve in the new reference frame with the correct polarisation.")
         rotated_rho_t = []
         flipped_rho_t = np.transpose(self.rho_t)  # Flip to loop over all rho
         for rho in flipped_rho_t:
             new_rho = np.zeros((self.n*self.n, 1), dtype = complex)  # Placeholder
             for i, element in enumerate(new_rho):
                 new_rho[i, 0] = rho[i]
-            rotated_rho_t.append(ro.rotateInitialMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma))
+            ro.rotateInitialMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma)
+            rotated_rho_t.append(new_rho)
         # Flip this back to the structure of rho_t
-        new_rho_t = []
-        for element_evolution in np.transpose(rotated_rho_t)[0]:
-            new_element_evolution = []  # Placeholder
-            for i in element_evolution:
-                new_element_evolution.append(i)
-            new_rho_t.append(new_element_evolution) 
+        new_rho_t = np.transpose(rotated_rho_t)[0]
+#         for element_evolution in np.transpose(rotated_rho_t)[0]:
+#             new_element_evolution = []  # Placeholder
+#             for i in element_evolution:
+#                 new_element_evolution.append(i)
+#             new_rho_t.append(new_element_evolution) 
         self.rho_t = new_rho_t
                 
     
