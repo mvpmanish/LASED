@@ -34,19 +34,19 @@ def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, t
         # rho(t)_ee
         for e in E:
             for ep in E:
-                rho_output[index(e, ep, n)][position] = abs(rho_t[index(e, ep, n), 0])
+                rho_output[index(e, ep, n)][position] = rho_t[index(e, ep, n), 0]
         # rho(t)_gg
         for g in G:
             for gp in G:
-                rho_output[index(g, gp, n)][position] = abs(rho_t[index(g, gp, n), 0])
+                rho_output[index(g, gp, n)][position] = rho_t[index(g, gp, n), 0]
         # rho(t)_eg
         for e in E:
             for g in G:
-                rho_output[index(e, g, n)][position] = abs(rho_t[index(e, g, n), 0])
+                rho_output[index(e, g, n)][position] = rho_t[index(e, g, n), 0]
         #rho(t)_ge
         for g in G:
             for e in E:
-                rho_output[index(g, e, n)][position] = abs(rho_t[index(g, e, n), 0])
+                rho_output[index(g, e, n)][position] = rho_t[index(g, e, n), 0]
 
 def timeEvolutionDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho0, rho_output, tau_f = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
     
@@ -82,19 +82,19 @@ def timeEvolutionDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_intensity, las
                 # rho(t)_ee
                 for e in E:
                     for ep in E:
-                        rho_output[index(e, ep, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(abs(rho_t[index(e, ep, n), 0]))
+                        rho_output[index(e, ep, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(rho_t[index(e, ep, n), 0])
                 # rho(t)_gg
                 for g in G:
                     for gp in G:
-                        rho_output[index(g, gp, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(abs(rho_t[index(g, gp, n), 0]))
+                        rho_output[index(g, gp, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(rho_t[index(g, gp, n), 0])
                 # rho(t)_eg
                 for e in E:
                     for g in G:
-                        rho_output[index(e, g, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(abs(rho_t[index(e, g, n), 0]))
+                        rho_output[index(e, g, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(rho_t[index(e, g, n), 0])
                 #rho(t)_ge
                 for g in G:
                     for e in E:
-                        rho_output[index(g, e, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(abs(rho_t[index(e, g, n), 0]))
+                        rho_output[index(g, e, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(rho_t[index(e, g, n), 0])
                         
 def timeEvolutionGaussianAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigma, n_intensity, laser_wavelength, time, rho0, rho_output, tau_f = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
     
@@ -130,19 +130,19 @@ def timeEvolutionGaussianAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigm
                 # rho(t)_ee
                 for e in E:
                     for ep in E:
-                        rho_output[index(e, ep, n)][position] += (2*k+1)*(abs(rho_t[index(e, ep, n), 0]))/(n_intensity*n_intensity)
+                        rho_output[index(e, ep, n)][position] += (2*k+1)*(rho_t[index(e, ep, n), 0])/(n_intensity*n_intensity)
                 # rho(t)_gg
                 for g in G:
                     for gp in G:
-                        rho_output[index(g, gp, n)][position] += (2*k+1)*(abs(rho_t[index(g, gp, n), 0]))/(n_intensity*n_intensity)
+                        rho_output[index(g, gp, n)][position] += (2*k+1)*(rho_t[index(g, gp, n), 0])/(n_intensity*n_intensity)
                 # rho(t)_eg
                 for e in E:
                     for g in G:
-                        rho_output[index(e, g, n)][position] += (2*k+1)*(abs(rho_t[index(e, g, n), 0]))/(n_intensity*n_intensity)
+                        rho_output[index(e, g, n)][position] += (2*k+1)*(rho_t[index(e, g, n), 0])/(n_intensity*n_intensity)
                 #rho(t)_ge
                 for g in G:
                     for e in E:
-                        rho_output[index(g, e, n)][position] += (2*k+1)*(abs(rho_t[index(e, g, n), 0]))/(n_intensity*n_intensity)
+                        rho_output[index(g, e, n)][position] += (2*k+1)*(rho_t[index(e, g, n), 0])/(n_intensity*n_intensity)
     
 
 def timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigma, n_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho0, rho_output, tau_f = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
@@ -184,17 +184,17 @@ def timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_pow
                 # rho(t)_ee
                 for e in E:
                     for ep in E:
-                        rho_output[index(e, ep, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(2*k+1)*(abs(rho_t[index(e, ep, n), 0]))/(n_intensity*n_intensity)
+                        rho_output[index(e, ep, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(2*k+1)*(rho_t[index(e, ep, n), 0])/(n_intensity*n_intensity)
                 # rho(t)_gg
                 for g in G:
                     for gp in G:
-                        rho_output[index(g, gp, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(2*k+1)*(abs(rho_t[index(g, gp, n), 0]))/(n_intensity*n_intensity)
+                        rho_output[index(g, gp, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(2*k+1)*(rho_t[index(g, gp, n), 0])/(n_intensity*n_intensity)
                 # rho(t)_eg
                 for e in E:
                     for g in G:
-                        rho_output[index(e, g, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(2*k+1)*(abs(rho_t[index(e, g, n), 0]))/(n_intensity*n_intensity)
+                        rho_output[index(e, g, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(2*k+1)*(rho_t[index(e, g, n), 0])/(n_intensity*n_intensity)
                 #rho(t)_ge
                 for g in G:
                     for e in E:
-                        rho_output[index(g, e, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(2*k+1)*(abs(rho_t[index(e, g, n), 0]))/(n_intensity*n_intensity)
+                        rho_output[index(g, e, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(2*k+1)*(rho_t[index(e, g, n), 0])/(n_intensity*n_intensity)
                                                                                                      

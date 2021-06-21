@@ -40,6 +40,4 @@ def halfRabiFreq(intensity, lifetime, wavelength):
     c = 299792458  # Speed of light
     tau = lifetime*1e-9  # Convert ns/rad lfetime to s/rad
     
-    constant = np.sqrt((3*1000*wavelength**3)/(8*np.pi*c*h*tau))
-    
     return np.sqrt((3*I*wavelength**3)/(8*np.pi*c*h*tau))*1e-9  #Gives half-Rabi freq in Grad/s

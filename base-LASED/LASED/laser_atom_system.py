@@ -138,21 +138,15 @@ class LaserAtomSystem:
         """
         print("Optical coherences are preserved under rotation. To obtain these in a new reference frame, rotate rho_0 and then evolve in the new reference frame with the correct polarisation.")
         rotated_rho_t = []
-        flipped_rho_t = np.transpose(self.rho_t)  # Flip to loop over all rho
-        for rho in flipped_rho_t:
+        # Flip to loop over all rho
+        for rho in np.transpose(self.rho_t):
             new_rho = np.zeros((self.n*self.n, 1), dtype = complex)  # Placeholder
             for i, element in enumerate(new_rho):
                 new_rho[i, 0] = rho[i]
-            ro.rotateInitialMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma)
+            new_rho = ro.rotateInitialMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma)
             rotated_rho_t.append(new_rho)
         # Flip this back to the structure of rho_t
-        new_rho_t = np.transpose(rotated_rho_t)[0]
-#         for element_evolution in np.transpose(rotated_rho_t)[0]:
-#             new_element_evolution = []  # Placeholder
-#             for i in element_evolution:
-#                 new_element_evolution.append(i)
-#             new_rho_t.append(new_element_evolution) 
-        self.rho_t = new_rho_t
+        self.rho_t = np.transpose(rotated_rho_t)[0]
                 
     
     def timeEvolution(self, time, beam_profile_averaging = None, doppler_averaging = None, 

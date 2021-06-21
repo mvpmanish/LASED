@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.1' 
+VERSION = '0.2' 
 DESCRIPTION = 'LASED'
 LONG_DESCRIPTION = 'A Laser-Atom Interaction Simulator using Quantum Electrodynamics'
 
@@ -14,7 +14,13 @@ setup(
         description = DESCRIPTION,
         long_description = LONG_DESCRIPTION,
         packages=find_packages(),
-        install_requires=[], # add any additional packages that 
+        install_requires=[
+            "numpy",
+            "math",
+            "copy",
+            "scipy",
+            "sympy"
+        ], # add any additional packages that 
         # needs to be installed along with your package. Eg: 'caer'
         
         keywords=['python', 'laser-atom', 'simulation', 'quantum', 'quantum electrodynamics', 'physics'],

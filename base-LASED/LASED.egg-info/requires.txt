@@ -1,0 +1,5 @@
+numpy
+math
+copy
+scipy
+sympy
