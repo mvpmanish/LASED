@@ -25,11 +25,12 @@ def quantumPolarisation(q):
 # Input: e and g are State objects, q is the laser polarisation
 # Output: the coupling coefficient which is the Dipole matrix element
 def coupling(e, g, q):
-    sign = np.power(-1, quantumPolarisation(q)+ e.S + 1 + e.L + g.J + e.J - e.m)
-    factor = np.sqrt((2*e.J+1)*(2*e.L+1)*(2*g.J+1))
-    wig6j = wigner_6j(e.L, e.J, e.S, g.J, g.L, 1)
-    wig3j = wigner_3j(e.J, 1, g.J, -1*e.m, q, g.m)
-    return sign*factor*wig6j*wig3j
+    sign = np.power(-1, quantumPolarisation(q)+e.F+g.F+e.J+g.J+e.I+e.L+e.S-e.m+ 1)
+    factor = np.sqrt((2*e.F+1)*(2*g.F+1)*(2*e.J+1)*(2*g.J+1)*(2*e.L+1))
+    wig6j_1 = wigner_6j(e.J, e.F, e.I, g.J, g.L, 1)
+    wig6j_2 = wigner_6j(e.L, e.J, e.S, g.J, g.L, 1)
+    wig3j = wigner_3j(e.F, 1, g.F, -1*e.m, q, g.m)
+    return sign*factor*wig6j_1*wig6j_2*wig3j
 
 # Caluclates the half-Rabi frequency in GHz.
 # Inputs: intensity given in mW/mm^2, lifetime in ns/rad, wavelength of laser in m
