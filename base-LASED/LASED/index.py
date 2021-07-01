@@ -3,6 +3,7 @@ Definition of the index function
 '''
 from state import *
 
+
 def index(i, j, n):
     '''
     Function to return the index of an element of a 2D square array of 

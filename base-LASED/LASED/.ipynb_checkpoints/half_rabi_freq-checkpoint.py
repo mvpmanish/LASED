@@ -32,7 +32,7 @@ def coupling(e, g, q):
     wig3j = wigner_3j(e.F, 1, g.F, -1*e.m, q, g.m)
     return sign*factor*wig6j_1*wig6j_2*wig3j
 
-# Caluclates the half-Rabi frequency in GHz.
+# Caluclates the half-Rabi frequency in Grad/s.
 # Inputs: intensity given in mW/mm^2, lifetime in ns/rad, wavelength of laser in m
 # Output: the half-Rabi frequency constant (without coupling coefficient) in GHz
 def halfRabiFreq(intensity, lifetime, wavelength):

@@ -12,5 +12,5 @@ class State():
         self.J = L+S  # Total angular momentum
         self.I = I  # Nuclear spin quantum number
         self.F = I + self.J
-        self.w = w  # angular frequency of state
+        self.w = w  # angular frequency of state in Grad/s
         self.label = label  # number labelling of state e.g. state |1> would have label 1

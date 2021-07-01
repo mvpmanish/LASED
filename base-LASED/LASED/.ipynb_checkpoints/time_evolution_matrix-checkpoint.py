@@ -98,12 +98,13 @@ def rho_eepp(A, n, E, G, Q, Q_decay, tau, rabi, tau_f = None, numeric_print = No
                     if (A[row, line] != 0):
                         print(A[row, line], "rho", getStateLabelsFromLineNo(line, n))
 
-def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, numeric_print = None):             # rho_ge
+def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, numeric_print = None):             
+    # rho_ge
     for g in G:
         for e in E: 
             row = index(g, e, n)
-            A[row, row] += -1.j*dopplerDelta(e, g, w_q = 0, lambda_q = laser_wavelength, 
-                                                 v_z = atomic_velocity)  - 1/(2*tau) 
+            A[row, row] += -1.j*dopplerDelta(e, g, w_q = angularFreq(laser_wavelength),
+                                             lambda_q = laser_wavelength, v_z = atomic_velocity)  - 1/(2*tau) 
             if(tau_f != None):
                 A[row, row] -= 1/(2*tau_f)
             for ep in E:
@@ -120,12 +121,13 @@ def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity,
                     if (A[row, line] != 0):
                         print(A[row, line], "rho", getStateLabelsFromLineNo(line, n))
 
-def rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, numeric_print = None):              # rho_eg
+def rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, numeric_print = None):              
+    # rho_eg
     for e in E:
         for g in G:  
             row = index(e, g, n)
-            A[row, row] += 1.j*dopplerDelta(e, g, w_q = 0, lambda_q = laser_wavelength,
-                                               v_z = atomic_velocity)  - 1/(2*tau)
+            A[row, row] += 1.j*dopplerDelta(e, g, w_q = angularFreq(laser_wavelength), 
+                                            lambda_q = laser_wavelength, v_z = atomic_velocity)  - 1/(2*tau)
             if(tau_f != None):
                 A[row, row] -= 1/(2*tau_f)
             for ep in E:
