@@ -13,18 +13,22 @@ class State():
         self.S = S  # Spin quantum number
         self.m = m  # m is the degeneracy of total angular momentum
         
-        if(J):
+        if(J != None):
             self.J = J  # Coupling between L and S
         else:
             self.J = L+S 
-        if(I):
+        if(I != None):
             self.I = I  # Nuclear spin quantum number
         else:
             self.I = 0  
-        if(F):
+        if(F != None):
             self.F = F  # Total angular momentum, coupling between J and I
         else:
             self.F = self.J + self.I
+    
+    # Print
+    def __repr__(self):
+        return f"State(label = {self.label}, w = {self.w}, m = {self.m}, L = {self.L}, J = {self.J}, I = {self.I}, F = {self.F})"
          
         
         

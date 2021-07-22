@@ -9,7 +9,15 @@ from detuning import *
 from half_rabi_freq import *
 from matrix_methods import *
 from time_evolution_matrix import *
-import scipy.sparse.linalg as sparsela
+import scipy.linalg as la
+from scipy.sparse import lil_matrix
+import plotly.graph_objects as go
+
+def printNonZeroMatrixElements(A):
+    for i, row in enumerate(A):
+        for j, element in enumerate(row):
+            if(element != 0):
+                print(f"[{i}, {j}] = {element}")
 
 def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, time, rho0, rho_output, tau_f = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
     
@@ -18,16 +26,23 @@ def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, t
     A = timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intensity, 
                         tau_f = tau_f, rabi_scaling = rabi_scaling, symbolic_print = pretty_print_eq, 
                                     numeric_print = print_eq, atomic_velocity = atomic_velocity)
+    print("A = ")
+    printNonZeroMatrixElements(A)
 
     # Compute the diagonalised matrix D and matrix of eigenvectors V
     D = diagonalise(A)
+    # Debug
+    print("D = ")
+    printNonZeroMatrixElements(D)
+    
     V = matrixOfEigenvec(A)
     f = np.dot(la.inv(V), rho0)  # Compute V^-1*rho(0)
     
     # Calculate the exponential
     for position, t in enumerate(time, start = 0):
         # Use expm() which computes the matrix exponential using the Pade approximation
-        VexpDt = np.dot(V, sparsela.expm(D*t))  # Use sparse linear algebra to compute e^Dt as this is faster
+        expS = la.expm(D*t) # Compute exp(D*t), this takes the longest so needs speeding up
+        VexpDt = np.dot(V, expS)  
         rho_t = np.dot(VexpDt, f)
         
         # Append density matrix elements

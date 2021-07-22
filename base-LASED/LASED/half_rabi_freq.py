@@ -25,20 +25,21 @@ def quantumPolarisation(q):
 # Input: e and g are State objects, q is the laser polarisation
 # Output: the coupling coefficient which is the Dipole matrix element
 def coupling(e, g, q):
-    sign = np.power(-1, quantumPolarisation(q)+e.F+g.F+e.J+g.J+e.I+e.L+e.S-e.m+ 1)
+    sign = np.power(-1, ( q*(1+q)/2)+1+2*e.F-e.m+e.I+g.J+e.S+g.L+e.J+ 1)
     factor = np.sqrt((2*e.F+1)*(2*g.F+1)*(2*e.J+1)*(2*g.J+1)*(2*e.L+1))
-    wig6j_1 = wigner_6j(e.J, e.F, e.I, g.J, g.L, 1)
+    wig6j_1 = wigner_6j(e.J, e.F, e.I, g.F, g.J, 1)
     wig6j_2 = wigner_6j(e.L, e.J, e.S, g.J, g.L, 1)
     wig3j = wigner_3j(e.F, 1, g.F, -1*e.m, q, g.m)
     return sign*factor*wig6j_1*wig6j_2*wig3j
 
 # Caluclates the half-Rabi frequency in Grad/s.
-# Inputs: intensity given in mW/mm^2, lifetime in ns/rad, wavelength of laser in m
+# Inputs: intensity given in mW/mm^2, lifetime in ns, wavelength of laser in m
 # Output: the half-Rabi frequency constant (without coupling coefficient) in GHz
 def halfRabiFreq(intensity, lifetime, wavelength):
     I = intensity*1000  # Convert mW/mm^2 to W/m^2
     h = 6.6260715e-34  # Plank's constant
+    #hbar = 1.0456e-34
     c = 299792458  # Speed of light
-    tau = lifetime*1e-9  # Convert ns/rad lfetime to s/rad
+    tau = lifetime*1e-9  # Convert ns lfetime to s
     
-    return np.sqrt((3*I*wavelength**3)/(8*np.pi*c*h*tau))*1e-9  #Gives half-Rabi freq in Grad/s
+    return np.sqrt((3*I*wavelength**3)/(8*PI*c*h*tau))*1e-9  #Gives half-Rabi freq in Grad/s

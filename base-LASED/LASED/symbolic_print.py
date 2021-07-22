@@ -84,7 +84,7 @@ def symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, laser_wavelength, atomic_velo
                 if(tau_f != None):
                     rho_dot += S('-rho{}{}/(2*tau_f)'.format(g.label, e.label))
                 if(dopplerDelta(e, g, w_q = 0, lambda_q = laser_wavelength, v_z = atomic_velocity) != 0):
-                    rho_dot += S('-I*Delta({}, {}, omega_q, v_z)'.format(e.label, g.label))
+                    rho_dot += S('-I*Delta({}, {}, omega_q, v_z)*rho_{}{}'.format(e.label, g.label, g.label, e.label))
                 for ep in E:
                     for q in Q: 
                         if(coupling(ep, g, q) != 0):
@@ -105,7 +105,7 @@ def symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f, laser_wavelength, atomic_velo
                 if(tau_f != None):
                     rho_dot += S('-rho{}{}/(2*tau_f)'.format(e.label, g.label))
                 if(dopplerDelta(e, g, w_q = 0, lambda_q = laser_wavelength, v_z = atomic_velocity) != 0):
-                    rho_dot += S('-I*Delta({}, {}, omega_q, v_z)'.format(e.label, g.label))
+                    rho_dot += S('-I*Delta({}, {}, omega_q, v_z)*rho_{}{}'.format(e.label, g.label, e.label, g.label))
                 for ep in E:
                     for q in Q: 
                         if(coupling(ep, g, q) != 0):
