@@ -11,6 +11,7 @@ from sympy import *
 from sympy import Symbol
 from symbolic_print import *
 from half_rabi_freq import *
+from decay_constant import *
 from index import *
 
 def timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intensity,
@@ -65,11 +66,18 @@ def rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, numeric_print = None):
                     sum_decay_channels = 0
                     for gp in G:
                         for qp in Q_decay:  # Sum over decay channel polarisations
-                            sum_decay_channels += coupling(epp, gp, qp)*coupling(ep, gp, qp)
+                            sum_decay_channels += abs(coupling(epp, gp, qp)*coupling(ep, gp, qp))
                     if(sum_decay_channels != 0):
-                        for qp in Q_decay:
-                            A[row, column] += 1/(2*tau)*coupling(ep, gpp, qp)*coupling(epp,g, qp)/sum_decay_channels
-                            A[row, column2] += 1/(2*tau)*coupling(epp, gpp, qp)*coupling(ep, g, qp)/sum_decay_channels
+                        if(ep.label == epp.label):
+                            for qp in Q_decay:
+                                A[row, column] += 1/(2*tau)*abs(coupling(ep, gpp, qp)*coupling(epp,g, qp))/sum_decay_channels
+                                A[row, column2] += 1/(2*tau)*abs(coupling(epp, gpp, qp)*coupling(ep, g, qp))/sum_decay_channels
+                        else:  
+                        # Then this is a vertical coherence and the generalised decay constant must be evaluated
+                            decay_const = generalisedDecayConstant(ep, epp, gpp, G, Q_decay)/(2*tau)  # Divide by two to takeinto account double counting of e'e'' and e''e'
+                            A[row, column] += decay_const
+                            A[row, column2] += decay_const
+                        
             if(numeric_print == True):  # Print numerical equations
                 print("rho_dot", g.label, gpp.label, " = ")
                 for line in range(n*n):

@@ -26,15 +26,9 @@ def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, t
     A = timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intensity, 
                         tau_f = tau_f, rabi_scaling = rabi_scaling, symbolic_print = pretty_print_eq, 
                                     numeric_print = print_eq, atomic_velocity = atomic_velocity)
-    print("A = ")
-    printNonZeroMatrixElements(A)
 
     # Compute the diagonalised matrix D and matrix of eigenvectors V
     D = diagonalise(A)
-    # Debug
-    print("D = ")
-    printNonZeroMatrixElements(D)
-    
     V = matrixOfEigenvec(A)
     f = np.dot(la.inv(V), rho0)  # Compute V^-1*rho(0)
     

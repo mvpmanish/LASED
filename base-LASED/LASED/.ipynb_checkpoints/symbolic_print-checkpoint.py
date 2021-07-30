@@ -10,6 +10,7 @@ from sympy import *
 from sympy import Symbol
 from half_rabi_freq import *
 from index import *
+from decay_constant import *
 
 
 def symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, laser_wavelength, atomic_velocity):
@@ -46,11 +47,15 @@ def symbolicPrintRhogg(n, E, G, Q, Q_decay):
                         sum_decay_channels = 0
                         for gp in G:
                             for qp in Q_decay:  # Sum over decay channel polarisations
-                                sum_decay_channels += coupling(epp, gp, qp)*coupling(ep, gp, qp)
+                                sum_decay_channels += abs(coupling(epp, gp, qp)*coupling(ep, gp, qp))
                         if(sum_decay_channels != 0):
-                            for qp in Q_decay:
-                                rho_dot += S('{}/(2*tau)*rho_{}{} + {}/(2*tau)*rho_{}{}'.format(coupling(ep, gpp, qp)*coupling(epp,g, qp)/sum_decay_channels,epp.label, ep.label,
-                                                                             coupling(epp, gpp, qp)*coupling(ep, g, qp)/sum_decay_channels, ep.label, epp.label))
+                            if(ep.label == epp.label):
+                                for qp in Q_decay:
+                                    rho_dot += S('{}/(2*tau)*rho_{}{} + {}/(2*tau)*rho_{}{}'.format(abs(coupling(ep, gpp, qp)*coupling(epp,g, qp))/sum_decay_channels,epp.label, ep.label,
+                                                                                 abs(coupling(epp, gpp, qp)*coupling(ep, g, qp))/sum_decay_channels, ep.label, epp.label))
+                            else:
+                                # Gerneralised decay constant
+                                rho_dot += S(f'({generalisedDecayConstant(ep, epp, gpp, G, Q_decay)}/(2*tau))*rho_{epp.label}{ep.label} + ({generalisedDecayConstant(ep, epp, gpp, G, Q_decay)}/(2*tau))*rho_{ep.label}{epp.label}')
                 display(Eq(S('rhodot_{}{}'.format(g.label, gpp.label)), rho_dot))
 
 def symbolicPrintRhoee(n, E, G, Q, Q_decay, tau_f):
