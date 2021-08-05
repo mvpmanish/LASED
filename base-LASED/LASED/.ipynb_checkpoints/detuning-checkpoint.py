@@ -19,13 +19,13 @@ def detuning(e, g):
 
 def angularFreq(wavelength):
     """
-    Calculates the angular frequenct in rad/s from a given wavelength.
+    Calculates the angular frequency in Grad/s from a given wavelength.
     Inputs:
         wavelength (float): a wavelength in nm
     Output:
         (float) the angular frequency in Grad/s
     """
-    return 2*PI*C/wavelength
+    return 2*PI*C/wavelength*1e-9
     
 # Doppler detuning.
 # Input: w_q is the angular frequency of the laser in rad/s, lambda_q is the wavelength of light in m

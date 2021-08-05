@@ -25,7 +25,7 @@ def quantumPolarisation(q):
 # Input: e and g are State objects, q is the laser polarisation
 # Output: the coupling coefficient which is the Dipole matrix element
 def coupling(e, g, q):
-    sign = np.power(-1, ( q*(1+q)/2)+1+2*e.F-e.m+e.I+g.J+e.S+g.L+e.J+ 1)
+    sign = np.power(-1, (q*(1+q)/2)+e.F+g.F+e.J+g.J+e.I+e.L+e.S-e.m+1)
     factor = np.sqrt((2*e.F+1)*(2*g.F+1)*(2*e.J+1)*(2*g.J+1)*(2*e.L+1))
     wig6j_1 = wigner_6j(e.J, e.F, e.I, g.F, g.J, 1)
     wig6j_2 = wigner_6j(e.L, e.J, e.S, g.J, g.L, 1)
