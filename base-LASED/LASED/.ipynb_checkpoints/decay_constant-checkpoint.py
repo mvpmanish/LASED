@@ -40,7 +40,8 @@ def generalisedDecayConstant(ep, epp, g, G, Q_decay):
 
     # Calculate the generalised decay constant
     gamma_epeppg = np.power(gamma_epg*gamma_eppg, 0.5)
-    # Calculate the sign
-    if(coupling(ep, g, q)*coupling(epp, g, q) < 0): 
-        gamma_epeppg = -1*gamma_epeppg
+    # Calculate the sign: only one polarisation will result in non-zero coupling so can sum over all
+    for q in Q_decay:
+        if(coupling(ep, g, q)*coupling(epp, g, q) < 0): 
+            gamma_epeppg = -1*gamma_epeppg
     return gamma_epeppg
