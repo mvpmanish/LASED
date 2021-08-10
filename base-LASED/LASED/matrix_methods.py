@@ -17,3 +17,10 @@ def diagonalise(A):
 def matrixOfEigenvec(A):
     eigenvals, eigenvecs = la.eig(A)
     return eigenvecs
+
+# For debugging purposes
+def printNonZeroMatrixElements(A):
+    for i, row in enumerate(A):
+        for j, element in enumerate(row):
+            if(element != 0):
+                print(f"[{i}, {j}] = {element}")

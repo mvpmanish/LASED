@@ -150,7 +150,7 @@ class LaserAtomSystem:
                 
     
     def timeEvolution(self, time, beam_profile_averaging = None, doppler_averaging = None, 
-                     pretty_print_eq = None, print_eq = None, rabi_scaling = None,
+                     pretty_print_eq = None, print_eq = None, detuning = None, rabi_scaling = None,
                      atomic_velocity = None, r_sigma = None, n_beam_averaging = None, 
                      doppler_width = None, doppler_detunings = None):
         """ Evolves the laser-atom system over time.
@@ -178,25 +178,25 @@ class LaserAtomSystem:
         
         if((beam_profile_averaging) and (doppler_averaging)):
             if(laser_power):
-                te.timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                te.timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else:
                 print("Need to have laser_power attribute in LaserAtomSystem to use beam profile avergaing! Equate <LaserAtomSystem>.laser_power to a power in milliWatts.")
         
         elif(beam_profile_averaging):
             if(laser_power):
-                te.timeEvolutionGaussianAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                te.timeEvolutionGaussianAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else:
                 print("Need to have laser_power attribute in LaserAtomSystem to use beam profile avergaing! Equate <LaserAtomSystem>.laser_power to the power of the laser in mW.")
             
         elif(doppler_averaging):
             if(laser_intensity):
-                te.timeEvolutionDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                te.timeEvolutionDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else: 
                 print("Need to have laser_intensity attribute in LaserAtomSystem! Equate <LaserAtomSystem>.laser_intensity to the intensity of the laser in mW/mm^2.")
 
         else:
             if(laser_intensity):
-                te.timeEvolution(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                te.timeEvolution(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else: 
                 print("Need to have laser_intensity attribute in LaserAtomSystem! Equate <LaserAtomSystem>.laser_intensity to the intensity of the laser in mW/mm^2.")
             

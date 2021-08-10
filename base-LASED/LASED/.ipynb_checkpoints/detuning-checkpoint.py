@@ -6,7 +6,7 @@ from constants import *
 
 # Detunings
 # Input: e is a State object, g is a State object
-def detuning(e, g):
+def delta(e, g):
     """
     Detunings between states. 
     Inputs:

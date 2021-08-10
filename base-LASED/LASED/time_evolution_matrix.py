@@ -15,7 +15,7 @@ from decay_constant import *
 from index import *
 
 def timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intensity,
-                        tau_f = None, symbolic_print = None, numeric_print = None,
+                        tau_f = None, detuning = None, symbolic_print = None, numeric_print = None,
                        rabi_scaling = None, atomic_velocity = None):
     '''
     Function to create and populate the coupled differential equation matrix A for the laser-atom system.
@@ -35,13 +35,13 @@ def timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intens
     # Populate A matrix
     rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, numeric_print = numeric_print)
     rho_eepp(A, n, E, G, Q, Q_decay, tau, rabi, tau_f = tau_f, numeric_print = numeric_print)
-    rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = tau_f, numeric_print = numeric_print)
-    rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = tau_f, numeric_print = numeric_print)
+    rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = tau_f, detuning = detuning, numeric_print = numeric_print)
+    rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = tau_f, detuning = detuning, numeric_print = numeric_print)
 
     # Symbolic Printing
     if(symbolic_print == True):
         init_printing()
-        symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, laser_wavelength, atomic_velocity)
+        symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, detuning, laser_wavelength, atomic_velocity)
     
     return A
 
@@ -50,7 +50,7 @@ def rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, numeric_print = None):
     for g in G:  # Start with looping over g and g'' for rho_gg''
         for gpp in G:
             row = index(g, gpp, n)  # matrix positions of rho_gg'' in 1D array
-            A[row, row] += -1.j*detuning(g, gpp)  # first term in equation
+            A[row, row] += -1.j*delta(g, gpp)  # first term in equation
             for e in E:
                 column = index(g, e, n)
                 for q in Q:  # Sum over all polarisations
@@ -89,7 +89,7 @@ def rho_eepp(A, n, E, G, Q, Q_decay, tau, rabi, tau_f = None, numeric_print = No
     for e in E:
         for epp in E:
             row = index(e, epp, n)
-            A[row, row] += -1.j*detuning(e, epp) - 1/(tau)
+            A[row, row] += -1.j*delta(e, epp) - 1/(tau)
             if(tau_f != None):
                 A[row, row] -= 1/tau_f
             for g in G:
@@ -106,13 +106,15 @@ def rho_eepp(A, n, E, G, Q, Q_decay, tau, rabi, tau_f = None, numeric_print = No
                     if (A[row, line] != 0):
                         print(A[row, line], "rho", getStateLabelsFromLineNo(line, n))
 
-def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, numeric_print = None):             
+def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, detuning = None, numeric_print = None):             
     # rho_ge
     for g in G:
         for e in E: 
             row = index(g, e, n)
             A[row, row] += -1.j*dopplerDelta(e, g, w_q = angularFreq(laser_wavelength),
-                                             lambda_q = laser_wavelength, v_z = atomic_velocity)  - 1/(2*tau) 
+                                             lambda_q = laser_wavelength, v_z = atomic_velocity)  - 1/(2*tau)
+            if(detuning != None):
+                A[row, row] += -1.j*detuning
             if(tau_f != None):
                 A[row, row] -= 1/(2*tau_f)
             for ep in E:
@@ -129,13 +131,15 @@ def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity,
                     if (A[row, line] != 0):
                         print(A[row, line], "rho", getStateLabelsFromLineNo(line, n))
 
-def rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, numeric_print = None):              
+def rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, detuning = None, numeric_print = None):              
     # rho_eg
     for e in E:
         for g in G:  
             row = index(e, g, n)
             A[row, row] += 1.j*dopplerDelta(e, g, w_q = angularFreq(laser_wavelength), 
                                             lambda_q = laser_wavelength, v_z = atomic_velocity)  - 1/(2*tau)
+            if(detuning != None):
+                A[row, row] += 1.j*detuning
             if(tau_f != None):
                 A[row, row] -= 1/(2*tau_f)
             for ep in E:
