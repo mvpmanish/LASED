@@ -2,11 +2,14 @@
 The LaserAtomSystem class definition.
 '''
 
-import time_evolution as te
+from time_evolution import *
+from density_matrix import *
+from index import *
+
+import rotation
 import numpy as np
-import index as ix
-import rotation as ro
-import density_matrix as dm
+
+
 
 class LaserAtomSystem:
     """A user-defined laser field acting on a user-defined atomic system
@@ -38,13 +41,13 @@ class LaserAtomSystem:
     def rho_e0(self):
         """ Upper state density matrix for the initial condition
         """
-        return dm.getSingleStateMatrix(self.rho_0, self.n, self.E)
+        return getSingleStateMatrix(self.rho_0, self.n, self.E)
     
     @property
     def rho_g0(self):
         """ Lower state density matrix for the initial condition
         """
-        return dm.getSingleStateMatrix(self.rho_0, self.n, self.G)
+        return getSingleStateMatrix(self.rho_0, self.n, self.G)
     
     @property
     def rho_et(self):
@@ -56,7 +59,7 @@ class LaserAtomSystem:
             new_rho = np.zeros((self.n*self.n, 1), dtype = complex)  # Placeholder
             for i, element in enumerate(new_rho):
                 new_rho[i, 0] = rho[i]
-            rho_et.append(dm.getSingleStateMatrix(new_rho, self.n, self.E))
+            rho_et.append(getSingleStateMatrix(new_rho, self.n, self.E))
         return rho_et
     
     @property
@@ -69,7 +72,7 @@ class LaserAtomSystem:
             new_rho = np.zeros((self.n*self.n, 1), dtype = complex)  # Placeholder
             for i, element in enumerate(new_rho):
                 new_rho[i, 0] = rho[i]
-            rho_et.append(dm.getSingleStateMatrix(new_rho, self.n, self.G))
+            rho_et.append(getSingleStateMatrix(new_rho, self.n, self.G))
         return rho_et
     
     def __repr__(self):
@@ -86,7 +89,7 @@ class LaserAtomSystem:
         Example:
             print(Rho_0(one, two))
         """
-        row = ix.index(i, j, self.n)
+        row = index(i, j, self.n)
         return self.rho_0[row, 0]
     
     def setRho_0(self, i, j, value):
@@ -96,7 +99,7 @@ class LaserAtomSystem:
             print("Cannot set an element of a density matrix > 1!")
             return
         else:
-            row = ix.index(i, j, self.n)
+            row = index(i, j, self.n)
             self.rho_0[row, 0] = value
     
     def appendDensityMatrixToRho_0(self, density_rho):
@@ -108,7 +111,7 @@ class LaserAtomSystem:
         else:
             print("Size of density_rho does not match with excited or ground states")
             return
-        dm.appendDensityMatrixToFlatCoupledMatrix(self.rho_0, density_rho, sub_states, self.n)
+        appendDensityMatrixToFlatCoupledMatrix(self.rho_0, density_rho, sub_states, self.n)
             
     
     def clearRho_0(self):
@@ -126,12 +129,12 @@ class LaserAtomSystem:
         Example:
             print(Rho_t(one, two))
         """
-        return self.rho_t[ix.index(i, j, self.n)]
+        return self.rho_t[index(i, j, self.n)]
     
     def rotateRho_0(self, alpha, beta, gamma):
         """ Rotate rho_0 by the Euler angles alpha, beta, and gamma.
         """
-        self.rho_0 = ro.rotateInitialMatrix(self.rho_0, self.n, self.E, self.G, alpha, beta, gamma)
+        self.rho_0 = rotation.rotateInitialMatrix(self.rho_0, self.n, self.E, self.G, alpha, beta, gamma)
     
     def rotateRho_t(self, alpha, beta, gamma):
         """ Rotate rho_0 by the Euler angles alpha, beta, and gamma.
@@ -143,7 +146,7 @@ class LaserAtomSystem:
             new_rho = np.zeros((self.n*self.n, 1), dtype = complex)  # Placeholder
             for i, element in enumerate(new_rho):
                 new_rho[i, 0] = rho[i]
-            new_rho = ro.rotateInitialMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma)
+            new_rho = rotation.rotateInitialMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma)
             rotated_rho_t.append(new_rho)
         # Flip this back to the structure of rho_t
         self.rho_t = np.transpose(rotated_rho_t)[0]
@@ -178,25 +181,25 @@ class LaserAtomSystem:
         
         if((beam_profile_averaging) and (doppler_averaging)):
             if(laser_power):
-                te.timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else:
                 print("Need to have laser_power attribute in LaserAtomSystem to use beam profile avergaing! Equate <LaserAtomSystem>.laser_power to a power in milliWatts.")
         
         elif(beam_profile_averaging):
             if(laser_power):
-                te.timeEvolutionGaussianAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                timeEvolutionGaussianAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else:
                 print("Need to have laser_power attribute in LaserAtomSystem to use beam profile avergaing! Equate <LaserAtomSystem>.laser_power to the power of the laser in mW.")
             
         elif(doppler_averaging):
             if(laser_intensity):
-                te.timeEvolutionDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                timeEvolutionDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else: 
                 print("Need to have laser_intensity attribute in LaserAtomSystem! Equate <LaserAtomSystem>.laser_intensity to the intensity of the laser in mW/mm^2.")
 
         else:
             if(laser_intensity):
-                te.timeEvolution(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                timeEvolution(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else: 
                 print("Need to have laser_intensity attribute in LaserAtomSystem! Equate <LaserAtomSystem>.laser_intensity to the intensity of the laser in mW/mm^2.")
             

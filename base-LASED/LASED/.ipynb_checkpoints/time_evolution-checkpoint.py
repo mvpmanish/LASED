@@ -10,8 +10,6 @@ from half_rabi_freq import *
 from matrix_methods import *
 from time_evolution_matrix import *
 import scipy.linalg as la
-from scipy.sparse import lil_matrix
-import plotly.graph_objects as go
 
 def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, time, rho0, rho_output, tau_f = None, detuning = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
     
