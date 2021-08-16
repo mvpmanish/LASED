@@ -7,9 +7,9 @@ from state import *
 import numpy as np
 
 def generateSubStates(label_from, w, L, S, J = None, I = None, F = None):
-    """
-    Generates a vector of sub-states given quantum numbers.
-    Inputs:
+    """Generates a vector of sub-states given quantum numbers.
+    
+    Parameters:
         label_from(int) : the number assigned to the first state generated - goes from -m_F to +m_F so the number given will be assigned to -m_F
         w(float) : the angular frequency (in Grad/s) given to the states generated
         L(int) : orbital angular momentum
@@ -17,7 +17,7 @@ def generateSubStates(label_from, w, L, S, J = None, I = None, F = None):
         J(int) : total angular momentum
         I(int) : nuclear isospin 
         F(int) : total angular momentum + isospin
-    Output:
+    Returns:
         A vector of State objects from -m_F to +m_F with labels beginning at label_from
     """
     # Set up a vector

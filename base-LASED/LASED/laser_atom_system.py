@@ -5,6 +5,7 @@ The LaserAtomSystem class definition.
 from time_evolution import *
 from density_matrix import *
 from index import *
+from generate_sub_states import *
 
 import rotation
 import numpy as np
@@ -12,7 +13,19 @@ import numpy as np
 
 
 class LaserAtomSystem:
-    """A user-defined laser field acting on a user-defined atomic system
+    """A physical system composed of a laser field acting on an atomic system.
+    
+    Attributes: 
+        Q_decay (list): List of ints describing the selection rules of the decay. Selection rules are set to +1, -1, and 0.
+        rho_t (list): List of density matrix over the time interval simulated for. This is initialised as empty as no time evolution has taken place.
+        E (list): List of State objects which are the excited states of the system.
+        G (list): List of State objects which are the ground states of the system.
+        tau (float): Lifetime of transition in nanoseconds between excited and ground state.
+        Q (list): List of laser polarisations. This can be +1, 0, -1 for right-hand circular, left-hand circular, and linear polarisation. If more than one polarisation is in the list then the system will be excited with a linear combination of the polarisations. 
+        laser_wavelength (float): Wavelength of transition from ground to excited state in metres.
+        laser_intensity (float): Intensity of the laser in mW/mm^2.
+        laser_power (float): Power of the laser in mW. This is needed for Gaussian averaging of beam profile.
+        rho_0 (ndarray): 2D array creating the density matrix at t = 0.
     """
     
     # Class variables
@@ -21,6 +34,9 @@ class LaserAtomSystem:
     
     def __init__(self, E, G, tau, Q, laser_wavelength, laser_intensity = None, 
                  laser_power = None, tau_f = None):
+        """
+        Inits LaserAtomSystem.
+        """
         self.E = E  # list of excited States
         self.G = G  # list of ground States
         self.tau = tau  # lifteime in ns/rad, N.B NIST database uses A_ki in rad/s
@@ -33,25 +49,25 @@ class LaserAtomSystem:
         
     @property
     def n(self):
-        """ Total number of sub-states
+        """ Total number of substates.
         """
         return int(len(self.G)+len(self.E))
     
     @property
     def rho_e0(self):
-        """ Upper state density matrix for the initial condition
+        """ Upper state density matrix for the initial condition.
         """
         return getSingleStateMatrix(self.rho_0, self.n, self.E)
     
     @property
     def rho_g0(self):
-        """ Lower state density matrix for the initial condition
+        """ Lower state density matrix for the initial condition.
         """
         return getSingleStateMatrix(self.rho_0, self.n, self.G)
     
     @property
     def rho_et(self):
-        """ Upper state density matrix for all of the time evolution
+        """ Upper state density matrix for all of the time evolution.
         """
         rho_et = []
         flipped_rho_t = np.transpose(self.rho_t)  # Flip to loop over all rho
@@ -64,7 +80,7 @@ class LaserAtomSystem:
     
     @property
     def rho_gt(self):
-        """ Lower state density matrix for all of the time evolution
+        """ Lower state density matrix for all of the time evolution.
         """
         rho_et = []
         flipped_rho_t = np.transpose(self.rho_t)  # Flip to loop over all rho
@@ -82,10 +98,15 @@ class LaserAtomSystem:
         
     
     def Rho_0(self, i, j):
-        """ Accessor for an element in rho_0
-        Args:
-            i (State): First state index
-            j (State): Second state index
+        """Accessor for an element in rho_0.
+        
+        Parameters:
+            i (State): First state index.
+            j (State): Second state index.
+        
+        Returns:
+            complex: element of the laser-atom system density matrix at t=0.
+        
         Example:
             print(Rho_0(one, two))
         """
@@ -93,7 +114,11 @@ class LaserAtomSystem:
         return self.rho_0[row, 0]
     
     def setRho_0(self, i, j, value):
-        """Sets a value to an element of rho_0
+        """Sets a value to an element of rho_0.
+        
+        Parameters:
+            i (State): First state index
+            j (State): Second state index
         """
         if(value > 1):
             print("Cannot set an element of a density matrix > 1!")
@@ -103,6 +128,14 @@ class LaserAtomSystem:
             self.rho_0[row, 0] = value
     
     def appendDensityMatrixToRho_0(self, density_rho):
+        """Sets the laser-atom system density matrix at t=0 to the matrix given.
+        
+        Parameters:
+            density_rho (ndarray): 2D array of the system density matrix.
+        
+        Note:
+            Density matrix input must be square and the size of the matrix must match with E or G.
+        """
         size = len(density_rho)
         if(size == len(G)):
             sub_states = self.G
@@ -115,29 +148,51 @@ class LaserAtomSystem:
             
     
     def clearRho_0(self):
-        """Makes all values of rho_0 zero
+        """Makes all values of rho_0 zero.
         """
         self.rho_0 = np.zeros((self.n*self.n, 1), dtype = complex)
     
     def Rho_t(self, i, j):
-        """ Accessor for an element in rho_t
-        Args:
+        """Accessor for an element in rho_t.
+        
+        Parameters:
             i (State): First state index
             j (State): Second state index
+        
         Returns:
             Array of an element in laser-atom system for all of the simulation time
+        
         Example:
-            print(Rho_t(one, two))
+            print(Rho_t(one, two)) prints element rho_12 if one and two are State objects corresponding 
+            to label 1 and 2 respectively. 
         """
         return self.rho_t[index(i, j, self.n)]
     
     def rotateRho_0(self, alpha, beta, gamma):
         """ Rotate rho_0 by the Euler angles alpha, beta, and gamma.
+        
+        Parameters:
+            alpha: rotation (in radians) around z-axis
+            beta: rotation (in radians) about the y'-axis
+            gamma: rotation (in radians) about the z''-axis 
+        
+        Note:
+            Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation
+            and not in F-representation. 
         """
         self.rho_0 = rotation.rotateInitialMatrix(self.rho_0, self.n, self.E, self.G, alpha, beta, gamma)
     
     def rotateRho_t(self, alpha, beta, gamma):
         """ Rotate rho_0 by the Euler angles alpha, beta, and gamma.
+
+        Parameters:
+            alpha: rotation (in radians) around z-axis
+            beta: rotation (in radians) about the y'-axis
+            gamma: rotation (in radians) about the z''-axis 
+        
+        Note:
+            Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation
+            and not in F-representation. 
         """
         print("Optical coherences are preserved under rotation. To obtain these in a new reference frame, rotate rho_0 and then evolve in the new reference frame with the correct polarisation.")
         rotated_rho_t = []

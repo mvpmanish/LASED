@@ -1,5 +1,5 @@
 '''
-This is a file to define functions to calculate the decay constants
+This is a file to define functions to calculate the generalised decay constants
 Author: Manish Patel
 Date created: 27/07/2021
 '''
@@ -8,17 +8,18 @@ from state import *
 from half_rabi_freq import *
 
 def generalisedDecayConstant(ep, epp, g, G, Q_decay):
-    """
-    Calculates the generalised decay constant (must multiply by 1/tau to get Grad/s). Used for evaluating vertical coherences.
-    Inputs:
+    """  Calculates the branching ratio for the generalised decay constant.
+    This ratio must be multiplied by 1/tau to get the generalised decay constant in Grad/s. This is then used for evaluating vertical coherences.
+    Parameters:
         ep - excited State object
         epp - excited State object
         g - ground State object
         G - list of all ground State objects
         tau - lifetime of state in ns
         Q_decay - list of decay channel polarisations allowed by transition rules, usually [-1, 0, 1]
-    Output:
-        Value of the generalised decay constant gamma_{ep, epp, g}*tau
+    
+    Returns:
+        Value of the branching ratio for the  generalised decay constant gamma_{ep, epp, g}
     """
     # Calculate the total branching from the excited state to all ground states
     sum_decay_channels_epg = 0

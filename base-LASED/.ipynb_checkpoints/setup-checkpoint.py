@@ -1,8 +1,11 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.2' 
+VERSION = '0.3' 
 DESCRIPTION = 'LASED'
 LONG_DESCRIPTION = 'A Laser-Atom Interaction Simulator using Quantum Electrodynamics'
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 # Setting up
 setup(
@@ -12,14 +15,15 @@ setup(
         author = "Manish Patel",
         author_email="<mvpmanish@gmail.com>",
         description = DESCRIPTION,
-        long_description = LONG_DESCRIPTION,
+        long_description = long_description,
+        long_description_content_type = "text/markdown",
         packages=find_packages(),
         install_requires=[
-            "numpy",
-            "math",
+            "numpy >= 1.20",
+            "math >= ",
             "copy",
-            "scipy",
-            "sympy"
+            "scipy >= 1.6.0",
+            "sympy >= 1.8"
         ], # add any additional packages that 
         # needs to be installed along with your package. Eg: 'caer'
         
