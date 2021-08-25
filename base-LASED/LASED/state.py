@@ -29,6 +29,8 @@ class State():
     # Print
     def __repr__(self):
         return f"State(label = {self.label}, w = {self.w}, m = {self.m}, L = {self.L}, J = {self.J}, I = {self.I}, F = {self.F})"
+    
+    
          
         
         

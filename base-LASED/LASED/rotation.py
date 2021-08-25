@@ -1,6 +1,4 @@
-'''
-This is a file to define functions for rotating density matrices in the QED simulation of
-a laser-atom system.
+'''Define functions for rotating density matrices in the QED simulation of a laser-atom system.
 Author: Manish Patel
 Date created: 12/05/2021
 '''

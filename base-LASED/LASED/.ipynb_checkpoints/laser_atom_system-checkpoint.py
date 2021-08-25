@@ -6,6 +6,7 @@ from time_evolution import *
 from density_matrix import *
 from index import *
 from generate_sub_states import *
+from save_to_csv import *
 
 import rotation
 import numpy as np
@@ -17,7 +18,7 @@ class LaserAtomSystem:
     
     Attributes: 
         Q_decay (list): List of ints describing the selection rules of the decay. Selection rules are set to +1, -1, and 0.
-        rho_t (list): List of density matrix over the time interval simulated for. This is initialised as empty as no time evolution has taken place.
+        rho_t (list): List of flattened 2D arrays over the time interval simulated for. This is initialised as empty as no time evolution has taken place.
         E (list): List of State objects which are the excited states of the system.
         G (list): List of State objects which are the ground states of the system.
         tau (float): Lifetime of transition in nanoseconds between excited and ground state.
@@ -31,6 +32,7 @@ class LaserAtomSystem:
     # Class variables
     Q_decay = [1, 0 ,-1]
     rho_t = []
+    time = []
     
     def __init__(self, E, G, tau, Q, laser_wavelength, laser_intensity = None, 
                  laser_power = None, tau_f = None):
@@ -50,24 +52,36 @@ class LaserAtomSystem:
     @property
     def n(self):
         """ Total number of substates.
+        
+        Returns:
+            (int) Number of substates.
         """
         return int(len(self.G)+len(self.E))
     
     @property
     def rho_e0(self):
         """ Upper state density matrix for the initial condition.
+        
+        Returns:
+            (ndarry) Upper state density matrix composed of all states defined in E.
         """
         return getSingleStateMatrix(self.rho_0, self.n, self.E)
     
     @property
     def rho_g0(self):
         """ Lower state density matrix for the initial condition.
+        
+        Returns:
+            (ndarry) Lower state density matrix composed of all states defined in G.
         """
         return getSingleStateMatrix(self.rho_0, self.n, self.G)
     
     @property
     def rho_et(self):
         """ Upper state density matrix for all of the time evolution.
+        
+        Returns:
+            (list of ndarray) A list of upper state density matrices for the time evolution.
         """
         rho_et = []
         flipped_rho_t = np.transpose(self.rho_t)  # Flip to loop over all rho
@@ -81,6 +95,9 @@ class LaserAtomSystem:
     @property
     def rho_gt(self):
         """ Lower state density matrix for all of the time evolution.
+        
+        Returns:
+            (list of ndarray) A list oflower state density matrices for the time evolution.
         """
         rho_et = []
         flipped_rho_t = np.transpose(self.rho_t)  # Flip to loop over all rho
@@ -180,6 +197,16 @@ class LaserAtomSystem:
             Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation
             and not in F-representation. 
         """
+        # Check if any state is in F-representation
+        sum_I = 0
+        for e in E:
+            sum_I += e.I
+        for g in G:
+            sum_I += g.I
+        if(sum_I > 0):
+            print("Warning:  Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation and not in F-representation! ")
+            return
+        
         self.rho_0 = rotation.rotateInitialMatrix(self.rho_0, self.n, self.E, self.G, alpha, beta, gamma)
     
     def rotateRho_t(self, alpha, beta, gamma):
@@ -195,6 +222,17 @@ class LaserAtomSystem:
             and not in F-representation. 
         """
         print("Optical coherences are preserved under rotation. To obtain these in a new reference frame, rotate rho_0 and then evolve in the new reference frame with the correct polarisation.")
+        
+        # Check if any state is in F-representation
+        sum_I = 0
+        for e in E:
+            sum_I += e.I
+        for g in G:
+            sum_I += g.I
+        if(sum_I > 0):
+            print("Warning:  Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation and not in F-representation! ")
+            return
+        
         rotated_rho_t = []
         # Flip to loop over all rho
         for rho in np.transpose(self.rho_t):
@@ -212,7 +250,27 @@ class LaserAtomSystem:
                      atomic_velocity = None, r_sigma = None, n_beam_averaging = None, 
                      doppler_width = None, doppler_detunings = None):
         """ Evolves the laser-atom system over time.
+        
+        Produces a list of flattened 2D density matrices which correspond to the time array. This is stored in rho_t.
+        
+        Parameters:
+            time (list): Array of the times in the time evolution in nanoseconds e.g. time = [0, 1, 2] to simulate up to 2 ns
+            beam_profile_averaging (bool): Turn on averaging over a Gaussian TEM00 laser beam profile. Must have n_beam_averaging to state the number of averages to take over the beam profile and r_sigma to characterise the standard debviation of the Gaussian beam. 
+            doppler_averaging (bool): Turn on averaging over the doppler profile of the atoms. Must have doppler_width and doppler_detunings as well.
+            pretty_print_eq (bool): Turn on printing of the coupled differential equations symbolically using Sympy.
+            print_eq (bool): Turn on printing the coupled differential equatiuons numerically.
+            rabi_scaling (float): The normalisation of the Rabi frequency. The half-Rabi frequency is divided by this number. Use this if there are more than one polarisations to normalise the population.
+            atomic_velocity (float): The velocity component of the atoms in the direction of the laser beam in metres/second. This is used for doppler shifting the energy levels.
+            r_sigma (float): The radial distance to the 2D standard deviation in millimetres of the Gaussian beam profile of the laser.
+            n_beam_averaging (int): The number of times the beam profile will be split to average over. The higher the number, the more accurate the beam profile averaging but it will be slower.
+            doppler_width (float): The doppler width of the beam profile in Grad/s.
+            doppler_detunings (list): List of the doppler detunings creating a doppler profile. This list will be averaged over. Must go from a -ve detuning to a +ve detuning. All detunings are in Grad/s.
+            
+            Note:
+                Must have laser_power attribute for Gaussian averaging of the beam and must have laser_intensity attribute when not Gaussian averaging. Also, cannot print equations in doppler or Gaussian averaging. 
         """
+        self.time = time  # Save the time
+        
         n = self.n
         E = self.E
         G = self.G
@@ -257,5 +315,18 @@ class LaserAtomSystem:
                 timeEvolution(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else: 
                 print("Need to have laser_intensity attribute in LaserAtomSystem! Equate <LaserAtomSystem>.laser_intensity to the intensity of the laser in mW/mm^2.")
-            
+                
+
+    def saveToCSV(self, filename, precision = None):
+        """Saves rho_t as a csv file
+        
+        Parameters:
+            filename (string): Name of the csv file created.
+            precision (int): Precision of numbers in decimal places.
+        
+        Returns:
+            Void.
+        """
+        saveRhotAsCSV(self.n, self.E, self.G, self.time, self.rho_t, filename, precision = None)
+        
             
