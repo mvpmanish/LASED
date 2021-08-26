@@ -9,20 +9,21 @@ import math
 import copy
 
 def wigner_D(J, alpha, beta, gamma):
-    '''
-    Calculates the Wigner D-matrix for rotation by Eueler angles (alpha, beta, gamma).
-    Inputs:
-        J: total angular momentum quantum number of the state which will be rotated with the 
-        resulting D-matrix
-        alpha: rotation around z-axis
-        beta: rotation about the y'-axis
-        gamma: rotation about the z''-axis
+    """Calculates the Wigner D-matrix for rotation by Eueler angles (alpha, beta, gamma).
+    
+    Parameters:
+        J (int): total angular momentum quantum number of the state which will be rotated with the 
+        resulting D-matrix.
+        alpha (float): rotation around z-axis in radians.
+        beta (float): rotation about the y'-axis in radians.
+        gamma (float): rotation about the z''-axis in radians.
+    
     Returns:
-        A square matrix of size 2J+1
-    '''
+        (ndarray) A square matrix of size 2J+1.
+    """
     size = 2*J+1  # Number of sub-states
     m = np.linspace(-J, J, size, dtype=int)  # Projections of J
-    D = np.zeros((size, size), dtype = np.complex)  # Set up D-matrix
+    D = np.zeros((size, size), dtype = complex)  # Set up D-matrix
     for i, mp in enumerate(m):
         for j, mpp in enumerate(m):
             alpha_const = math.cos(-mp*alpha)+1.j*math.sin(-mp*alpha)
@@ -31,9 +32,17 @@ def wigner_D(J, alpha, beta, gamma):
     return D
 
 def small_Wigner_D(J, beta, mp, m):
-    '''
-    Calculates the small Wigner D-matrix elements for rotation by Euler angles (alpha, beta, gamma)
-    '''
+    """Calculates the small Wigner D-matrix elements for rotation.
+    
+    Parameters:
+        J (int): total angular momentum quantum number of the state which will be rotated with the resulting D-matrix.
+        beta (float): rotation about the y'-axis in radians.
+        mp (int): row number of element in the Wigner D-matrix
+        m (int): column number oif element in the Wigner D-matrix
+    
+    Returns:
+        (float) small Wigner D-matrix elements
+    """
     const = np.sqrt((math.factorial(J+mp))*math.factorial(J-mp)*math.factorial(J+m)*math.factorial(J-m))
     d_sum = 0
     # Define limits so sum does not contain negative factorials
@@ -47,21 +56,40 @@ def small_Wigner_D(J, beta, mp, m):
     
     return const*d_sum
 
-'''
-Rotates a density matrix by the wigner D-matrix determined by Euler angles (alpha, beta, gamma).
-(rho_newframe) = (D)(rho)(D*). The z-y-z convention is used where alpha rotates around the z-axis,
-then beta rotates around the new y-axis, and gamma rotates around the new z-axis
-'''
 def rotation(rho, J, alpha, beta, gamma):
+    """Rotates a density matrix by the wigner D-matrix.
+    
+    The rotation is determined by Euler angles (alpha, beta, gamma). (rho_newframe) = (D)(rho)(D*).
+    
+    Parameters:
+        J (int): total angular momentum quantum number of the state which will be rotated with the 
+        resulting D-matrix.
+        alpha (float): rotation around z-axis in radians.
+        beta (float): rotation about the y'-axis in radians.
+        gamma (float): rotation about the z''-axis in radians.
+    
+    Returns:
+        (ndarray) The rotated density matrix.
+    """
     D_matrix = np.transpose(wigner_D(J, alpha, beta, gamma))
     D_conj = np.transpose(np.conj(D_matrix))
     return np.dot(D_matrix, np.dot(rho, D_conj))
 
-
-'''
-Rotate the excited and ground state populations by the Euler angles alpha, beta, gamma
-'''
 def rotateInitialMatrix(flat_rho, n, E, G, alpha, beta, gamma):
+    """Rotate the excited and ground state populations by the Euler angles.
+    
+    Parameters:
+        flat_rho (list): A flattened 2D density matrix
+        n (int): Number of substates which compose the density matrix flat_rho
+        E (list of States): list of excited State objects which compose flat_rho
+        G (list of States): list of ground State objects which compose flat_rho
+        alpha (float): rotation around z-axis in radians.
+        beta (float): rotation about the y'-axis in radians.
+        gamma (float): rotation about the z''-axis in radians.
+    
+    Returns:
+        (list) A rotated flattened 2D density matrix
+    """
     # Make a copy to return
     rotated_rho = copy.deepcopy(flat_rho)
     # Rotate the excited state populations and atomic coherences
