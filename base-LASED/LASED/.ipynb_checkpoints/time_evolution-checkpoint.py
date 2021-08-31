@@ -1,6 +1,6 @@
 '''
-This file contains the function to calculate the evolution of the density matrix
-for an atomic system interacting with a laser
+This file contains the function to calculate the time evolution of the density matrix
+for an atomic system interacting with a laser.
 '''
 
 from constants import *
@@ -12,6 +12,11 @@ from time_evolution_matrix import *
 import scipy.linalg as la
 
 def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, time, rho0, rho_output, tau_f = None, detuning = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+    """Calculates the time evolution of a laser-atom system.
+    
+    Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+    The density matrix at each time step is stored in rho_output.
+    """
     
     rabi = halfRabiFreq(laser_intensity, tau, laser_wavelength)
             
@@ -51,6 +56,11 @@ def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, t
                 rho_output[index(g, e, n)][position] = rho_t[index(g, e, n), 0]
 
 def timeEvolutionDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho0, rho_output, tau_f = None, detuning = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+    """Calculates the time evolution of a laser-atom system with a Gaussian doppler profile for the atoms.
+    
+    Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+    The density matrix at each time step is stored in rho_output. 
+    """
     
     if(print_eq or pretty_print_eq != None):
         print("Cannot print equations when beam profile or doppler averaging!")
@@ -100,6 +110,11 @@ def timeEvolutionDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_intensity, las
                         rho_output[index(g, e, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(rho_t[index(e, g, n), 0])
                         
 def timeEvolutionGaussianAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigma, n_intensity, laser_wavelength, time, rho0, rho_output, tau_f = None, detuning = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+    """Calculates the time evolution of a laser-atom system with a Gaussian laser beam profile.
+    
+    Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+    The density matrix at each time step is stored in rho_output. 
+    """
     
     if(print_eq or pretty_print_eq != None):
         print("Cannot print equations when beam profile or doppler averaging!")
@@ -150,6 +165,11 @@ def timeEvolutionGaussianAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigm
     
 
 def timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigma, n_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho0, rho_output, tau_f = None, detuning = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+    """Calculates the time evolution of a laser-atom system with a Gaussian doppler profile for the atoms and a Gaussian laser beam profile.
+    
+    Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+    The density matrix at each time step is stored in rho_output. 
+    """
     
     if(print_eq or pretty_print_eq != None):
         print("Cannot print equations when beam profile or doppler averaging!")

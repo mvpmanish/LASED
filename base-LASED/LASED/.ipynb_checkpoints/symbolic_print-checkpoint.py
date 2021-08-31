@@ -1,5 +1,5 @@
 '''
-Defines functions to symbolically print the equations of motion of the laser-atom system
+Defines functions to symbolically print the equations of motion of the laser-atom system.
 Author: Manish Patel
 Date created: 07/06/2021
 '''

@@ -17,9 +17,12 @@ from index import *
 def timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intensity,
                         tau_f = None, detuning = None, symbolic_print = None, numeric_print = None,
                        rabi_scaling = None, atomic_velocity = None):
-    '''
-    Function to create and populate the coupled differential equation matrix A for the laser-atom system.
-    '''
+    """Function to create and populate the coupled differential equation matrix A for the laser-atom system.
+    
+    Returns:
+        (ndarray) Matrix which contains all the coefficients for the set of coupled differential equations describing a laser-atom system. 
+    """
+    
     # Initialise matrix with zeros
     A = np.zeros((n*n,n*n), dtype = np.complex)
     
@@ -46,6 +49,8 @@ def timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intens
     return A
 
 def rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, numeric_print = None):
+    """ Function to populate the matrix A with coefficients for populations and atomic coherences of the ground states. 
+    """
     # rho_gg''
     for g in G:  # Start with looping over g and g'' for rho_gg''
         for gpp in G:
@@ -74,7 +79,7 @@ def rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, numeric_print = None):
                                 A[row, column2] += 1/(2*tau)*abs(coupling(epp, gpp, qp)*coupling(ep, g, qp))/sum_decay_channels
                         else:  
                         # Then this is a vertical coherence and the generalised decay constant must be evaluated
-                            decay_const = generalisedDecayConstant(ep, epp, gpp, G, Q_decay)/(2*tau)  # Divide by two to takeinto account double counting of e'e'' and e''e'
+                            decay_const = generalisedDecayConstant(ep, epp, gpp, G, Q_decay)/(2*tau)  # Divide by two to take into account double counting of e'e'' and e''e'
                             A[row, column] += decay_const
                             A[row, column2] += decay_const
                         
@@ -85,6 +90,8 @@ def rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, numeric_print = None):
                         print(A[row, line], "rho", getStateLabelsFromLineNo(line, n))
 
 def rho_eepp(A, n, E, G, Q, Q_decay, tau, rabi, tau_f = None, numeric_print = None):
+    """ Function to populate the matrix A with coefficients for populations and atomic coherences of the excited states. 
+    """
     # rho_ee''
     for e in E:
         for epp in E:
@@ -106,7 +113,9 @@ def rho_eepp(A, n, E, G, Q, Q_decay, tau, rabi, tau_f = None, numeric_print = No
                     if (A[row, line] != 0):
                         print(A[row, line], "rho", getStateLabelsFromLineNo(line, n))
 
-def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, detuning = None, numeric_print = None):             
+def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, detuning = None, numeric_print = None):
+    """ Function to populate the matrix A with coefficients for optical coherences between ground and excited states. 
+    """
     # rho_ge
     for g in G:
         for e in E: 
@@ -131,7 +140,9 @@ def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity,
                     if (A[row, line] != 0):
                         print(A[row, line], "rho", getStateLabelsFromLineNo(line, n))
 
-def rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, detuning = None, numeric_print = None):              
+def rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, detuning = None, numeric_print = None):
+    """ Function to populate the matrix A with coefficients for optical coherences between excited and ground states. 
+    """
     # rho_eg
     for e in E:
         for g in G:  
