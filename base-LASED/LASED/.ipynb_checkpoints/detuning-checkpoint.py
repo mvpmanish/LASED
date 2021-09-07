@@ -1,8 +1,8 @@
 '''
 Define functions for the detuning of an atomic system
 '''
-from state import *
-from constants import *
+from LASED.state import *
+from LASED.constants import *
 
 def delta(e, g):
     """Detunings between substates.

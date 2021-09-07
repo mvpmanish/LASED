@@ -4,23 +4,24 @@ Author: Manish Patel
 Date created: 12/05/2021
 '''
 
-import numpy as np
-from state import *
-from detuning import *
+from LASED.state import *
+from LASED.detuning import *
+from LASED.symbolic_print import *
+from LASED.half_rabi_freq import *
+from LASED.decay_constant import *
+from LASED.index import *
+
 from sympy import *
 from sympy import Symbol
-from symbolic_print import *
-from half_rabi_freq import *
-from decay_constant import *
-from index import *
+import numpy as np
 
 def timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intensity,
                         tau_f = None, detuning = None, symbolic_print = None, numeric_print = None,
-                       rabi_scaling = None, atomic_velocity = None):
+                       rabi_scaling = None, rabi_factors = None, atomic_velocity = None):
     """Function to create and populate the coupled differential equation matrix A for the laser-atom system.
     
     Returns:
-        (ndarray) Matrix which contains all the coefficients for the set of coupled differential equations describing a laser-atom system. 
+        (ndarray) Matrix which contains all thera coefficients for the set of coupled differential equations describing a laser-atom system. 
     """
     
     # Initialise matrix with zeros
@@ -28,27 +29,36 @@ def timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intens
     
     # Calculate half-Rabi frequency
     rabi = halfRabiFreq(laser_intensity, tau, laser_wavelength)
-    if(rabi_scaling != None):
+    if(rabi_scaling != None):  # For normalising the rabi frequency
         rabi = rabi*rabi_scaling
+    else:
+        rabi_scaling = 1  # For symbolic printing
+    
+    if(rabi_factors != None):
+        if(len(rabi_factors) != len(Q)):
+            print("rabi_factors must be the same length as Q! Each element of Q is multiplied by the corresponding rabi_factor.")
+    else:
+        rabi_factors = [1 for q in Q]  # Set Rabi factors to 1
     
     # Initialise null parameters
     if(atomic_velocity == None):
         atomic_velocity = 0
     
     # Populate A matrix
-    rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, numeric_print = numeric_print)
-    rho_eepp(A, n, E, G, Q, Q_decay, tau, rabi, tau_f = tau_f, numeric_print = numeric_print)
-    rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = tau_f, detuning = detuning, numeric_print = numeric_print)
-    rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = tau_f, detuning = detuning, numeric_print = numeric_print)
+    rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, rabi_factors, numeric_print = numeric_print)
+    rho_eepp(A, n, E, G, Q, Q_decay, tau, rabi, rabi_factors, tau_f = tau_f, numeric_print = numeric_print)
+    rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, rabi_factors, laser_wavelength, atomic_velocity, tau_f = tau_f, detuning = detuning, numeric_print = numeric_print)
+    rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, rabi_factors, laser_wavelength, atomic_velocity, tau_f = tau_f, detuning = detuning, numeric_print = numeric_print)
 
     # Symbolic Printing
     if(symbolic_print == True):
         init_printing()
-        symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, detuning, laser_wavelength, atomic_velocity)
+        symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, detuning, 
+                            laser_wavelength, atomic_velocity, rabi_scaling, rabi_factors)
     
     return A
 
-def rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, numeric_print = None):
+def rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, rabi_factors, numeric_print = None):
     """ Function to populate the matrix A with coefficients for populations and atomic coherences of the ground states. 
     """
     # rho_gg''
@@ -58,12 +68,12 @@ def rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, numeric_print = None):
             A[row, row] += -1.j*delta(g, gpp)  # first term in equation
             for e in E:
                 column = index(g, e, n)
-                for q in Q:  # Sum over all polarisations
-                    A[row, column] += coupling(e, gpp, q)*1.j*rabi
+                for i,q in enumerate(Q):  # Sum over all polarisations
+                    A[row, column] += coupling(e, gpp, q)*1.j*rabi*rabi_factors[i]
             for e in E:
                 column = index(e, gpp, n)
-                for q in Q: 
-                    A[row, column] += -1.j*coupling(e, g, q)*rabi
+                for i,q in enumerate(Q): 
+                    A[row, column] += -1.j*coupling(e, g, q)*rabi*rabi_factors[i]
             for ep in E:
                 for epp in E:
                     column = index(epp, ep, n)
@@ -89,7 +99,7 @@ def rho_ggpp(A, n, E, G, Q, Q_decay, tau, rabi, numeric_print = None):
                     if (A[row, line] != 0):
                         print(A[row, line], "rho", getStateLabelsFromLineNo(line, n))
 
-def rho_eepp(A, n, E, G, Q, Q_decay, tau, rabi, tau_f = None, numeric_print = None):
+def rho_eepp(A, n, E, G, Q, Q_decay, tau, rabi, rabi_factors, tau_f = None, numeric_print = None):
     """ Function to populate the matrix A with coefficients for populations and atomic coherences of the excited states. 
     """
     # rho_ee''
@@ -101,19 +111,19 @@ def rho_eepp(A, n, E, G, Q, Q_decay, tau, rabi, tau_f = None, numeric_print = No
                 A[row, row] -= 1/tau_f
             for g in G:
                 column = index(e, g, n)
-                for q in Q:
-                    A[row, column] += 1.j*coupling(epp, g, q)*rabi
+                for i,q in enumerate(Q):
+                    A[row, column] += 1.j*coupling(epp, g, q)*rabi*rabi_factors[i]
             for g in G:
                 column = index(g, epp, n)
-                for q in Q: 
-                    A[row, column] += -1.j*coupling(e, g, q)*rabi
+                for i,q in enumerate(Q): 
+                    A[row, column] += -1.j*coupling(e, g, q)*rabi*rabi_factors[i]
             if(numeric_print == True):
                 print("rho_dot", e.label, epp.label, " = ")
                 for line in range(n*n):
                     if (A[row, line] != 0):
                         print(A[row, line], "rho", getStateLabelsFromLineNo(line, n))
 
-def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, detuning = None, numeric_print = None):
+def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, rabi_factors, laser_wavelength, atomic_velocity, tau_f = None, detuning = None, numeric_print = None):
     """ Function to populate the matrix A with coefficients for optical coherences between ground and excited states. 
     """
     # rho_ge
@@ -128,19 +138,19 @@ def rho_ge(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity,
                 A[row, row] -= 1/(2*tau_f)
             for ep in E:
                 column = index(ep, e, n)
-                for q in Q: 
-                    A[row, column] += -1.j*coupling(ep, g, q)*rabi
+                for i,q in enumerate(Q): 
+                    A[row, column] += -1.j*coupling(ep, g, q)*rabi*rabi_factors[i]
             for gp in G:
                 column = index(g, gp, n)
-                for q in Q: 
-                    A[row, column] += 1.j*coupling(e, gp, q)*rabi
+                for i,q in enumerate(Q): 
+                    A[row, column] += 1.j*coupling(e, gp, q)*rabi*rabi_factors[i]
             if(numeric_print == True):
                 print("rho_dot", g.label, e.label, " = ")
                 for line in range(n*n):
                     if (A[row, line] != 0):
                         print(A[row, line], "rho", getStateLabelsFromLineNo(line, n))
 
-def rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity, tau_f = None, detuning = None, numeric_print = None):
+def rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, rabi_factors, laser_wavelength, atomic_velocity, tau_f = None, detuning = None, numeric_print = None):
     """ Function to populate the matrix A with coefficients for optical coherences between excited and ground states. 
     """
     # rho_eg
@@ -155,12 +165,12 @@ def rho_eg(A, n, E, G, Q, Q_decay, tau, rabi, laser_wavelength, atomic_velocity,
                 A[row, row] -= 1/(2*tau_f)
             for ep in E:
                 column = index(e, ep, n)
-                for q in Q: 
-                    A[row, column] += 1.j*coupling(ep, g, q)*rabi
+                for i,q in enumerate(Q): 
+                    A[row, column] += 1.j*coupling(ep, g, q)*rabi*rabi_factors[i]
             for gp in G:
                 column = index(gp, g, n)
-                for q in Q: 
-                    A[row, column] += -1.j*coupling(e, gp, q)*rabi
+                for i,q in enumerate(Q): 
+                    A[row, column] += -1.j*coupling(e, gp, q)*rabi*rabi_factors[i]
             if(numeric_print == True):
                 print("rho_dot", e.label, g.label, " = ")
                 for line in range(n*n):

@@ -4,8 +4,8 @@ Author: Manish Patel
 Date created: 27/07/2021
 '''
 
-from state import *
-from half_rabi_freq import *
+from LASED.state import *
+from LASED.half_rabi_freq import *
 
 def generalisedDecayConstant(ep, epp, g, G, Q_decay):
     """  Calculates the branching ratio for the generalised decay constant.

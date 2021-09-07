@@ -3,8 +3,8 @@ Definition of the half-Rabi frequency and all other functions needed to calculat
 '''
 
 import numpy as np
-from state import *
-from constants import *
+from LASED.state import *
+from LASED.constants import *
 from sympy.physics.wigner import wigner_3j
 from sympy.physics.wigner import wigner_6j
 

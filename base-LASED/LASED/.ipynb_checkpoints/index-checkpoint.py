@@ -1,7 +1,7 @@
 '''
 Definition of the index function
 '''
-from state import *
+from LASED.state import *
 
 
 def index(i, j, n):

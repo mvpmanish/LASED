@@ -5,7 +5,7 @@ Date Created: 11/06/2021
 '''
 
 import numpy as np
-from index import *
+from LASED.index import *
 
 def getSingleStateMatrix(flat_rho, n, sub_states):
     """Obtain an angular momentum state density matrix from the flattened coupled state density rho vector.

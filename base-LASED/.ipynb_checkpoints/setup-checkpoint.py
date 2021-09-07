@@ -20,8 +20,6 @@ setup(
         packages=find_packages(),
         install_requires=[
             "numpy >= 1.20",
-            "math >= ",
-            "copy",
             "scipy >= 1.6.0",
             "sympy >= 1.8"
         ], # add any additional packages that 

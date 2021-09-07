@@ -3,7 +3,7 @@ Author: Manish Patel
 Date created: 12/05/2021
 '''
 
-from density_matrix import *
+from LASED.density_matrix import *
 import numpy as np
 import math
 import copy

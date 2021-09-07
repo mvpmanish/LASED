@@ -3,8 +3,8 @@ This is a file to define the function to save rho_t as a csv file.
 """
 
 import csv
-from state import *
-from index import *
+from LASED.state import *
+from LASED.index import *
 from itertools import zip_longest
 
 def writeCSV(filename, headers, data, precision = None):

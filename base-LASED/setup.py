@@ -4,7 +4,7 @@ VERSION = '0.3'
 DESCRIPTION = 'LASED'
 LONG_DESCRIPTION = 'A Laser-Atom Interaction Simulator using Quantum Electrodynamics'
 
-with open("README.md", "r") as fh:
+with open("../README.md", "r") as fh:
     long_description = fh.read()
 
 # Setting up
@@ -20,8 +20,6 @@ setup(
         packages=find_packages(),
         install_requires=[
             "numpy >= 1.20",
-            "math >= ",
-            "copy",
             "scipy >= 1.6.0",
             "sympy >= 1.8"
         ], # add any additional packages that 

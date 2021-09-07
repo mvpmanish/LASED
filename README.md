@@ -10,6 +10,8 @@ Run the following to install:
 pip install LASED
 ```
 
+The source code can be found at https://github.com/mvpmanish/LASED.
+
 ## Usage
 
 In this simulator a user defines a `State` object with all quantum numbers defined. The user then creates two vectors: one containing all the ground states and one for the excited states. The user can then define a `LaserAtomSystem` object with a laser power (or intensity) and the laser wavelength. With this object the user can:

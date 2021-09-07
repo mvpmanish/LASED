@@ -2,13 +2,13 @@
 The LaserAtomSystem class definition.
 '''
 
-from time_evolution import *
-from density_matrix import *
-from index import *
-from generate_sub_states import *
-from save_to_csv import *
+from LASED.time_evolution import *
+from LASED.density_matrix import *
+from LASED.index import *
+from LASED.generate_sub_states import *
+from LASED.save_to_csv import *
 
-import rotation
+import LASED.rotation
 import numpy as np
 
 
@@ -26,7 +26,10 @@ class LaserAtomSystem:
         laser_wavelength (float): Wavelength of transition from ground to excited state in metres.
         laser_intensity (float): Intensity of the laser in mW/mm^2.
         laser_power (float): Power of the laser in mW. This is needed for Gaussian averaging of beam profile.
+        tau_f (float): Non-radiative lifetime of the laser-atom system
         rho_0 (ndarray): 2D array creating the density matrix at t = 0.
+        rabi_scaling (float): The normalisation of the Rabi frequency. The half-Rabi frequency is divided by this number. Use this if there are more than one polarisations to normalise the population.
+        rabi_factors (list): Elements of this list are multiplies by the half-Rabi frequency for each polarisation. This is used to obtain elliptical polarisation or align the polarisation of the laser to a different axis e.g. rabi_factors = [1*cos(pi/2)+1*j*sin(pi/2), 2*cos(pi/2+2*j*sin(pi/2))] for Q = [1, -1] gives a more LH elliptical polarisation aligned by 45 deg to the x-axis.
     """
     
     # Class variables
@@ -35,7 +38,8 @@ class LaserAtomSystem:
     time = []
     
     def __init__(self, E, G, tau, Q, laser_wavelength, laser_intensity = None, 
-                 laser_power = None, tau_f = None):
+                 laser_power = None, tau_f = None, rabi_scaling = None, 
+                rabi_factors = None):
         """
         Inits LaserAtomSystem.
         """
@@ -48,6 +52,8 @@ class LaserAtomSystem:
         self.laser_intensity = laser_intensity  # in mW/mm^2
         self.laser_power = laser_power  # in mW
         self.rho_0 = np.zeros((self.n*self.n, 1), dtype = complex)  # flattened density matrix
+        self.rabi_scaling = rabi_scaling  # Normalisation factor of rabi frequencies for different polarisations
+        self.rabi_factors = rabi_factors  # multiply these by rabi frequency for different polarisations
         
     @property
     def n(self):
@@ -246,7 +252,7 @@ class LaserAtomSystem:
                 
     
     def timeEvolution(self, time, beam_profile_averaging = None, doppler_averaging = None, 
-                     pretty_print_eq = None, print_eq = None, detuning = None, rabi_scaling = None,
+                     pretty_print_eq = None, print_eq = None, detuning = None,
                      atomic_velocity = None, r_sigma = None, n_beam_averaging = None, 
                      doppler_width = None, doppler_detunings = None):
         """ Evolves the laser-atom system over time.
@@ -259,7 +265,6 @@ class LaserAtomSystem:
             doppler_averaging (bool): Turn on averaging over the doppler profile of the atoms. Must have doppler_width and doppler_detunings as well.
             pretty_print_eq (bool): Turn on printing of the coupled differential equations symbolically using Sympy.
             print_eq (bool): Turn on printing the coupled differential equatiuons numerically.
-            rabi_scaling (float): The normalisation of the Rabi frequency. The half-Rabi frequency is divided by this number. Use this if there are more than one polarisations to normalise the population.
             atomic_velocity (float): The velocity component of the atoms in the direction of the laser beam in metres/second. This is used for doppler shifting the energy levels.
             r_sigma (float): The radial distance to the 2D standard deviation in millimetres of the Gaussian beam profile of the laser.
             n_beam_averaging (int): The number of times the beam profile will be split to average over. The higher the number, the more accurate the beam profile averaging but it will be slower.
@@ -281,6 +286,8 @@ class LaserAtomSystem:
         laser_wavelength = self.laser_wavelength
         rho_0 = self.rho_0
         tau_f = self.tau_f
+        rabi_scaling = self.rabi_scaling
+        rabi_factors = self.rabi_factors
         
         # If rho0 is not populated then set equal ground state populations
         if(not rho_0.any()):
@@ -294,25 +301,25 @@ class LaserAtomSystem:
         
         if((beam_profile_averaging) and (doppler_averaging)):
             if(laser_power):
-                timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, rabi_factors = rabi_factors, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else:
                 print("Need to have laser_power attribute in LaserAtomSystem to use beam profile avergaing! Equate <LaserAtomSystem>.laser_power to a power in milliWatts.")
         
         elif(beam_profile_averaging):
             if(laser_power):
-                timeEvolutionGaussianAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                timeEvolutionGaussianAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, rabi_factors = rabi_factors, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else:
                 print("Need to have laser_power attribute in LaserAtomSystem to use beam profile avergaing! Equate <LaserAtomSystem>.laser_power to the power of the laser in mW.")
             
         elif(doppler_averaging):
             if(laser_intensity):
-                timeEvolutionDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                timeEvolutionDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, rabi_factors = rabi_factors, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else: 
                 print("Need to have laser_intensity attribute in LaserAtomSystem! Equate <LaserAtomSystem>.laser_intensity to the intensity of the laser in mW/mm^2.")
 
         else:
             if(laser_intensity):
-                timeEvolution(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
+                timeEvolution(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, time, rho_0, self.rho_t, tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, rabi_factors = rabi_factors, print_eq = print_eq, pretty_print_eq = pretty_print_eq, atomic_velocity = atomic_velocity)
             else: 
                 print("Need to have laser_intensity attribute in LaserAtomSystem! Equate <LaserAtomSystem>.laser_intensity to the intensity of the laser in mW/mm^2.")
                 

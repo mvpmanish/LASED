@@ -3,7 +3,7 @@ Generate Sub States.
 Generates sub-states of a quantum state
 """
 
-from state import *
+from LASED.state import *
 import numpy as np
 
 def generateSubStates(label_from, w, L, S, J = None, I = None, F = None):

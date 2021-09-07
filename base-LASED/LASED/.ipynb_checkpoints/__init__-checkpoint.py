@@ -1,2 +1,2 @@
 # Init file for LASED
-import laser_atom_system
+from LASED.laser_atom_system import *

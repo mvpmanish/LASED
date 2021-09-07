@@ -4,8 +4,6 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-import sphinx_rtd_theme
-
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -14,7 +12,8 @@ import sphinx_rtd_theme
 #
 import os
 import sys
-sys.path.insert(0, os.path.relpath('../base-LASED/LASED'))
+import sphinx_rtd_theme
+sys.path.insert(0, os.path.abspath('../../base-LASED/LASED'))
 
 
 # -- Project information -----------------------------------------------------
@@ -32,7 +31,7 @@ release = '0.3'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [sphinx.ext.autodoc, sphinx.ext.napoleon]
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
