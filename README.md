@@ -5,7 +5,7 @@ Many experiments using atoms and lasers are performed in physics which require k
 
 ## Installation
 
-Run the following to install:
+Open up your terminal and ruun the following to install:
 ```python
 pip install LASED
 ```
