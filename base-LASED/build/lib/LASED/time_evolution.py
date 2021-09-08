@@ -1,23 +1,30 @@
 '''
-This file contains the function to calculate the evolution of the density matrix
-for an atomic system interacting with a laser
+This file contains the function to calculate the time evolution of the density matrix
+for an atomic system interacting with a laser.
 '''
 
-from constants import *
-import numpy as np
-from detuning import *
-from half_rabi_freq import *
-from matrix_methods import *
-from time_evolution_matrix import *
-import scipy.sparse.linalg as sparsela
+from LASED.constants import *
+from LASED.detuning import *
+from LASED.half_rabi_freq import *
+from LASED.matrix_methods import *
+from LASED.time_evolution_matrix import *
 
-def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, time, rho0, rho_output, tau_f = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+import numpy as np
+import scipy.linalg as la
+
+def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, time, rho0, rho_output, tau_f = None, detuning = None, rabi_scaling = None, rabi_factors = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+    """Calculates the time evolution of a laser-atom system.
+    
+    Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+    The density matrix at each time step is stored in rho_output.
+    """
     
     rabi = halfRabiFreq(laser_intensity, tau, laser_wavelength)
             
     A = timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intensity, 
-                        tau_f = tau_f, rabi_scaling = rabi_scaling, symbolic_print = pretty_print_eq, 
-                                    numeric_print = print_eq, atomic_velocity = atomic_velocity)
+                        tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling,
+                        rabi_factors = rabi_factors, symbolic_print = pretty_print_eq, 
+                        numeric_print = print_eq, atomic_velocity = atomic_velocity)
 
     # Compute the diagonalised matrix D and matrix of eigenvectors V
     D = diagonalise(A)
@@ -27,7 +34,8 @@ def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, t
     # Calculate the exponential
     for position, t in enumerate(time, start = 0):
         # Use expm() which computes the matrix exponential using the Pade approximation
-        VexpDt = np.dot(V, sparsela.expm(D*t))  # Use sparse linear algebra to compute e^Dt as this is faster
+        expS = la.expm(D*t) # Compute exp(D*t), this takes the longest so needs speeding up
+        VexpDt = np.dot(V, expS)  
         rho_t = np.dot(VexpDt, f)
         
         # Append density matrix elements
@@ -48,7 +56,12 @@ def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, t
             for e in E:
                 rho_output[index(g, e, n)][position] = rho_t[index(g, e, n), 0]
 
-def timeEvolutionDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho0, rho_output, tau_f = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+def timeEvolutionDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho0, rho_output, tau_f = None, detuning = None, rabi_scaling = None, rabi_factors = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+    """Calculates the time evolution of a laser-atom system with a Gaussian doppler profile for the atoms.
+    
+    Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+    The density matrix at each time step is stored in rho_output. 
+    """
     
     if(print_eq or pretty_print_eq != None):
         print("Cannot print equations when beam profile or doppler averaging!")
@@ -64,8 +77,9 @@ def timeEvolutionDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_intensity, las
             rabi = halfRabiFreq(laser_intensity, tau, laser_wavelength)
             
             A = timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intensity, 
-                        tau_f = tau_f, rabi_scaling = rabi_scaling, symbolic_print = pretty_print_eq, 
-                                    numeric_print = print_eq, atomic_velocity = atomic_velocity)
+                        tau_f = tau_f, detuning = detuning, rabi_scaling = rabi_scaling, 
+                        rabi_factors = rabi_factors, symbolic_print = pretty_print_eq, 
+                        numeric_print = print_eq, atomic_velocity = atomic_velocity)
 
             # Compute the diagonalised matrix D and matrix of eigenvectors V
             D = diagonalise(A)
@@ -96,7 +110,12 @@ def timeEvolutionDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_intensity, las
                     for e in E:
                         rho_output[index(g, e, n)][position] += doppler_factor*np.exp(-np.power(doppler_delta/doppler_width, 2)/2)*(rho_t[index(e, g, n), 0])
                         
-def timeEvolutionGaussianAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigma, n_intensity, laser_wavelength, time, rho0, rho_output, tau_f = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+def timeEvolutionGaussianAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigma, n_intensity, laser_wavelength, time, rho0, rho_output, tau_f = None, detuning = None, rabi_scaling = None, rabi_factors = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+    """Calculates the time evolution of a laser-atom system with a Gaussian laser beam profile.
+    
+    Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+    The density matrix at each time step is stored in rho_output. 
+    """
     
     if(print_eq or pretty_print_eq != None):
         print("Cannot print equations when beam profile or doppler averaging!")
@@ -112,8 +131,9 @@ def timeEvolutionGaussianAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigm
             rabi = halfRabiFreq(laser_intensity, tau, laser_wavelength)
             
             A = timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intensity, 
-                        tau_f = tau_f, rabi_scaling = rabi_scaling, symbolic_print = pretty_print_eq, 
-                                    numeric_print = print_eq, atomic_velocity = atomic_velocity)
+                        tau_f = tau_f, rabi_scaling = rabi_scaling, rabi_factors = rabi_factors, 
+                        detuning = detuning, symbolic_print = pretty_print_eq, 
+                        numeric_print = print_eq, atomic_velocity = atomic_velocity)
 
             # Compute the diagonalised matrix D and matrix of eigenvectors V
             D = diagonalise(A)
@@ -145,7 +165,12 @@ def timeEvolutionGaussianAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigm
                         rho_output[index(g, e, n)][position] += (2*k+1)*(rho_t[index(e, g, n), 0])/(n_intensity*n_intensity)
     
 
-def timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigma, n_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho0, rho_output, tau_f = None, rabi_scaling = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+def timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigma, n_intensity, laser_wavelength, doppler_width, doppler_detunings, time, rho0, rho_output, tau_f = None, detuning = None, rabi_scaling = None, rabi_factors = None, print_eq = None, pretty_print_eq = None, atomic_velocity = None):
+    """Calculates the time evolution of a laser-atom system with a Gaussian doppler profile for the atoms and a Gaussian laser beam profile.
+    
+    Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+    The density matrix at each time step is stored in rho_output. 
+    """
     
     if(print_eq or pretty_print_eq != None):
         print("Cannot print equations when beam profile or doppler averaging!")
@@ -166,8 +191,9 @@ def timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_pow
             rabi = halfRabiFreq(laser_intensity, tau, laser_wavelength)
             
             A = timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intensity, 
-                        tau_f = tau_f, rabi_scaling = rabi_scaling, symbolic_print = pretty_print_eq, 
-                                    numeric_print = print_eq, atomic_velocity = atomic_velocity)
+                        tau_f = tau_f, rabi_scaling = rabi_scaling, rabi_factors = rabi_factors, 
+                        detuning = detuning, symbolic_print = pretty_print_eq, 
+                        numeric_print = print_eq, atomic_velocity = atomic_velocity)
 
             # Compute the diagonalised matrix D and matrix of eigenvectors V
             D = diagonalise(A)

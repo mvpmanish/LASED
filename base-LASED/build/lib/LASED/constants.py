@@ -1,4 +1,7 @@
-# This file contains all the constants used in the QED simulation
+"""Contains definitions of useful fundamental constants.
+Author: Manish Patel
+Last Edited: 25/08/2021
+"""
 
 import numpy as np
 

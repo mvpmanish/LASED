@@ -1,4 +1,3 @@
-README.md
 setup.py
 LASED/__init__.py
 LASED/constants.py
