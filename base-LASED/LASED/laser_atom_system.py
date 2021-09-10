@@ -8,7 +8,7 @@ from LASED.index import *
 from LASED.generate_sub_states import *
 from LASED.save_to_csv import *
 
-import LASED.rotation
+import LASED.rotation as rot
 import numpy as np
 
 
@@ -205,15 +205,15 @@ class LaserAtomSystem:
         """
         # Check if any state is in F-representation
         sum_I = 0
-        for e in E:
+        for e in self.E:
             sum_I += e.I
-        for g in G:
+        for g in self.G:
             sum_I += g.I
         if(sum_I > 0):
             print("Warning:  Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation and not in F-representation! ")
             return
         
-        self.rho_0 = rotation.rotateInitialMatrix(self.rho_0, self.n, self.E, self.G, alpha, beta, gamma)
+        self.rho_0 = rot.rotateInitialMatrix(self.rho_0, self.n, self.E, self.G, alpha, beta, gamma)
     
     def rotateRho_t(self, alpha, beta, gamma):
         """ Rotate rho_0 by the Euler angles alpha, beta, and gamma.
@@ -231,9 +231,9 @@ class LaserAtomSystem:
         
         # Check if any state is in F-representation
         sum_I = 0
-        for e in E:
+        for e in self.E:
             sum_I += e.I
-        for g in G:
+        for g in self.G:
             sum_I += g.I
         if(sum_I > 0):
             print("Warning:  Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation and not in F-representation! ")
@@ -245,7 +245,7 @@ class LaserAtomSystem:
             new_rho = np.zeros((self.n*self.n, 1), dtype = complex)  # Placeholder
             for i, element in enumerate(new_rho):
                 new_rho[i, 0] = rho[i]
-            new_rho = rotation.rotateInitialMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma)
+            new_rho = rot.rotateInitialMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma)
             rotated_rho_t.append(new_rho)
         # Flip this back to the structure of rho_t
         self.rho_t = np.transpose(rotated_rho_t)[0]

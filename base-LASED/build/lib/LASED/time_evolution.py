@@ -89,7 +89,7 @@ def timeEvolutionDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_intensity, las
             # Calculate the exponential
             for position, t in enumerate(time, start = 0):
                 # Use expm() which computes the matrix exponential using the Pade approximation
-                VexpDt = np.dot(V, sparsela.expm(D*t))  # Use sparse linear algebra to compute e^Dt as this is faster
+                VexpDt = np.dot(V, la.expm(D*t))  # Can I make this is faster?
                 rho_t = np.dot(VexpDt, f)
 
                 # Append density matrix for each ring and each detuning fraction
@@ -143,7 +143,7 @@ def timeEvolutionGaussianAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigm
             # Calculate the exponential
             for position, t in enumerate(time, start = 0):
                 # Use expm() which computes the matrix exponential using the Pade approximation
-                VexpDt = np.dot(V, sparsela.expm(D*t))  # Use sparse linear algebra to compute e^Dt as this is faster
+                VexpDt = np.dot(V, la.expm(D*t))  # Can I make this faster?
                 rho_t = np.dot(VexpDt, f)
 
                 # Append density matrix for each ring
@@ -203,7 +203,7 @@ def timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_pow
             # Calculate the exponential
             for position, t in enumerate(time, start = 0):
                 # Use expm() which computes the matrix exponential using the Pade approximation
-                VexpDt = np.dot(V, sparsela.expm(D*t))  # Use sparse linear algebra to compute e^Dt as this is faster
+                VexpDt = np.dot(V, la.expm(D*t))  # Can I make this faster?
                 rho_t = np.dot(VexpDt, f)
 
                 # Append density matrix for each ring and each detuning fraction

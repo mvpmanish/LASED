@@ -19,7 +19,7 @@ def wigner_D(J, alpha, beta, gamma):
         gamma (float): rotation about the z''-axis in radians.
     
     Returns:
-        (ndarray) A square matrix of size 2J+1.
+        ndarray: A square matrix of size 2J+1.
     """
     size = 2*J+1  # Number of sub-states
     m = np.linspace(-J, J, size, dtype=int)  # Projections of J
@@ -41,7 +41,7 @@ def small_Wigner_D(J, beta, mp, m):
         m (int): column number oif element in the Wigner D-matrix
     
     Returns:
-        (float) small Wigner D-matrix elements
+        float: The small Wigner D-matrix elements
     """
     const = np.sqrt((math.factorial(J+mp))*math.factorial(J-mp)*math.factorial(J+m)*math.factorial(J-m))
     d_sum = 0
@@ -69,7 +69,7 @@ def rotation(rho, J, alpha, beta, gamma):
         gamma (float): rotation about the z''-axis in radians.
     
     Returns:
-        (ndarray) The rotated density matrix.
+        ndarray: The rotated density matrix.
     """
     D_matrix = np.transpose(wigner_D(J, alpha, beta, gamma))
     D_conj = np.transpose(np.conj(D_matrix))
@@ -88,7 +88,7 @@ def rotateInitialMatrix(flat_rho, n, E, G, alpha, beta, gamma):
         gamma (float): rotation about the z''-axis in radians.
     
     Returns:
-        (list) A rotated flattened 2D density matrix
+        list of lists: A rotated flattened 2D density matrix
     """
     # Make a copy to return
     rotated_rho = copy.deepcopy(flat_rho)

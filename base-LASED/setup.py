@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.3' 
+VERSION = '0.3.1' 
 DESCRIPTION = 'LASED'
 LONG_DESCRIPTION = 'A Laser-Atom Interaction Simulator using Quantum Electrodynamics'
 
@@ -10,7 +10,7 @@ with open("../README.md", "r") as fh:
 # Setting up
 setup(
        # the name must match the folder name 'LASED'
-        name = "LASED", 
+        name = "LASED",
         version = VERSION,
         author = "Manish Patel",
         author_email="<mvpmanish@gmail.com>",
@@ -22,9 +22,9 @@ setup(
             "numpy >= 1.20",
             "scipy >= 1.6.0",
             "sympy >= 1.8"
-        ], # add any additional packages that 
+        ], # add any additional packages that
         # needs to be installed along with your package. Eg: 'caer'
-        
+
         keywords=['python', 'laser-atom', 'simulation', 'quantum', 'quantum electrodynamics', 'physics'],
         classifiers= [
             "Development Status :: 1 - Planning",
