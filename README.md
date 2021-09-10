@@ -22,7 +22,7 @@ In this simulator a user defines a `State` object with all quantum numbers defin
 
 ## Tutorials
 
-Check out readthedocs for detailed tutorials and a guide for how to use the library. 
+Check out readthedocs for detailed tutorials and a guide for how to use the library: https://lased.readthedocs.io/en/latest/
 
 ## Acknowledgements
 
