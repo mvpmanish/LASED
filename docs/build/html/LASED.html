@@ -1,0 +1,1396 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>LASED package &mdash; LASED 0.3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="LASED" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LASED
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">LASED</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">LASED package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.constants">LASED.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.decay_constant">LASED.decay_constant module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.density_matrix">LASED.density_matrix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.detuning">LASED.detuning module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.generate_sub_states">LASED.generate_sub_states module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.half_rabi_freq">LASED.half_rabi_freq module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.index">LASED.index module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.laser_atom_system">LASED.laser_atom_system module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.matrix_methods">LASED.matrix_methods module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.rotation">LASED.rotation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.save_to_csv">LASED.save_to_csv module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.state">LASED.state module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.symbolic_print">LASED.symbolic_print module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.time_evolution">LASED.time_evolution module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED.time_evolution_matrix">LASED.time_evolution_matrix module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-LASED">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LASED</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">LASED</a> &raquo;</li>
+        
+      <li>LASED package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/LASED.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="lased-package">
+<h1>LASED package<a class="headerlink" href="#lased-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-LASED.constants">
+<span id="lased-constants-module"></span><h2>LASED.constants module<a class="headerlink" href="#module-LASED.constants" title="Permalink to this headline">¶</a></h2>
+<p>Contains definitions of useful fundamental constants.
+Author: Manish Patel
+Last Edited: 25/08/2021</p>
+</div>
+<div class="section" id="module-LASED.decay_constant">
+<span id="lased-decay-constant-module"></span><h2>LASED.decay_constant module<a class="headerlink" href="#module-LASED.decay_constant" title="Permalink to this headline">¶</a></h2>
+<p>This is a file to define functions to calculate the generalised decay constants
+Author: Manish Patel
+Date created: 27/07/2021</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.decay_constant.generalisedDecayConstant">
+<span class="sig-prename descclassname"><span class="pre">LASED.decay_constant.</span></span><span class="sig-name descname"><span class="pre">generalisedDecayConstant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.decay_constant.generalisedDecayConstant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the branching ratio for the generalised decay constant.</p>
+<p>This ratio must be multiplied by 1/tau to get the generalised decay constant in Grad/s. This is then used for evaluating vertical coherences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ep</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – Excited State object</p></li>
+<li><p><strong>epp</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – Excited State object</p></li>
+<li><p><strong>g</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – Ground State object</p></li>
+<li><p><strong>G</strong> (<em>list</em>) – :List of all ground State objects</p></li>
+<li><p><strong>tau</strong> (<em>float</em>) – Lifetime of state in ns</p></li>
+<li><p><strong>Q_decay</strong> (<em>list</em>) – List of decay channel polarisations allowed by transition rules, usually [-1, 0, 1]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value of the branching ratio for the  generalised decay constant gamma_{ep, epp, g}.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.density_matrix">
+<span id="lased-density-matrix-module"></span><h2>LASED.density_matrix module<a class="headerlink" href="#module-LASED.density_matrix" title="Permalink to this headline">¶</a></h2>
+<p>Density matrix operations
+Author: Manish Patel
+Date Created: 11/06/2021</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.density_matrix.JNumber">
+<span class="sig-prename descclassname"><span class="pre">LASED.density_matrix.</span></span><span class="sig-name descname"><span class="pre">JNumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.density_matrix.JNumber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the angular momentum from the number of sub-states in the list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state_list</strong> (<em>list</em>) – List of sub-states of a single angular momentum state.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>int: The total angular momentum of the state.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.density_matrix.appendDensityMatrixToFlatCoupledMatrix">
+<span class="sig-prename descclassname"><span class="pre">LASED.density_matrix.</span></span><span class="sig-name descname"><span class="pre">appendDensityMatrixToFlatCoupledMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flatrho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density_rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.density_matrix.appendDensityMatrixToFlatCoupledMatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds density matrix elements to a flat, coupled matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flat_rho</strong> (<em>list</em>) – array of arrays with one column of all density matrix elements of coupled E and G states</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – number of states in total laser-coupled system</p></li>
+<li><p><strong>sub-states</strong> (<em>list</em>) – a list of the excited or ground states</p></li>
+<li><p><strong>density_rho</strong> (<em>ndarray</em>) – either the excited or ground state density matrix with the convention that the
+upper left-hand of the matrix is state population for m_J = -J if the state has angular momentum J</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.density_matrix.getSingleStateMatrix">
+<span class="sig-prename descclassname"><span class="pre">LASED.density_matrix.</span></span><span class="sig-name descname"><span class="pre">getSingleStateMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flat_rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_states</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.density_matrix.getSingleStateMatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain an angular momentum state density matrix from the flattened coupled state density rho vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flat_rho</strong> (<em>list of list</em>) – flattened 2D density matrix of coupled E &amp; G states with the laser.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – number of states in total laser-coupled system.</p></li>
+<li><p><strong>sub_states</strong> (<em>list</em>) – a list of the excited or ground states, E or G respectively.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A square matrix of size length of sub_states. Elements are ordered from left to right
+according to the order of sub_states e.g. if state labelled 1 is first then first element
+would correspond to rho_11 i.e. population of state 1.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.detuning">
+<span id="lased-detuning-module"></span><h2>LASED.detuning module<a class="headerlink" href="#module-LASED.detuning" title="Permalink to this headline">¶</a></h2>
+<p>Define functions for the detuning of an atomic system</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.detuning.angularFreq">
+<span class="sig-prename descclassname"><span class="pre">LASED.detuning.</span></span><span class="sig-name descname"><span class="pre">angularFreq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.detuning.angularFreq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the angular frequency in Grad/s from a given wavelength.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wavelength</strong> (<em>float</em>) – A wavelength in nm</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The angular frequency in Grad/s</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.detuning.delta">
+<span class="sig-prename descclassname"><span class="pre">LASED.detuning.</span></span><span class="sig-name descname"><span class="pre">delta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.detuning.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detunings between substates.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Parameters:</dt><dd><p>e (State): State object
+g (State): State object</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Difference in angular frequency of states (Grad/s).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.detuning.dopplerDelta">
+<span class="sig-prename descclassname"><span class="pre">LASED.detuning.</span></span><span class="sig-name descname"><span class="pre">dopplerDelta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.detuning.dopplerDelta" title="Permalink to this definition">¶</a></dt>
+<dd><p>The detuning between excited and ground states.</p>
+<p>Accounts for a fixed motion of the atoms. Used between excited and ground states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – State object for excited state.</p></li>
+<li><p><strong>g</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – State object for ground state.</p></li>
+<li><p><strong>w_q</strong> (<em>float</em>) – Angular frequency of exciting laser in rad/s.</p></li>
+<li><p><strong>lambda_q</strong> (<em>float</em>) – Wavelength of exciting laser in m.</p></li>
+<li><p><strong>v_z</strong> (<em>float</em>) – Velocity component of atoms in direction of laser in m/s.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The detuning between ground and excited states including the doppler detuning due to a given atomic velocity.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.generate_sub_states">
+<span id="lased-generate-sub-states-module"></span><h2>LASED.generate_sub_states module<a class="headerlink" href="#module-LASED.generate_sub_states" title="Permalink to this headline">¶</a></h2>
+<p>Generate Sub States.
+Generates sub-states of a quantum state</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.generate_sub_states.generateSubStates">
+<span class="sig-prename descclassname"><span class="pre">LASED.generate_sub_states.</span></span><span class="sig-name descname"><span class="pre">generateSubStates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.generate_sub_states.generateSubStates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a vector of sub-states given quantum numbers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label_from</strong> (<em>int</em>) – the number assigned to the first state generated - goes from -m_F to +m_F so the number given will be assigned to -m_F</p></li>
+<li><p><strong>w</strong> (<em>float</em>) – the angular frequency (in Grad/s) given to the states generated</p></li>
+<li><p><strong>L</strong> (<em>int</em>) – orbital angular momentum</p></li>
+<li><p><strong>S</strong> (<em>int</em>) – spin quantum number</p></li>
+<li><p><strong>J</strong> (<em>int</em>) – total angular momentum</p></li>
+<li><p><strong>I</strong> (<em>int</em>) – nuclear isospin</p></li>
+<li><p><strong>F</strong> (<em>int</em>) – total angular momentum + isospin</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of State objects from -m_F to +m_F with labels beginning at label_from</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.half_rabi_freq">
+<span id="lased-half-rabi-freq-module"></span><h2>LASED.half_rabi_freq module<a class="headerlink" href="#module-LASED.half_rabi_freq" title="Permalink to this headline">¶</a></h2>
+<p>Definition of the half-Rabi frequency and all other functions needed to calculate it</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.half_rabi_freq.coupling">
+<span class="sig-prename descclassname"><span class="pre">LASED.half_rabi_freq.</span></span><span class="sig-name descname"><span class="pre">coupling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.half_rabi_freq.coupling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coupling constants between states via laser radiation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – the excited state</p></li>
+<li><p><strong>g</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – the ground state</p></li>
+<li><p><strong>q</strong> (<em>int</em>) – the laser polarisation coupling e and g. This can be -1 for LH circular, +1 for RH circular, or 0 for linear polarisation.</p></li>
+<li><p><strong>Returns</strong> – float: the coupling constant between an excited and ground state</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.half_rabi_freq.gaussianIntensity">
+<span class="sig-prename descclassname"><span class="pre">LASED.half_rabi_freq.</span></span><span class="sig-name descname"><span class="pre">gaussianIntensity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P_las</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.half_rabi_freq.gaussianIntensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intensity of Gaussian TEM_00 laser beam profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P_las</strong> (<em>float</em>) – Power of laser given by power meter in mW</p></li>
+<li><p><strong>r_sigma</strong> (<em>float</em>) – Radius at 2D standard deviation of a Gaussian in mm</p></li>
+<li><p><strong>r</strong> (<em>float</em>) – Radius in mm at which the laser intensity is evaluated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Intensity in mW/mm^2 at radius r from beam axis given a Gaussian intensity profile</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.half_rabi_freq.halfRabiFreq">
+<span class="sig-prename descclassname"><span class="pre">LASED.half_rabi_freq.</span></span><span class="sig-name descname"><span class="pre">halfRabiFreq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intensity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lifetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.half_rabi_freq.halfRabiFreq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the half-Rabi frequency in Grad/s.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>intensity</strong> – intensity of laser in mW/mm^2</p></li>
+<li><p><strong>lifetime</strong> – lifetime of the excited state to the ground state transition in nanoseconds</p></li>
+<li><p><strong>wavelength</strong> – wavelength (in metres) corresponding to the resonant transition from the ground to excited state.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The half-Rabi frequency in Grad/s.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.index">
+<span id="lased-index-module"></span><h2>LASED.index module<a class="headerlink" href="#module-LASED.index" title="Permalink to this headline">¶</a></h2>
+<p>Definition of the index function</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.index.getStateLabelsFromLineNo">
+<span class="sig-prename descclassname"><span class="pre">LASED.index.</span></span><span class="sig-name descname"><span class="pre">getStateLabelsFromLineNo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.index.getStateLabelsFromLineNo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the indeces for labelling rho [i, j] from the line number of an array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>line_no</strong> (<em>int</em>) – line number of an array e.g. position of a row in a matrix or column in rho_t</p></li>
+<li><p><strong>n</strong> – the number of states in the system</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple of the indeces for the matrix position</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.index.index">
+<span class="sig-prename descclassname"><span class="pre">LASED.index.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.index.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to return the index of an element of a 2D density matrix if flattened to a 1D array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – To get the row number of the element to be selected</p></li>
+<li><p><strong>j</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – To get the column number of the element to be selected</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – dimension of the square array i.e. number of states in the system</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Index of the element in a 1D array</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>To get the index of rho_44 in a 4-level system call index(four, four, 4) where “four” is the variable which stores the State object labelled 4.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.laser_atom_system">
+<span id="lased-laser-atom-system-module"></span><h2>LASED.laser_atom_system module<a class="headerlink" href="#module-LASED.laser_atom_system" title="Permalink to this headline">¶</a></h2>
+<p>The LaserAtomSystem class definition.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">LASED.laser_atom_system.</span></span><span class="sig-name descname"><span class="pre">LaserAtomSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_intensity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A physical system composed of a laser field acting on an atomic system.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.Q_decay">
+<span class="sig-name descname"><span class="pre">Q_decay</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.Q_decay" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of ints describing the selection rules of the decay. Selection rules are set to +1, -1, and 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.rho_t">
+<span class="sig-name descname"><span class="pre">rho_t</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.rho_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of flattened 2D arrays over the time interval simulated for. This is initialised as empty as no time evolution has taken place.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.E">
+<span class="sig-name descname"><span class="pre">E</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.E" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of State objects which are the excited states of the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.G">
+<span class="sig-name descname"><span class="pre">G</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.G" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of State objects which are the ground states of the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.tau">
+<span class="sig-name descname"><span class="pre">tau</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.tau" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lifetime of transition in nanoseconds between excited and ground state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.Q">
+<span class="sig-name descname"><span class="pre">Q</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.Q" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of laser polarisations. This can be +1, 0, -1 for right-hand circular, left-hand circular, and linear polarisation. If more than one polarisation is in the list then the system will be excited with a linear combination of the polarisations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.laser_wavelength">
+<span class="sig-name descname"><span class="pre">laser_wavelength</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.laser_wavelength" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wavelength of transition from ground to excited state in metres.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.laser_intensity">
+<span class="sig-name descname"><span class="pre">laser_intensity</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.laser_intensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intensity of the laser in mW/mm^2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.laser_power">
+<span class="sig-name descname"><span class="pre">laser_power</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.laser_power" title="Permalink to this definition">¶</a></dt>
+<dd><p>Power of the laser in mW. This is needed for Gaussian averaging of beam profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.tau_f">
+<span class="sig-name descname"><span class="pre">tau_f</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.tau_f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Non-radiative lifetime of the laser-atom system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.rho_0">
+<span class="sig-name descname"><span class="pre">rho_0</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.rho_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D array creating the density matrix at t = 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.rabi_scaling">
+<span class="sig-name descname"><span class="pre">rabi_scaling</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.rabi_scaling" title="Permalink to this definition">¶</a></dt>
+<dd><p>The normalisation of the Rabi frequency. The half-Rabi frequency is divided by this number. Use this if there are more than one polarisations to normalise the population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.rabi_factors">
+<span class="sig-name descname"><span class="pre">rabi_factors</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.rabi_factors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Elements of this list are multiplies by the half-Rabi frequency for each polarisation. This is used to obtain elliptical polarisation or align the polarisation of the laser to a different axis e.g. rabi_factors = [1*cos(pi/2)+1*j*sin(pi/2), 2*cos(pi/2+2*j*sin(pi/2))] for Q = [1, -1] gives a more LH elliptical polarisation aligned by 45 deg to the x-axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">Q_decay</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">0,</span> <span class="pre">-1]</span></em><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.Rho_0">
+<span class="sig-name descname"><span class="pre">Rho_0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.Rho_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for an element in rho_0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – First state index.</p></li>
+<li><p><strong>j</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – Second state index.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element of the laser-atom system density matrix at t=0.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>complex</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>print(Rho_0(one, two))</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.Rho_t">
+<span class="sig-name descname"><span class="pre">Rho_t</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.Rho_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for an element in rho_t.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – First state index</p></li>
+<li><p><strong>j</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – Second state index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of an element in laser-atom system for all of the simulation time</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>print(Rho_t(one, two)) prints element rho_12 if one and two are State objects corresponding
+to label 1 and 2 respectively.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.appendDensityMatrixToRho_0">
+<span class="sig-name descname"><span class="pre">appendDensityMatrixToRho_0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">density_rho</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.appendDensityMatrixToRho_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the laser-atom system density matrix at t=0 to the matrix given.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>density_rho</strong> (<em>ndarray</em>) – 2D array of the system density matrix.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Density matrix input must be square and the size of the matrix must match with E or G.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.clearRho_0">
+<span class="sig-name descname"><span class="pre">clearRho_0</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.clearRho_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes all values of rho_0 zero.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.n">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">n</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of substates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Number of substates.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.rho_e0">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rho_e0</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.rho_e0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upper state density matrix for the initial condition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Upper state density matrix composed of all states defined in E.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.rho_et">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rho_et</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.rho_et" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upper state density matrix for all of the time evolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of upper state density matrices for the time evolution.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.rho_g0">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rho_g0</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.rho_g0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lower state density matrix for the initial condition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Lower state density matrix composed of all states defined in G.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.rho_gt">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rho_gt</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.rho_gt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lower state density matrix for all of the time evolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list oflower state density matrices for the time evolution.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">rho_t</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[]</span></em><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.rotateRho_0">
+<span class="sig-name descname"><span class="pre">rotateRho_0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.rotateRho_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate rho_0 by the Euler angles alpha, beta, and gamma.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> – rotation (in radians) around z-axis</p></li>
+<li><p><strong>beta</strong> – rotation (in radians) about the y’-axis</p></li>
+<li><p><strong>gamma</strong> – rotation (in radians) about the z’’-axis</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation
+and not in F-representation.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.rotateRho_t">
+<span class="sig-name descname"><span class="pre">rotateRho_t</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.rotateRho_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate rho_0 by the Euler angles alpha, beta, and gamma.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> – rotation (in radians) around z-axis</p></li>
+<li><p><strong>beta</strong> – rotation (in radians) about the y’-axis</p></li>
+<li><p><strong>gamma</strong> – rotation (in radians) about the z’’-axis</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation
+and not in F-representation.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.saveToCSV">
+<span class="sig-name descname"><span class="pre">saveToCSV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.saveToCSV" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves rho_t as a csv file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>string</em>) – Name of the csv file created.</p></li>
+<li><p><strong>precision</strong> (<em>int</em>) – Precision of numbers in decimal places.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Void.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.setRho_0">
+<span class="sig-name descname"><span class="pre">setRho_0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.setRho_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a value to an element of rho_0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – First state index</p></li>
+<li><p><strong>j</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – Second state index</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.time">
+<span class="sig-name descname"><span class="pre">time</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[]</span></em><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.timeEvolution">
+<span class="sig-name descname"><span class="pre">timeEvolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beam_profile_averaging</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doppler_averaging</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty_print_eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_velocity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_beam_averaging</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doppler_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doppler_detunings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.timeEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evolves the laser-atom system over time.</p>
+<p>Produces a list of flattened 2D density matrices which correspond to the time array. This is stored in rho_t.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<em>list</em>) – Array of the times in the time evolution in nanoseconds e.g. time = [0, 1, 2] to simulate up to 2 ns</p></li>
+<li><p><strong>beam_profile_averaging</strong> (<em>bool</em>) – Turn on averaging over a Gaussian TEM00 laser beam profile. Must have n_beam_averaging to state the number of averages to take over the beam profile and r_sigma to characterise the standard debviation of the Gaussian beam.</p></li>
+<li><p><strong>doppler_averaging</strong> (<em>bool</em>) – Turn on averaging over the doppler profile of the atoms. Must have doppler_width and doppler_detunings as well.</p></li>
+<li><p><strong>pretty_print_eq</strong> (<em>bool</em>) – Turn on printing of the coupled differential equations symbolically using Sympy.</p></li>
+<li><p><strong>print_eq</strong> (<em>bool</em>) – Turn on printing the coupled differential equatiuons numerically.</p></li>
+<li><p><strong>atomic_velocity</strong> (<em>float</em>) – The velocity component of the atoms in the direction of the laser beam in metres/second. This is used for doppler shifting the energy levels.</p></li>
+<li><p><strong>r_sigma</strong> (<em>float</em>) – The radial distance to the 2D standard deviation in millimetres of the Gaussian beam profile of the laser.</p></li>
+<li><p><strong>n_beam_averaging</strong> (<em>int</em>) – The number of times the beam profile will be split to average over. The higher the number, the more accurate the beam profile averaging but it will be slower.</p></li>
+<li><p><strong>doppler_width</strong> (<em>float</em>) – The doppler width of the beam profile in Grad/s.</p></li>
+<li><p><strong>doppler_detunings</strong> (<em>list</em>) – List of the doppler detunings creating a doppler profile. This list will be averaged over. Must go from a -ve detuning to a +ve detuning. All detunings are in Grad/s.</p></li>
+<li><p><strong>Note</strong> – Must have laser_power attribute for Gaussian averaging of the beam and must have laser_intensity attribute when not Gaussian averaging. Also, cannot print equations in doppler or Gaussian averaging.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.matrix_methods">
+<span id="lased-matrix-methods-module"></span><h2>LASED.matrix_methods module<a class="headerlink" href="#module-LASED.matrix_methods" title="Permalink to this headline">¶</a></h2>
+<p>Defines functions to manipulate matrices.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.matrix_methods.diagonalise">
+<span class="sig-prename descclassname"><span class="pre">LASED.matrix_methods.</span></span><span class="sig-name descname"><span class="pre">diagonalise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.matrix_methods.diagonalise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Diagonalise a matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>A</strong> (<em>ndarry</em>) – A square matrix.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A diagonalised matrix.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.matrix_methods.matrixOfEigenvec">
+<span class="sig-prename descclassname"><span class="pre">LASED.matrix_methods.</span></span><span class="sig-name descname"><span class="pre">matrixOfEigenvec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.matrix_methods.matrixOfEigenvec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a matrix of eigenvectors.
+:param A: A square matrix.
+:type A: ndarray</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A matrix of eigenvectors</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.matrix_methods.printNonZeroMatrixElements">
+<span class="sig-prename descclassname"><span class="pre">LASED.matrix_methods.</span></span><span class="sig-name descname"><span class="pre">printNonZeroMatrixElements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.matrix_methods.printNonZeroMatrixElements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints non-zero matrix elements</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>A</strong> (<em>ndarray</em>) – A matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.rotation">
+<span id="lased-rotation-module"></span><h2>LASED.rotation module<a class="headerlink" href="#module-LASED.rotation" title="Permalink to this headline">¶</a></h2>
+<p>Define functions for rotating density matrices in the QED simulation of a laser-atom system.
+Author: Manish Patel
+Date created: 12/05/2021</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.rotation.rotateInitialMatrix">
+<span class="sig-prename descclassname"><span class="pre">LASED.rotation.</span></span><span class="sig-name descname"><span class="pre">rotateInitialMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flat_rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.rotation.rotateInitialMatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate the excited and ground state populations by the Euler angles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flat_rho</strong> (<em>list</em>) – A flattened 2D density matrix</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Number of substates which compose the density matrix flat_rho</p></li>
+<li><p><strong>E</strong> (<em>list of States</em>) – list of excited State objects which compose flat_rho</p></li>
+<li><p><strong>G</strong> (<em>list of States</em>) – list of ground State objects which compose flat_rho</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – rotation around z-axis in radians.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – rotation about the y’-axis in radians.</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – rotation about the z’’-axis in radians.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A rotated flattened 2D density matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of lists</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.rotation.rotation">
+<span class="sig-prename descclassname"><span class="pre">LASED.rotation.</span></span><span class="sig-name descname"><span class="pre">rotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.rotation.rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotates a density matrix by the wigner D-matrix.</p>
+<p>The rotation is determined by Euler angles (alpha, beta, gamma). (rho_newframe) = (D)(rho)(D*).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>J</strong> (<em>int</em>) – total angular momentum quantum number of the state which will be rotated with the</p></li>
+<li><p><strong>D-matrix.</strong> (<em>resulting</em>) – </p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – rotation around z-axis in radians.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – rotation about the y’-axis in radians.</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – rotation about the z’’-axis in radians.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The rotated density matrix.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.rotation.small_Wigner_D">
+<span class="sig-prename descclassname"><span class="pre">LASED.rotation.</span></span><span class="sig-name descname"><span class="pre">small_Wigner_D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.rotation.small_Wigner_D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the small Wigner D-matrix elements for rotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>J</strong> (<em>int</em>) – total angular momentum quantum number of the state which will be rotated with the resulting D-matrix.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – rotation about the y’-axis in radians.</p></li>
+<li><p><strong>mp</strong> (<em>int</em>) – row number of element in the Wigner D-matrix</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – column number oif element in the Wigner D-matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The small Wigner D-matrix elements</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.rotation.wigner_D">
+<span class="sig-prename descclassname"><span class="pre">LASED.rotation.</span></span><span class="sig-name descname"><span class="pre">wigner_D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.rotation.wigner_D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the Wigner D-matrix for rotation by Eueler angles (alpha, beta, gamma).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>J</strong> (<em>int</em>) – total angular momentum quantum number of the state which will be rotated with the</p></li>
+<li><p><strong>D-matrix.</strong> (<em>resulting</em>) – </p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – rotation around z-axis in radians.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – rotation about the y’-axis in radians.</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – rotation about the z’’-axis in radians.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A square matrix of size 2J+1.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.save_to_csv">
+<span id="lased-save-to-csv-module"></span><h2>LASED.save_to_csv module<a class="headerlink" href="#module-LASED.save_to_csv" title="Permalink to this headline">¶</a></h2>
+<p>This is a file to define the function to save rho_t as a csv file.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.save_to_csv.saveRhotAsCSV">
+<span class="sig-prename descclassname"><span class="pre">LASED.save_to_csv.</span></span><span class="sig-name descname"><span class="pre">saveRhotAsCSV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.save_to_csv.saveRhotAsCSV" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves rho_t to a csv file.</p>
+<p>Creates a csv file with filename and saves each element’s time evolution as a column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Number of substates in the system.</p></li>
+<li><p><strong>E</strong> (<em>list of States</em>) – List of State objects in excited state of system.</p></li>
+<li><p><strong>G</strong> (<em>list of States</em>) – List of State objects in ground state of system.</p></li>
+<li><p><strong>rho_t</strong> (<em>list of lists</em>) – List of flattened 2D density matrices representing time evolution of density matrix.</p></li>
+<li><p><strong>filename</strong> (<em>string</em>) – Name of the csv file created.</p></li>
+<li><p><strong>precision</strong> (<em>int</em>) – Precision of numbers in decimal places.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Void</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.save_to_csv.stateLabel">
+<span class="sig-prename descclassname"><span class="pre">LASED.save_to_csv.</span></span><span class="sig-name descname"><span class="pre">stateLabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.save_to_csv.stateLabel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the short-hand label of the state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – a State object.</p></li>
+<li><p><strong>state_type</strong> (<em>string</em>) – either ‘e’ or ‘g’ for excited state or ground state. The ground state is primed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>“J=k;m_J=l” if k and l are J and m quantum numbers. If the state has isospin then it is “F=k;m_F=l”</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>stringe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.save_to_csv.writeCSV">
+<span class="sig-prename descclassname"><span class="pre">LASED.save_to_csv.</span></span><span class="sig-name descname"><span class="pre">writeCSV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.save_to_csv.writeCSV" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a csv file using pandas dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>headers</strong> – Array of strings used as column headers.</p></li>
+<li><p><strong>data</strong> – Array of arrays of data used for the columns, must be same size as headers</p></li>
+<li><p><strong>filename</strong> – String of the name of the csv file output</p></li>
+<li><p><strong>precision</strong> (<em>int</em>) – Precision of numbers in decimal places.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Void.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.state">
+<span id="lased-state-module"></span><h2>LASED.state module<a class="headerlink" href="#module-LASED.state" title="Permalink to this headline">¶</a></h2>
+<p>Class definition for an atomic state</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="LASED.state.State">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">LASED.state.</span></span><span class="sig-name descname"><span class="pre">State</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.state.State" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>An atomic state.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.state.State.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#LASED.state.State.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number labelling of state e.g. state <a href="#id2"><span class="problematic" id="id3">|</span></a>2&gt; would have label 2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.state.State.w">
+<span class="sig-name descname"><span class="pre">w</span></span><a class="headerlink" href="#LASED.state.State.w" title="Permalink to this definition">¶</a></dt>
+<dd><p>Angular frequency corresponding to energy of state in Grad/s.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.state.State.L">
+<span class="sig-name descname"><span class="pre">L</span></span><a class="headerlink" href="#LASED.state.State.L" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orbital angular momentum quantum number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.state.State.S">
+<span class="sig-name descname"><span class="pre">S</span></span><a class="headerlink" href="#LASED.state.State.S" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spin quantum number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.state.State.m">
+<span class="sig-name descname"><span class="pre">m</span></span><a class="headerlink" href="#LASED.state.State.m" title="Permalink to this definition">¶</a></dt>
+<dd><p>Degeneracy of the total angular momentum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.state.State.J">
+<span class="sig-name descname"><span class="pre">J</span></span><a class="headerlink" href="#LASED.state.State.J" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resultant of L coupling to S.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.state.State.I">
+<span class="sig-name descname"><span class="pre">I</span></span><a class="headerlink" href="#LASED.state.State.I" title="Permalink to this definition">¶</a></dt>
+<dd><p>Nuclear spin quantum number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LASED.state.State.F">
+<span class="sig-name descname"><span class="pre">F</span></span><a class="headerlink" href="#LASED.state.State.F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total angular momentum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.symbolic_print">
+<span id="lased-symbolic-print-module"></span><h2>LASED.symbolic_print module<a class="headerlink" href="#module-LASED.symbolic_print" title="Permalink to this headline">¶</a></h2>
+<p>Defines functions to symbolically print the equations of motion of the laser-atom system.
+Author: Manish Patel
+Date created: 07/06/2021</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.symbolic_print.symbolicPrintRhoee">
+<span class="sig-prename descclassname"><span class="pre">LASED.symbolic_print.</span></span><span class="sig-name descname"><span class="pre">symbolicPrintRhoee</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_scaling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.symbolic_print.symbolicPrintRhoee" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the density matrix elements rho_ee’’ for the motion of the laser-atom system using Sympy.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.symbolic_print.symbolicPrintRhoeg">
+<span class="sig-prename descclassname"><span class="pre">LASED.symbolic_print.</span></span><span class="sig-name descname"><span class="pre">symbolicPrintRhoeg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_velocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_scaling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.symbolic_print.symbolicPrintRhoeg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the density matrix elements rho_eg for the motion of the laser-atom system using Sympy.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.symbolic_print.symbolicPrintRhoge">
+<span class="sig-prename descclassname"><span class="pre">LASED.symbolic_print.</span></span><span class="sig-name descname"><span class="pre">symbolicPrintRhoge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_velocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_scaling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.symbolic_print.symbolicPrintRhoge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the density matrix elements rho_ge for the motion of the laser-atom system using Sympy.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.symbolic_print.symbolicPrintRhogg">
+<span class="sig-prename descclassname"><span class="pre">LASED.symbolic_print.</span></span><span class="sig-name descname"><span class="pre">symbolicPrintRhogg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_scaling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.symbolic_print.symbolicPrintRhogg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the density matrix elements rho_gg’’ for the motion of the laser-atom system using Sympy.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.symbolic_print.symbolicPrintSystem">
+<span class="sig-prename descclassname"><span class="pre">LASED.symbolic_print.</span></span><span class="sig-name descname"><span class="pre">symbolicPrintSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_velocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_scaling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.symbolic_print.symbolicPrintSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the equations of motion of the laser-atom system in full using Sympy.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.time_evolution">
+<span id="lased-time-evolution-module"></span><h2>LASED.time_evolution module<a class="headerlink" href="#module-LASED.time_evolution" title="Permalink to this headline">¶</a></h2>
+<p>This file contains the function to calculate the time evolution of the density matrix
+for an atomic system interacting with a laser.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.time_evolution.timeEvolution">
+<span class="sig-prename descclassname"><span class="pre">LASED.time_evolution.</span></span><span class="sig-name descname"><span class="pre">timeEvolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_intensity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty_print_eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_velocity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.time_evolution.timeEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the time evolution of a laser-atom system.</p>
+<p>Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+The density matrix at each time step is stored in rho_output.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.time_evolution.timeEvolutionDopplerAveraging">
+<span class="sig-prename descclassname"><span class="pre">LASED.time_evolution.</span></span><span class="sig-name descname"><span class="pre">timeEvolutionDopplerAveraging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_intensity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doppler_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doppler_detunings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty_print_eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_velocity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.time_evolution.timeEvolutionDopplerAveraging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the time evolution of a laser-atom system with a Gaussian doppler profile for the atoms.</p>
+<p>Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+The density matrix at each time step is stored in rho_output.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.time_evolution.timeEvolutionGaussianAndDopplerAveraging">
+<span class="sig-prename descclassname"><span class="pre">LASED.time_evolution.</span></span><span class="sig-name descname"><span class="pre">timeEvolutionGaussianAndDopplerAveraging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_intensity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doppler_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doppler_detunings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty_print_eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_velocity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.time_evolution.timeEvolutionGaussianAndDopplerAveraging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the time evolution of a laser-atom system with a Gaussian doppler profile for the atoms and a Gaussian laser beam profile.</p>
+<p>Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+The density matrix at each time step is stored in rho_output.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.time_evolution.timeEvolutionGaussianAveraging">
+<span class="sig-prename descclassname"><span class="pre">LASED.time_evolution.</span></span><span class="sig-name descname"><span class="pre">timeEvolutionGaussianAveraging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_intensity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty_print_eq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_velocity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.time_evolution.timeEvolutionGaussianAveraging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the time evolution of a laser-atom system with a Gaussian laser beam profile.</p>
+<p>Uses a flattened density matrix rho0 and calculates the time evolution over the time specified.
+The density matrix at each time step is stored in rho_output.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED.time_evolution_matrix">
+<span id="lased-time-evolution-matrix-module"></span><h2>LASED.time_evolution_matrix module<a class="headerlink" href="#module-LASED.time_evolution_matrix" title="Permalink to this headline">¶</a></h2>
+<p>This is a file to define a function to populate the time evolution matrix for a laser-atom system
+Author: Manish Patel
+Date created: 12/05/2021</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.time_evolution_matrix.rho_eepp">
+<span class="sig-prename descclassname"><span class="pre">LASED.time_evolution_matrix.</span></span><span class="sig-name descname"><span class="pre">rho_eepp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numeric_print</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.time_evolution_matrix.rho_eepp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to populate the matrix A with coefficients for populations and atomic coherences of the excited states.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.time_evolution_matrix.rho_eg">
+<span class="sig-prename descclassname"><span class="pre">LASED.time_evolution_matrix.</span></span><span class="sig-name descname"><span class="pre">rho_eg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_velocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numeric_print</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.time_evolution_matrix.rho_eg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to populate the matrix A with coefficients for optical coherences between excited and ground states.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.time_evolution_matrix.rho_ge">
+<span class="sig-prename descclassname"><span class="pre">LASED.time_evolution_matrix.</span></span><span class="sig-name descname"><span class="pre">rho_ge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_velocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numeric_print</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.time_evolution_matrix.rho_ge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to populate the matrix A with coefficients for optical coherences between ground and excited states.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.time_evolution_matrix.rho_ggpp">
+<span class="sig-prename descclassname"><span class="pre">LASED.time_evolution_matrix.</span></span><span class="sig-name descname"><span class="pre">rho_ggpp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numeric_print</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.time_evolution_matrix.rho_ggpp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to populate the matrix A with coefficients for populations and atomic coherences of the ground states.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.time_evolution_matrix.timeEvolutionMatrix">
+<span class="sig-prename descclassname"><span class="pre">LASED.time_evolution_matrix.</span></span><span class="sig-name descname"><span class="pre">timeEvolutionMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_wavelength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">laser_intensity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbolic_print</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numeric_print</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rabi_factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_velocity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.time_evolution_matrix.timeEvolutionMatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create and populate the coupled differential equation matrix A for the laser-atom system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Matrix which contains all thera coefficients for the set of coupled differential equations describing a laser-atom system.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-LASED">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-LASED" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="modules.html" class="btn btn-neutral float-left" title="LASED" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Manish.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
