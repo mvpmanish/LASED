@@ -20,7 +20,7 @@ def gaussianIntensity(P_las, r_sigma, r):
         r (float): Radius in mm at which the laser intensity is evaluated
         
     Returns:
-        Intensity in mW/mm^2 at radius r from beam axis given a Gaussian intensity profile
+        float: Intensity in mW/mm^2 at radius r from beam axis given a Gaussian intensity profile
     """
     return (P_las/(2*PI*r_sigma*r_sigma))*np.exp(-(r*r)/(2*r_sigma*r_sigma))
 
@@ -36,7 +36,7 @@ def coupling(e, g, q):
         q (int): the laser polarisation coupling e and g. This can be -1 for LH circular, +1 for RH circular, or 0 for linear polarisation.
         
         Returns:
-            (float) the coupling constant between an excited and ground state
+            float: the coupling constant between an excited and ground state
     """
     sign = np.power(-1, (q*(1+q)/2)+e.F+g.F+e.J+g.J+e.I+e.L+e.S-e.m+1)
     factor = np.sqrt((2*e.F+1)*(2*g.F+1)*(2*e.J+1)*(2*g.J+1)*(2*e.L+1))
@@ -57,7 +57,7 @@ def halfRabiFreq(intensity, lifetime, wavelength):
         wavelength: wavelength (in metres) corresponding to the resonant transition from the ground to excited state.
     
     Returns:
-        (float) the half-Rabi frequency in Grad/s
+        float: The half-Rabi frequency in Grad/s.
     
     """
     I = intensity*1000  # Convert mW/mm^2 to W/m^2

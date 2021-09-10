@@ -42,7 +42,7 @@ def stateLabel(s, state_type):
             state_type (string): either 'e' or 'g' for excited state or ground state. The ground state is primed.
             
         Returns:
-            "J=k;m_J=l" if k and l are J and m quantum numbers. If the state has isospin then it is "F=k;m_F=l"
+            stringe: "J=k;m_J=l" if k and l are J and m quantum numbers. If the state has isospin then it is "F=k;m_F=l"
         """
         
         if(s.I != None):

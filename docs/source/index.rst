@@ -10,7 +10,10 @@ Welcome to LASED's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   gettingstarted
+   tutorials
    modules
+
 
 Indices and tables
 ==================

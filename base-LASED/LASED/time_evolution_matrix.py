@@ -21,7 +21,7 @@ def timeEvolutionMatrix(n, E, G, Q, Q_decay, tau, laser_wavelength, laser_intens
     """Function to create and populate the coupled differential equation matrix A for the laser-atom system.
     
     Returns:
-        (ndarray) Matrix which contains all thera coefficients for the set of coupled differential equations describing a laser-atom system. 
+        ndarray: Matrix which contains all thera coefficients for the set of coupled differential equations describing a laser-atom system. 
     """
     
     # Initialise matrix with zeros

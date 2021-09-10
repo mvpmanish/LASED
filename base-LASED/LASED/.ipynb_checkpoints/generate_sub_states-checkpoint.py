@@ -18,7 +18,7 @@ def generateSubStates(label_from, w, L, S, J = None, I = None, F = None):
         I(int) : nuclear isospin 
         F(int) : total angular momentum + isospin
     Returns:
-        A vector of State objects from -m_F to +m_F with labels beginning at label_from
+        list: A list of State objects from -m_F to +m_F with labels beginning at label_from
     """
     # Set up a vector
     states = []

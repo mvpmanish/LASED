@@ -12,7 +12,7 @@ def diagonalise(A):
         A (ndarry): A square matrix.
     
     Returns:
-        (ndarry) A diagonalised matrix.
+        ndarray: A diagonalised matrix.
     """
     eigenvals, eigenvecs = la.eig(A)
     return np.diag(eigenvals)
@@ -25,7 +25,7 @@ def matrixOfEigenvec(A):
         A (ndarray): A square matrix.
         
     Returns:
-        (ndarray): A matrix of eigenvectors
+        ndarray: A matrix of eigenvectors
     """
     eigenvals, eigenvecs = la.eig(A)
     return eigenvecs

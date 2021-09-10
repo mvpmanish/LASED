@@ -60,7 +60,7 @@ class LaserAtomSystem:
         """ Total number of substates.
         
         Returns:
-            (int) Number of substates.
+            int: Number of substates.
         """
         return int(len(self.G)+len(self.E))
     
@@ -69,7 +69,7 @@ class LaserAtomSystem:
         """ Upper state density matrix for the initial condition.
         
         Returns:
-            (ndarry) Upper state density matrix composed of all states defined in E.
+            ndarray: Upper state density matrix composed of all states defined in E.
         """
         return getSingleStateMatrix(self.rho_0, self.n, self.E)
     
@@ -78,7 +78,7 @@ class LaserAtomSystem:
         """ Lower state density matrix for the initial condition.
         
         Returns:
-            (ndarry) Lower state density matrix composed of all states defined in G.
+            ndarray: Lower state density matrix composed of all states defined in G.
         """
         return getSingleStateMatrix(self.rho_0, self.n, self.G)
     
@@ -87,7 +87,7 @@ class LaserAtomSystem:
         """ Upper state density matrix for all of the time evolution.
         
         Returns:
-            (list of ndarray) A list of upper state density matrices for the time evolution.
+            list of ndarray: A list of upper state density matrices for the time evolution.
         """
         rho_et = []
         flipped_rho_t = np.transpose(self.rho_t)  # Flip to loop over all rho
@@ -103,7 +103,7 @@ class LaserAtomSystem:
         """ Lower state density matrix for all of the time evolution.
         
         Returns:
-            (list of ndarray) A list oflower state density matrices for the time evolution.
+            list of ndarray: A list oflower state density matrices for the time evolution.
         """
         rho_et = []
         flipped_rho_t = np.transpose(self.rho_t)  # Flip to loop over all rho
@@ -183,7 +183,7 @@ class LaserAtomSystem:
             j (State): Second state index
         
         Returns:
-            Array of an element in laser-atom system for all of the simulation time
+            list: Array of an element in laser-atom system for all of the simulation time
         
         Example:
             print(Rho_t(one, two)) prints element rho_12 if one and two are State objects corresponding 

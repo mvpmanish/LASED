@@ -8,18 +8,20 @@ from LASED.state import *
 from LASED.half_rabi_freq import *
 
 def generalisedDecayConstant(ep, epp, g, G, Q_decay):
-    """  Calculates the branching ratio for the generalised decay constant.
+    """Calculates the branching ratio for the generalised decay constant.
+    
     This ratio must be multiplied by 1/tau to get the generalised decay constant in Grad/s. This is then used for evaluating vertical coherences.
+    
     Parameters:
-        ep - excited State object
-        epp - excited State object
-        g - ground State object
-        G - list of all ground State objects
-        tau - lifetime of state in ns
-        Q_decay - list of decay channel polarisations allowed by transition rules, usually [-1, 0, 1]
+        ep (State): Excited State object
+        epp (State): Excited State object
+        g (State): Ground State object
+        G (list): :List of all ground State objects
+        tau (float): Lifetime of state in ns
+        Q_decay (list): List of decay channel polarisations allowed by transition rules, usually [-1, 0, 1]
     
     Returns:
-        Value of the branching ratio for the  generalised decay constant gamma_{ep, epp, g}
+        Value of the branching ratio for the  generalised decay constant gamma_{ep, epp, g}.
     """
     # Calculate the total branching from the excited state to all ground states
     sum_decay_channels_epg = 0
