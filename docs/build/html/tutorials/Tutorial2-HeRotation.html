@@ -96,10 +96,14 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Tutorial1-SimpleCalcium.html">Tutorial 1: Simple Calcium</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Tutorial 2: D to P Exciation in Helium with Atomic Doppler Profile Avergaing, Gaussian Beam Averaging, and Rotation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Setting-up-the-system">Setting up the system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Setting-up-the-system">Setting up the system</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#TEM_{00}-Gaussian-Beam-Profile">TEM<span class="math notranslate nohighlight">\(_{00}\)</span> Gaussian Beam Profile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Doppler-Detuning-from-the-Atomic-Velocity-Profile">Doppler Detuning from the Atomic Velocity Profile</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#Rotation">Rotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Rotation">Rotation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">LASED</a></li>
@@ -444,7 +448,8 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Tutorial-2:-D-to-P-Exciation-in-Helium-with-Atomic-Doppler-Profile-Avergaing,-Gaussian-Beam-Averaging,-and-Rotation">
 <h1>Tutorial 2: D to P Exciation in Helium with Atomic Doppler Profile Avergaing, Gaussian Beam Averaging, and Rotation<a class="headerlink" href="#Tutorial-2:-D-to-P-Exciation-in-Helium-with-Atomic-Doppler-Profile-Avergaing,-Gaussian-Beam-Averaging,-and-Rotation" title="Permalink to this headline">¶</a></h1>
-<p>This tutorial demonstrates how to</p>
+<p>This tutorial demonstrates how to set up a system and time evolve the sysem averaging over the Gaussian beam profile and the doppler profile of the atoms. We also uses the Wigner-D matrices to rotate the system to a different reference frame and show that this model is physically consistent in all reference frames.</p>
+<p>Start by importing the libraries we will be using.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -459,18 +464,39 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Setting-up-the-system">
 <h2>Setting up the system<a class="headerlink" href="#Setting-up-the-system" title="Permalink to this headline">¶</a></h2>
-<p>To set up a Laser-Atom system you must first declare the atomic states which you want to work with and label them.</p>
-<p>Then, you must put the states into either the ground or excited states which the laser couples to.</p>
-<p>Then, all other laser parameters must be input.</p>
-<div class="nbinput nblast docutils container">
+<p>To set up a Laser-Atom system you must first declare the atomic states which you want to work with and label them. We are going to set up an example system for a D-state to a P-state transistion for helium where the P-state is a high principle quantum number Rydberg state. Therefore, we will assume that the wavelength of this fictitious transition is the ionisation energy of helium as this is a very high lying Rydberg state. This system is only for example purposes only and does not exist.</p>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="n">Image</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;../../../LevelDiagrams/HeRydbergDtoP.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial2-HeRotation_3_0.png" src="../_images/tutorials_Tutorial2-HeRotation_3_0.png" />
+</div>
+</div>
+<p>A level diagram of the system we will model is shown above.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> is setup in the code block below. As the excited state is high-lying its non-radiative lifetime will be comparable to its radiative lifetime. This non-radiative decay to other states outside the system is characterised by the arrow from the upper states to state <span class="math notranslate nohighlight">\(|f\rangle\)</span>. This can be input into the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> using the keyword <code class="docutils literal notranslate"><span class="pre">tau_f</span></code>.</p>
+<p>We will excite this system with simultaneous right-hand circular and left-hand circular polarised light in the natural frame with the laser beam travelling down the quantisation axis. This will be linearly-polarised light in the collision frame where the transverse E-field of the laser is oscillating along the quantisation axis. Therefore, we must set <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">[-1,</span> <span class="pre">1]</span></code> and set the <code class="docutils literal notranslate"><span class="pre">rabi_factors</span></code> to <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">-1]</span></code> as noted in Tutorial 1 and scale the Rabi frequency in the system by using
+<code class="docutils literal notranslate"><span class="pre">rabi_scaling</span></code>. In this case set it to <span class="math notranslate nohighlight">\(1/{\sqrt{2}}\)</span>.</p>
+<p>Then, we create the sub-states and put them into either the ground or excited states.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># System parameters</span>
 <span class="n">n</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># number of energy levels in system</span>
 
-<span class="n">laser_wavelength</span> <span class="o">=</span> <span class="mf">827e-9</span> <span class="c1"># wavelength of laser</span>
+<span class="n">laser_wavelength</span> <span class="o">=</span> <span class="mf">827e-9</span> <span class="c1"># wavelength of transition</span>
 <span class="n">w_e</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">angularFreq</span><span class="p">(</span><span class="n">laser_wavelength</span><span class="p">)</span>
 
 <span class="c1"># Create states</span>
@@ -487,38 +513,90 @@ div.rendered_html tbody tr:hover {
 
 <span class="n">G</span> <span class="o">=</span> <span class="p">[</span><span class="n">one</span><span class="p">,</span> <span class="n">two</span><span class="p">,</span> <span class="n">three</span><span class="p">,</span> <span class="n">four</span><span class="p">,</span> <span class="n">five</span><span class="p">]</span> <span class="c1"># ground states</span>
 <span class="n">E</span> <span class="o">=</span> <span class="p">[</span><span class="n">six</span><span class="p">,</span> <span class="n">seven</span><span class="p">,</span> <span class="n">eight</span><span class="p">]</span> <span class="c1"># excited states</span>
-<span class="n">Q</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># laser radiation polarisation</span>
-<span class="n">tau</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># lifetime in ns/rad (take from NIST 1/A_ki as this is in rad/s)</span>
-<span class="n">tau_f</span> <span class="o">=</span> <span class="mf">100e3</span> <span class="c1"># non-radiative lifetime of rydberg upper state to other states in ns/rad</span>
-
+<span class="n">Q</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># laser radiation polarisation</span>
+<span class="n">rabi_scaling_he</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">rabi_factors_he</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">tau</span> <span class="o">=</span> <span class="mf">100e3</span> <span class="c1"># lifetime in ns (estimated)</span>
+<span class="n">tau_f</span> <span class="o">=</span> <span class="mf">100e3</span> <span class="c1"># non-radiative lifetime of rydberg upper state to other states in ns (estimated)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="TEM_{00}-Gaussian-Beam-Profile">
+<h3>TEM<span class="math notranslate nohighlight">\(_{00}\)</span> Gaussian Beam Profile<a class="headerlink" href="#TEM_{00}-Gaussian-Beam-Profile" title="Permalink to this headline">¶</a></h3>
+<p>A laser beam usually does not have a flat beam profile (known as a “top-hat” distribution) in intensity. As the beam has spatial variation in intensity the atoms being excited experience a non-uniform time evolution. To model the effects of the beam profile the beam can be split up into regions of approximate uniform intensity and each spatial portion of the beam is used to time-evolve a part of the system being illuminated. Then, each part of the system is summed together and normalised which
+results in the entire system being modelled.</p>
+<p><code class="docutils literal notranslate"><span class="pre">LASED</span></code> supports the modelling of a Gaussian TEM<span class="math notranslate nohighlight">\(_{00}\)</span> laser beam profile. The 2D standard deviation of the Gaussian must be declared with keyword <code class="docutils literal notranslate"><span class="pre">r_sigma</span></code> when performing the <code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code> of the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code>. The number of portions which the beam is split into must be chosen as well. This is declared with the keyword <code class="docutils literal notranslate"><span class="pre">n_intensity</span></code> when using <code class="docutils literal notranslate"><span class="pre">timeEvolution</span></code>. If these are left out then a “top-hat” distribution of laser intensity is assumed. Also, to use the
+Gaussian avergaing over the beam profile, the keyword <code class="docutils literal notranslate"><span class="pre">laser_power</span></code> must be defined in the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code>. This is the total power which the laser delivers as opposed to the intensity over a mm<span class="math notranslate nohighlight">\(^2\)</span>.</p>
+<p>Below, the laser parameters are declared for this system.</p>
+<p><strong>Note</strong>: If using this averaging the model will loop over the time evolution with the number defined in <code class="docutils literal notranslate"><span class="pre">n_intensity</span></code> so the model will be much slower if a larger number is input. The larger number also results in a more accurate representation of the beam profile. Usually, a <code class="docutils literal notranslate"><span class="pre">n_intensity</span></code> of around 50 is enough for most cases.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Laser parameters</span>
 <span class="n">laser_power</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># laser intensity in mW</span>
 <span class="n">r_sigma</span> <span class="o">=</span> <span class="mf">0.75</span>  <span class="c1"># radial distance to 2D standard deviation in mm</span>
-<span class="n">n_intensity</span> <span class="o">=</span> <span class="mi">30</span>
-
-<span class="c1"># Doppler detuning parameters</span>
+<span class="n">n_intensity</span> <span class="o">=</span> <span class="mi">20</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Doppler-Detuning-from-the-Atomic-Velocity-Profile">
+<h3>Doppler Detuning from the Atomic Velocity Profile<a class="headerlink" href="#Doppler-Detuning-from-the-Atomic-Velocity-Profile" title="Permalink to this headline">¶</a></h3>
+<p>When using <code class="docutils literal notranslate"><span class="pre">LASED</span></code> the atoms being excited are usually defined as being stationary unless specified. If the atoms are not stationary and have some velocity with respect to the laser beam then the frequency of the laser is detuned from resonance due to the fixed velocity. In experiments an atomic beam is sometimes used to provide the atoms to some interaction region where the laser-excitation takes place. If a velocity component is in (or opposite to) the direction of the laser beam then
+detuning occurs. The velocity component can be specified using the <code class="docutils literal notranslate"><span class="pre">atomic_velocity</span></code> keyword in the <code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code>. This is specified in units of m/s in the direction of the laser beam. If the direction is opposite to this then the <code class="docutils literal notranslate"><span class="pre">atomic_velocity</span></code> is negative.</p>
+<p>Detuning can also occur due to the Maxwell-Boltzmann distribution of atomic velocities. This results in a Gaussian detuning profile. This can be modelled by splitting the detuning due to the velocity distribution of atoms into uniform sections and time-evolving the system with these uniform detunings and then summing up the time evolution for each detuning and normalising. The detuning due to this Doppler broadening can be modelled in <code class="docutils literal notranslate"><span class="pre">LASED</span></code> by defining a <code class="docutils literal notranslate"><span class="pre">doppler_width</span></code> in Grad/s in
+<code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code> and a list with all the detunings to be used for the averaging process called <code class="docutils literal notranslate"><span class="pre">doppler_detunings</span></code>. The more elements in <code class="docutils literal notranslate"><span class="pre">doppler_detunings</span></code> the more the time evolution of the system is calculated and the more time it will take to model the system.</p>
+<p><strong>Note</strong>: When using <em>both</em> Doppler and Gaussian beam averaging the number of times the system is time evolved will be <code class="docutils literal notranslate"><span class="pre">n_intensity</span></code> multiplied by the number of elements in <code class="docutils literal notranslate"><span class="pre">doppler_detunings</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Doppler detuning parameters</span>
 <span class="n">doppler_width</span> <span class="o">=</span> <span class="mf">0.1</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="c1"># doppler width in Grad/s</span>
 <span class="n">delta_upper</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="n">doppler_width</span>
 <span class="n">delta_lower</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">doppler_width</span>
-<span class="n">doppler_steps</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">doppler_steps</span> <span class="o">=</span> <span class="mi">20</span>
 <span class="n">doppler_detunings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">delta_lower</span><span class="p">,</span> <span class="n">delta_upper</span><span class="p">,</span> <span class="n">doppler_steps</span><span class="p">)</span>
 <span class="n">atomic_velocity</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Velocity component of atoms in direction of laser beam in m/s</span>
-
-<span class="c1"># Simulation parameters</span>
+</pre></div>
+</div>
+</div>
+<p>Set the simulation time for 1000 ns every 1 ns as follows:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Simulation parameters</span>
 <span class="n">start_time</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">stop_time</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># in ns</span>
 <span class="n">time_steps</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">stop_time</span><span class="p">,</span> <span class="n">time_steps</span><span class="p">)</span>
-
-<span class="n">helium_system</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">laser_wavelength</span><span class="p">,</span> <span class="n">tau_f</span> <span class="o">=</span> <span class="n">tau_f</span><span class="p">,</span>
-                                 <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">laser_power</span><span class="p">,</span> <span class="n">laser_power</span> <span class="o">=</span> <span class="n">laser_power</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Create the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> object. To set the initial conditions of the density matrix at t = 0 ns <span class="math notranslate nohighlight">\(\rho(t = 0)\)</span> we can use the <code class="docutils literal notranslate"><span class="pre">setRho_0(s1,</span> <span class="pre">s2,</span> <span class="pre">val)</span></code> where <code class="docutils literal notranslate"><span class="pre">s1</span></code> and <code class="docutils literal notranslate"><span class="pre">s2</span></code> are <code class="docutils literal notranslate"><span class="pre">State</span></code> objects denoting the element of the density matrix to be set as <span class="math notranslate nohighlight">\(\rho_{s1,s2}\)</span> and <code class="docutils literal notranslate"><span class="pre">val</span></code> denotes the value assigned to this element.</p>
+<p>For this system we have set the populations of states <span class="math notranslate nohighlight">\(|1\rangle\)</span>, <span class="math notranslate nohighlight">\(|3\rangle\)</span>, and <span class="math notranslate nohighlight">\(|5\rangle\)</span> as 1/3. So the density matrix elements <span class="math notranslate nohighlight">\(\rho_{11}\)</span> = <span class="math notranslate nohighlight">\(\rho_{33}\)</span> = <span class="math notranslate nohighlight">\(\rho_{55}\)</span> = 1/3.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">helium_system</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">laser_wavelength</span><span class="p">,</span> <span class="n">tau_f</span> <span class="o">=</span> <span class="n">tau_f</span><span class="p">,</span>
+                                 <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">laser_power</span><span class="p">,</span> <span class="n">laser_power</span> <span class="o">=</span> <span class="n">laser_power</span><span class="p">,</span>
+                                   <span class="n">rabi_scaling</span> <span class="o">=</span> <span class="n">rabi_scaling_he</span><span class="p">,</span> <span class="n">rabi_factors</span> <span class="o">=</span> <span class="n">rabi_factors_he</span><span class="p">,)</span>
 <span class="n">helium_system</span><span class="o">.</span><span class="n">setRho_0</span><span class="p">(</span><span class="n">one</span><span class="p">,</span> <span class="n">one</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">helium_system</span><span class="o">.</span><span class="n">setRho_0</span><span class="p">(</span><span class="n">three</span><span class="p">,</span> <span class="n">three</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">helium_system</span><span class="o">.</span><span class="n">setRho_0</span><span class="p">(</span><span class="n">five</span><span class="p">,</span> <span class="n">five</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+<p>Time evolve the system.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -532,8 +610,9 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<p>Now, we can plot the populations using <code class="docutils literal notranslate"><span class="pre">Plotly</span></code> (or any other plotting package).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -573,12 +652,22 @@ div.rendered_html tbody tr:hover {
                  <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
                 <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                     <span class="n">size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">))</span>
-<span class="n">fig_upper</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">fig_upper</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigUpperNatFrame.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigUpperNatFrame.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial2-HeRotation_17_0.png" src="../_images/tutorials_Tutorial2-HeRotation_17_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -632,30 +721,47 @@ div.rendered_html tbody tr:hover {
 <span class="n">fig_lower</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Lower Atomic Populations&quot;</span><span class="p">,</span>
                         <span class="n">xaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Time (ns)&quot;</span><span class="p">,</span>
                  <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">)</span>
-<span class="n">fig_lower</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">fig_lower</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigLowerNatFrame.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigLowerNatFrame.png&quot;</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial2-HeRotation_18_0.png" src="../_images/tutorials_Tutorial2-HeRotation_18_0.png" />
 </div>
 </div>
 </div>
 </div>
 <div class="section" id="Rotation">
-<h1>Rotation<a class="headerlink" href="#Rotation" title="Permalink to this headline">¶</a></h1>
+<h2>Rotation<a class="headerlink" href="#Rotation" title="Permalink to this headline">¶</a></h2>
+<p>With <code class="docutils literal notranslate"><span class="pre">LASED</span></code> we can rotate density matrices to different reference frames using the Wigner-D matrix.</p>
+<p><strong>Note</strong>: The Wigner-D matrix is only defined for J-represenattion (when isospin I = 0) and therefore when in F-representation the rotation may not be correct. Also, density matrices can only be rotated for single atomic states so the optical coherences between ground and excited states cannot be rotated. To obtain optical coherences in a different reference frame the initial density matrix (at t = 0) must be rotated and time evolved with the polarisation rotated to that frame.</p>
+<p>The rotation is defined by Euler angles <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">beta</span></code>, and <code class="docutils literal notranslate"><span class="pre">gamma</span></code>. The frame is rotated with each angle in succession so that: * <code class="docutils literal notranslate"><span class="pre">alpha</span></code> is the rotation (in radians) around the initial z-axis to obtain the new frame Z’ * <code class="docutils literal notranslate"><span class="pre">beta</span></code> is the rotation (in radians) about the new y’-axis to obtain the new frame Z’’ * <code class="docutils literal notranslate"><span class="pre">gamma</span></code> is the rotation (in radians) about the new z’’-axis to obtain the final frame</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">LASED</span></code> to rotate the initial density matrix use <code class="docutils literal notranslate"><span class="pre">rotateRho_0(alpha,</span> <span class="pre">beta,</span> <span class="pre">gamma)</span></code> on the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code>. In this he lium system the atom is changed to be defined in the collision frame from the natural frame so the polarisation is changed to be purely linear with <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">[0]</span></code> and scaled to 1.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">alpha</span> <span class="o">=</span> <span class="n">PI</span><span class="o">/</span><span class="mi">2</span>
-<span class="n">beta</span> <span class="o">=</span> <span class="n">PI</span><span class="o">/</span><span class="mi">2</span>
-<span class="n">gamma</span> <span class="o">=</span> <span class="o">-</span><span class="n">PI</span><span class="o">/</span><span class="mi">2</span>
+<span></span><span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span>
 <span class="n">helium_system_rot</span> <span class="o">=</span> <span class="n">helium_system</span>
 <span class="n">helium_system_rot</span><span class="o">.</span><span class="n">rotateRho_0</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
 <span class="n">helium_system_rot</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">helium_system</span><span class="o">.</span><span class="n">rabi_scaling</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">helium_system</span><span class="o">.</span><span class="n">rabi_factors</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<p>Now, we can time evolve this system in this new reference frame.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -665,14 +771,22 @@ div.rendered_html tbody tr:hover {
                             <span class="n">n_beam_averaging</span> <span class="o">=</span> <span class="n">n_intensity</span><span class="p">,</span>
                             <span class="n">doppler_width</span> <span class="o">=</span> <span class="n">doppler_width</span><span class="p">,</span>
                             <span class="n">doppler_detunings</span> <span class="o">=</span> <span class="n">doppler_detunings</span><span class="p">,</span>
-                            <span class="n">rabi_scaling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
                             <span class="n">beam_profile_averaging</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                             <span class="n">doppler_averaging</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+LaserAtomSystem([6, 7, 8], [1, 2, 3, 4, 5], 100000.0, [0], [1, 0, -1], 8.27e-07, 100000.0, 100, 100)
+</pre></div></div>
+</div>
+<p>Now we can plot what the populations look like.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -712,12 +826,22 @@ div.rendered_html tbody tr:hover {
                  <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
                 <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                     <span class="n">size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">))</span>
-<span class="n">fig_upper</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">fig_upper</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigUpperCollFrame.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigUpperCollFrame.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial2-HeRotation_24_0.png" src="../_images/tutorials_Tutorial2-HeRotation_24_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -771,12 +895,24 @@ div.rendered_html tbody tr:hover {
 <span class="n">fig_lower</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Lower Atomic Populations&quot;</span><span class="p">,</span>
                         <span class="n">xaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Time (ns)&quot;</span><span class="p">,</span>
                  <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">)</span>
-<span class="n">fig_lower</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">fig_lower</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigLowerCollFrame.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigLowerCollFrame.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial2-HeRotation_25_0.png" src="../_images/tutorials_Tutorial2-HeRotation_25_0.png" />
+</div>
+</div>
+<p>If we rotate the time-evolved density matrix <code class="docutils literal notranslate"><span class="pre">rho_t</span></code> back to the natural frame we should get the same populations as when we evolved in the natural frame as the excitation must be the same in all reference frames. We can do this rotation by using <code class="docutils literal notranslate"><span class="pre">rotateRho_t</span></code> on the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code>.</p>
+<p><strong>Note</strong>: A message will be thrown saying that the optical coherences are not rotated.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -785,8 +921,18 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Optical coherences are preserved under rotation. To obtain these in a new reference frame, rotate rho_0 and then evolve in the new reference frame with the correct polarisation.
+Natural Frame final populations
+</pre></div></div>
+</div>
+<p>Now we can plot the results and obtain the same plots as in the first time evolution.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -826,12 +972,22 @@ div.rendered_html tbody tr:hover {
                  <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
                 <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                     <span class="n">size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">))</span>
-<span class="n">fig_upper</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">fig_upper</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigUpperRotatedToNatFrame.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigUpperRotatedToNatFrame.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial2-HeRotation_29_0.png" src="../_images/tutorials_Tutorial2-HeRotation_29_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -885,8 +1041,19 @@ div.rendered_html tbody tr:hover {
 <span class="n">fig_lower</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Lower Atomic Populations&quot;</span><span class="p">,</span>
                         <span class="n">xaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Time (ns)&quot;</span><span class="p">,</span>
                  <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">)</span>
-<span class="n">fig_lower</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">fig_lower</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigLowerRotatedToNatFrame.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial2-HeFigLowerRotatedToNatFrame.png&quot;</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial2-HeRotation_30_0.png" src="../_images/tutorials_Tutorial2-HeRotation_30_0.png" />
+</div>
 </div>
 </div>
 </div>

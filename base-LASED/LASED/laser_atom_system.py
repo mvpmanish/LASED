@@ -32,7 +32,6 @@ class LaserAtomSystem:
         rabi_factors (list): Elements of this list are multiplies by the half-Rabi frequency for each polarisation. This is used to obtain elliptical polarisation or align the polarisation of the laser to a different axis e.g. rabi_factors = [1*cos(pi/2)+1*j*sin(pi/2), 2*cos(pi/2+2*j*sin(pi/2))] for Q = [1, -1] gives a more LH elliptical polarisation aligned by 45 deg to the x-axis.
     """
     
-    # Class variables
     Q_decay = [1, 0 ,-1]
     rho_t = []
     time = []
