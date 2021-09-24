@@ -159,9 +159,9 @@ class LaserAtomSystem:
             Density matrix input must be square and the size of the matrix must match with E or G.
         """
         size = len(density_rho)
-        if(size == len(G)):
+        if(size == len(self.G)):
             sub_states = self.G
-        elif(size == len(E)):
+        elif(size == len(self.E)):
             sub_states = self.E
         else:
             print("Size of density_rho does not match with excited or ground states")
