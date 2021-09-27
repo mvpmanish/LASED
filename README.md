@@ -1,7 +1,5 @@
 # LASED: Laser Atom interaction Simulator using quantum ElectroDynamics
 
-THIS PROJECT IS STILL IN BETA. PLEASE GIVE SOME FEEDBACK TO github.com/mvpmanish.
-
 Many experiments using atoms and lasers are performed in physics which require knowledge and modelling about the excited state of the atomic species being studied. Steady-state models can be used to get the final equilibrium of a laser-atom system but a large number of laser-atom interactions are short-lived an decay quickly. Most models using the Louiville equation to capture the dynamics of the interaction do not use a full quantum electrodynamic picture to evolve the system over time but instead use a semi-classical approach. In this simulator all dynamics are calculated by deriving the equations from field operators. This gives a more physcially accurate model.
 
 ## Installation
