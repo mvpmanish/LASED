@@ -72,7 +72,7 @@ def symbolicPrintRhoee(n, E, G, Q, Q_decay, tau_f, rabi_scaling, rabi_factors):
                 for g in G:
                     for i,q in enumerate(Q):
                         if(coupling(epp, g, q) != 0):
-                            rho_dot += S('I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i], epp.label, g.label, q, e.label, epp.label))
+                            rho_dot += S('I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i], epp.label, g.label, q, e.label, g.label))
                 for g in G:
                     for i,q in enumerate(Q): 
                         if(coupling(e, g, q) != 0):

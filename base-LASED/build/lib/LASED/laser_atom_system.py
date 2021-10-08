@@ -8,7 +8,7 @@ from LASED.index import *
 from LASED.generate_sub_states import *
 from LASED.save_to_csv import *
 
-import LASED.rotation
+import LASED.rotation as rot
 import numpy as np
 
 
@@ -32,7 +32,6 @@ class LaserAtomSystem:
         rabi_factors (list): Elements of this list are multiplies by the half-Rabi frequency for each polarisation. This is used to obtain elliptical polarisation or align the polarisation of the laser to a different axis e.g. rabi_factors = [1*cos(pi/2)+1*j*sin(pi/2), 2*cos(pi/2+2*j*sin(pi/2))] for Q = [1, -1] gives a more LH elliptical polarisation aligned by 45 deg to the x-axis.
     """
     
-    # Class variables
     Q_decay = [1, 0 ,-1]
     rho_t = []
     time = []
@@ -160,9 +159,9 @@ class LaserAtomSystem:
             Density matrix input must be square and the size of the matrix must match with E or G.
         """
         size = len(density_rho)
-        if(size == len(G)):
+        if(size == len(self.G)):
             sub_states = self.G
-        elif(size == len(E)):
+        elif(size == len(self.E)):
             sub_states = self.E
         else:
             print("Size of density_rho does not match with excited or ground states")
@@ -205,15 +204,15 @@ class LaserAtomSystem:
         """
         # Check if any state is in F-representation
         sum_I = 0
-        for e in E:
+        for e in self.E:
             sum_I += e.I
-        for g in G:
+        for g in self.G:
             sum_I += g.I
         if(sum_I > 0):
             print("Warning:  Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation and not in F-representation! ")
             return
         
-        self.rho_0 = rotation.rotateInitialMatrix(self.rho_0, self.n, self.E, self.G, alpha, beta, gamma)
+        self.rho_0 = rot.rotateInitialMatrix(self.rho_0, self.n, self.E, self.G, alpha, beta, gamma)
     
     def rotateRho_t(self, alpha, beta, gamma):
         """ Rotate rho_0 by the Euler angles alpha, beta, and gamma.
@@ -231,9 +230,9 @@ class LaserAtomSystem:
         
         # Check if any state is in F-representation
         sum_I = 0
-        for e in E:
+        for e in self.E:
             sum_I += e.I
-        for g in G:
+        for g in self.G:
             sum_I += g.I
         if(sum_I > 0):
             print("Warning:  Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation and not in F-representation! ")
@@ -245,7 +244,7 @@ class LaserAtomSystem:
             new_rho = np.zeros((self.n*self.n, 1), dtype = complex)  # Placeholder
             for i, element in enumerate(new_rho):
                 new_rho[i, 0] = rho[i]
-            new_rho = rotation.rotateInitialMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma)
+            new_rho = rot.rotateInitialMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma)
             rotated_rho_t.append(new_rho)
         # Flip this back to the structure of rho_t
         self.rho_t = np.transpose(rotated_rho_t)[0]

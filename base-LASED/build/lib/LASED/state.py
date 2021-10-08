@@ -2,7 +2,6 @@
 Class definition for an atomic state
 '''
 
-# Class to hold information to construct an atomic state
 class State():
     """An atomic state.
     
