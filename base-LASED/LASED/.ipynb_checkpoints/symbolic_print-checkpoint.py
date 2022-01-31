@@ -13,22 +13,24 @@ from LASED.index import *
 from LASED.decay_constant import *
 
 
-def symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, detuning, laser_wavelength, atomic_velocity, rabi_scaling, rabi_factors):
+def symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength, atomic_velocity, rabi_scaling, rabi_factors):
     """Prints the equations of motion of the laser-atom system in full using Sympy.
     """
-    symbolicPrintRhogg(n, E, G, Q, Q_decay, rabi_scaling, rabi_factors)
+    symbolicPrintRhogg(n, E, G, Q, Q_decay, tau_b, rabi_scaling, rabi_factors)
     symbolicPrintRhoee(n, E, G, Q, Q_decay, tau_f, rabi_scaling, rabi_factors)
-    symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, detuning, laser_wavelength, atomic_velocity, rabi_scaling, rabi_factors)
-    symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f, detuning, laser_wavelength, atomic_velocity, rabi_scaling, rabi_factors)
+    symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength, atomic_velocity, rabi_scaling, rabi_factors)
+    symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength, atomic_velocity, rabi_scaling, rabi_factors)
     
     
-def symbolicPrintRhogg(n, E, G, Q, Q_decay, rabi_scaling, rabi_factors):
+def symbolicPrintRhogg(n, E, G, Q, Q_decay, tau_b, rabi_scaling, rabi_factors):
         """Prints the density matrix elements rho_gg'' for the motion of the laser-atom system using Sympy.
         """
         # rho_gg''
         for g in G:  # Start with looping over g and g'' for rho_gg''
             for gpp in G:
                 rho_dot = 0
+                if(tau_b != None):
+                    rho_dot += S('-rho{}{}/tau_b'.format(g.label, gpp.label))
                 if(delta(g, gpp) != 0):
                     rho_dot += S('Delta_{}{}*rho_{}{}'.format(g.label, gpp.label, g.label, gpp.label))
                 for e in E:
@@ -79,7 +81,7 @@ def symbolicPrintRhoee(n, E, G, Q, Q_decay, tau_f, rabi_scaling, rabi_factors):
                             rho_dot += S('-I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i], e.label, g.label, q, g.label, epp.label))
                 display(Eq(S('rhodot_{}{}'.format(e.label, epp.label)), rho_dot))
                 
-def symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, detuning, laser_wavelength, atomic_velocity, rabi_scaling, rabi_factors):
+def symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength, atomic_velocity, rabi_scaling, rabi_factors):
         """Prints the density matrix elements rho_ge for the motion of the laser-atom system using Sympy.
         """ 
         # rho_ge
@@ -88,6 +90,8 @@ def symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, detuning, laser_wavelength, a
                 rho_dot = S('-rho_{}{}/(2*tau)'.format(g.label, e.label))
                 if(tau_f != None):
                     rho_dot += S('-rho{}{}/(2*tau_f)'.format(g.label, e.label))
+                if(tau_b != None):
+                    rho_dot += S('-rho{}{}/(2*tau_b)'.format(g.label, e.label))
                 if(dopplerDelta(e, g, w_q = angularFreq(laser_wavelength), lambda_q = laser_wavelength, v_z = atomic_velocity) != 0):
                     rho_dot += S('-I*Delta({}, {}, omega_q, v_z)*rho_{}{}'.format(e.label, g.label, g.label, e.label))
                 if(detuning != None):
@@ -102,7 +106,7 @@ def symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, detuning, laser_wavelength, a
                             rho_dot += S('-I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i], e.label, gp.label, q, g.label, gp.label))
                 display(Eq(S('rhodot_{}{}'.format(g.label, e.label)), rho_dot))
                 
-def symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f, detuning, laser_wavelength, atomic_velocity, rabi_scaling, rabi_factors):
+def symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength, atomic_velocity, rabi_scaling, rabi_factors):
         """Prints the density matrix elements rho_eg for the motion of the laser-atom system using Sympy.
         """ 
         # rho_eg
@@ -111,6 +115,8 @@ def symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f, detuning, laser_wavelength, a
                 rho_dot = S('-rho_{}{}/(2*tau)'.format(e.label, g.label))
                 if(tau_f != None):
                     rho_dot += S('-rho{}{}/(2*tau_f)'.format(e.label, g.label))
+                if(tau_b != None):
+                    rho_dot += S('-rho{}{}/(2*tau_b)'.format(e.label, g.label))
                 if(dopplerDelta(e, g, w_q = angularFreq(laser_wavelength), lambda_q = laser_wavelength, v_z = atomic_velocity) != 0):
                     rho_dot += S('I*Delta({}, {}, omega_q, v_z)*rho_{}{}'.format(e.label, g.label, e.label, g.label))
                 if(detuning != None):
