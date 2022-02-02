@@ -22,7 +22,7 @@ def symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavel
     """
     if(pretty_print_eq):
         init_printing() # Initialise the IPython environment for printing
-    if((pretty_print_eq_pdf or pretty_print_pdf_eq_tex) and (not pretty_print_eq_filename)):
+    if((pretty_print_eq_pdf or pretty_print_eq_tex) and (not pretty_print_eq_filename)):
         # Catch the case where the filename is not give
         print("""Need to have a filename for the .tex/.pdf files!
         \nUse the keyword \"pretty_print_eq_filename =\" and specify your filename.
@@ -119,7 +119,7 @@ def symbolicPrintRhoee(n, E, G, Q, Q_decay, tau_f, rabi_scaling, rabi_factors,
                      appendEqToTexFile(pretty_print_eq_file, latex(eq))
 
 def symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength, atomic_velocity,
-                        rabi_scaling, rabi_factors, pretty_print_eq_file = None):
+                        rabi_scaling, rabi_factors, pretty_print_eq = None, pretty_print_eq_file = None):
         """Prints the density matrix elements rho_ge for the motion of the laser-atom system using Sympy.
         """
         # rho_ge
@@ -149,7 +149,7 @@ def symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavele
                      appendEqToTexFile(pretty_print_eq_file, latex(eq))
 
 def symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength, atomic_velocity,
-                        rabi_scaling, rabi_factors, pretty_print_eq_file = None):
+                        rabi_scaling, rabi_factors, pretty_print_eq = None, pretty_print_eq_file = None):
         """Prints the density matrix elements rho_eg for the motion of the laser-atom system using Sympy.
         """
         # rho_eg
