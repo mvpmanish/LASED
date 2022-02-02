@@ -98,9 +98,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#Setting-up-the-System">Setting up the System</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Time-Evolution-of-the-System">Time Evolution of the System</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Saving-and-Plotting">Saving and Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Elliptical-Polarisation">Elliptical Polarisation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="Tutorial2-HeRotation.html">Tutorial 2: D to P Exciation in Helium with Atomic Doppler Profile Avergaing, Gaussian Beam Averaging, and Rotation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial3-MetastableHe.html">Tutorial 3: Initialisation of Metastable He Excitation with Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial4-SodiumDLine.html">Tutorial 4: Hyperfine Structure of Sodium D2 Line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial5-Rubidium85DLine.html">Tutorial 5: Rubidium-85 D Line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial6-Caesium133DLine.html">Tutorial 6: Caesium-133 D Line</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">LASED</a></li>
@@ -450,32 +455,15 @@ laser on-resonance and 200 MHz &amp; 500 MHz detuned from resonance.</p>
 <p>First, we’ll set up the states. A diagram of the system we are going to model is seen below. The ground S-state is represented by one sub-state lebelled as <span class="math notranslate nohighlight">\(|1\rangle\)</span> and the excited P-state is represented by three sub-states labelled as <span class="math notranslate nohighlight">\(|2\rangle\)</span>, <span class="math notranslate nohighlight">\(|3\rangle\)</span>, and <span class="math notranslate nohighlight">\(|4\rangle\)</span>.</p>
 <p>The numbers indicate the labelling I have given them. It is convention to label the sub-states in your system by labelling the lowest in energy state first. The sub-state with the lowest <span class="math notranslate nohighlight">\(m\)</span> value is labelled as <span class="math notranslate nohighlight">\(|1\rangle\)</span> and then the 2nd lowest <span class="math notranslate nohighlight">\(m\)</span> value as <span class="math notranslate nohighlight">\(|2\rangle\)</span> etc. until you run out of sub-states. Then, the next highest in energy state is labelled.</p>
 <p>The wavelength of the difference in energy between these two states is also shown as 422.8 nm.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="n">Image</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;../../../LevelDiagrams/Calcium.jpg&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/tutorials_Tutorial1-SimpleCalcium_3_0.jpg" src="../_images/tutorials_Tutorial1-SimpleCalcium_3_0.jpg" />
-</div>
-</div>
+<img alt="Calcium" src="../_images/Calcium.jpg" />
 <p>Now, we’ll import the <code class="docutils literal notranslate"><span class="pre">LASED</span></code> library and a plotting library. I use <code class="docutils literal notranslate"><span class="pre">Plotly</span></code> to plot all the figures here but any plotting library can be used.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">LASED</span> <span class="k">as</span> <span class="nn">las</span>
-
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
 <span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>  <span class="c1"># For plotting</span>
 <span class="kn">import</span> <span class="nn">time</span>  <span class="c1"># NOT NEEDED: For seeing how quickly the time evolution is calculated</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -531,8 +519,9 @@ laser on-resonance and 200 MHz &amp; 500 MHz detuned from resonance.</p>
 State(label = 3, w = 4455183.460995396, m = 0, L = 1, J = 1, I = 0, F = 1)
 </pre></div></div>
 </div>
-<p>Declare the laser parameters. The intensity of the laser <code class="docutils literal notranslate"><span class="pre">laser_intensity</span></code> must be in u nits of mW/mm<span class="math notranslate nohighlight">\(^2\)</span>.</p>
-<p>The polarisation of the laser is defined by keyword <code class="docutils literal notranslate"><span class="pre">Q</span></code> and is either right-hand circular (<span class="math notranslate nohighlight">\(\sigma^+\)</span>) with a +1, left-hand circular (<span class="math notranslate nohighlight">\(\sigma^-\)</span>) with a -1, and linear (<span class="math notranslate nohighlight">\(\pi\)</span>) polarisation with the polarisation axis defined along the axis with a 0 (angle of polarisation of zero degrees). <code class="docutils literal notranslate"><span class="pre">Q</span></code> is defined as a list of any of these three values.</p>
+<p>Declare the laser parameters. The intensity of the laser <code class="docutils literal notranslate"><span class="pre">laser_intensity</span></code> must be in units of mW/mm<span class="math notranslate nohighlight">\(^2\)</span>.</p>
+<p>The polarisation of the laser is defined by keyword <code class="docutils literal notranslate"><span class="pre">Q</span></code> and is either right-hand circular (<span class="math notranslate nohighlight">\(\sigma^+\)</span>) with a +1, left-hand circular (<span class="math notranslate nohighlight">\(\sigma^-\)</span>) with a -1, and linear (<span class="math notranslate nohighlight">\(\pi\)</span>) polarisation with the polarisation axis defined along the axis with a 0 (angle of polarisation of zero degrees). <code class="docutils literal notranslate"><span class="pre">Q</span></code> is defined as a list of any of these three values. If <code class="docutils literal notranslate"><span class="pre">Q</span></code> is 0 then it is defined that the linear polarisation is aligned with the x-axis (if the z-axis is the quantisation axis).
+This is known as the collision frame in scattering experiments.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">detuning</span></code> of the laser away from resonance can be specified as well. If no detuning is given then the laser is assumed to be on-resonance i.e. <code class="docutils literal notranslate"><span class="pre">detuning</span> <span class="pre">=</span> <span class="pre">0</span></code></p>
 <p><strong>Note on using more than one polarisation</strong>: If more than one value is in the list then the laser is defined as having simulataneous polarisations of the same laser acting upon the atom. This can be possible if working in the natural frame when the laser is travelling along the direction of the quantisation axis and the polarisation is linear in the collision frame. When working in this natural frame <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">[-1,</span> <span class="pre">1]</span></code>. You must normalise the Rabi frequencies if you do this by a normalisation
 constant by giving the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> an attribute called <code class="docutils literal notranslate"><span class="pre">rabi_scaling</span></code>. In this case of two simultaneous Rabi frequencies, the correct time evolution would be scaled by <code class="docutils literal notranslate"><span class="pre">1/np.sqrt(2)</span></code>. If <code class="docutils literal notranslate"><span class="pre">n</span></code> simultaneous polarisations are used then it must be scaled by <code class="docutils literal notranslate"><span class="pre">1/np.sqrt(n)</span></code>. You must also apply the <code class="docutils literal notranslate"><span class="pre">rabi_factors</span></code> attribute as the simultaneous combination of LHC and RHC Rabi frequencies is only equal to a linear exciation if the total Rabi frequency is
@@ -571,7 +560,6 @@ constant by giving the <code class="docutils literal notranslate"><span class="p
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">calcium_system</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ca</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
                                  <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">intensity_ca</span><span class="p">)</span>
-
 <span class="n">calcium_system200MHzdetuned</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ca</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
                                  <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">intensity_ca</span><span class="p">)</span>
 <span class="n">calcium_system500MHzdetuned</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ca</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
@@ -629,7 +617,7 @@ $\displaystyle \dot{\rho}_{22} = - \frac{\rho_{22}}{\tau}$</div></div>
 </div>
 <div class="output_area docutils container">
 <div class="math notranslate nohighlight">
-$\displaystyle \dot{\rho}_{23} = i \rho_{23} \Omega{\left(3,1,0 \right)} - \frac{\rho_{23}}{\tau}$</div></div>
+$\displaystyle \dot{\rho}_{23} = i \rho_{21} \Omega{\left(3,1,0 \right)} - \frac{\rho_{23}}{\tau}$</div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -650,7 +638,7 @@ $\displaystyle \dot{\rho}_{32} = - i \rho_{12} \Omega{\left(3,1,0 \right)} - \fr
 </div>
 <div class="output_area docutils container">
 <div class="math notranslate nohighlight">
-$\displaystyle \dot{\rho}_{33} = - i \rho_{13} \Omega{\left(3,1,0 \right)} + i \rho_{33} \Omega{\left(3,1,0 \right)} - \frac{\rho_{33}}{\tau}$</div></div>
+$\displaystyle \dot{\rho}_{33} = - i \rho_{13} \Omega{\left(3,1,0 \right)} + i \rho_{31} \Omega{\left(3,1,0 \right)} - \frac{\rho_{33}}{\tau}$</div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -671,7 +659,7 @@ $\displaystyle \dot{\rho}_{42} = - \frac{\rho_{42}}{\tau}$</div></div>
 </div>
 <div class="output_area docutils container">
 <div class="math notranslate nohighlight">
-$\displaystyle \dot{\rho}_{43} = i \rho_{43} \Omega{\left(3,1,0 \right)} - \frac{\rho_{43}}{\tau}$</div></div>
+$\displaystyle \dot{\rho}_{43} = i \rho_{41} \Omega{\left(3,1,0 \right)} - \frac{\rho_{43}}{\tau}$</div></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -729,7 +717,7 @@ $\displaystyle \dot{\rho}_{41} = - \frac{\rho_{41}}{2 \tau} + i \rho_{43} \Omega
 <div class="highlight"><pre>
 Populating ground states equally as the initial condition.
 Populating ground states equally as the initial condition.
-The code finished in 6.5154 seconds
+The code finished in 9.7780 seconds
 </pre></div></div>
 </div>
 </div>
@@ -801,9 +789,128 @@ The code finished in 6.5154 seconds
 </pre></div>
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/tutorials_Tutorial1-SimpleCalcium_22_0.png" src="../_images/tutorials_Tutorial1-SimpleCalcium_22_0.png" />
+<img alt="../_images/tutorials_Tutorial1-SimpleCalcium_21_0.png" src="../_images/tutorials_Tutorial1-SimpleCalcium_21_0.png" />
 </div>
 </div>
+</div>
+<div class="section" id="Elliptical-Polarisation">
+<h2>Elliptical Polarisation<a class="headerlink" href="#Elliptical-Polarisation" title="Permalink to this headline">¶</a></h2>
+<p>To excite an atomic system with ellipticaly polarised light use the relation that elliptically polarisaed light can be composed of right-hand circular (RHC) <span class="math notranslate nohighlight">\(\sigma^+\)</span> and left-hand circular (LHC) <span class="math notranslate nohighlight">\(\sigma^-\)</span> light in varying weights. So, elliptical light can be described as:</p>
+<div class="math notranslate nohighlight">
+\[\epsilon = \frac{1}{\sqrt{L^2+R^2}}(L\sigma^-+R\sigma^+)\]</div>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> and <span class="math notranslate nohighlight">\(L\)</span> are weights with a value of 0 to 1 denoting how elliptically polarised the light is in either right or left-handed direction. If <span class="math notranslate nohighlight">\(R = L\)</span> then the light is just linearly polarised.</p>
+<p>The Rabi frequency for elliptically polarisation follows from the expression above and is the superposition of the Rabi frequency for RHC and LHC light with differing weights:</p>
+<div class="math notranslate nohighlight">
+\[\Omega^{\epsilon}=\frac{1}{\sqrt{L^2+R^2}}(L\Omega^{-1}-R\Omega^{+1})\]</div>
+<p>To encode this in <code class="docutils literal notranslate"><span class="pre">LASED</span></code> the polarisation key word <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">[-1,</span> <span class="pre">1]</span></code> with <code class="docutils literal notranslate"><span class="pre">rabi_factors</span> <span class="pre">=</span> <span class="pre">[L,</span> <span class="pre">R]</span></code> and <code class="docutils literal notranslate"><span class="pre">rabi_scaling</span> <span class="pre">=</span> <span class="pre">1/np.sqrt(L*L+R*R)</span></code> for normalisation. With this description of the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> the laser beam’s direction of travel is down the quantisation axis. As an exmaple, the simple calcium system will be modelled with different weights: one system with more a more LHC ellipse and the other with a more RHC ellipse.</p>
+<p>For the first system, use values of L = 0.75 and R = 0.25.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Declare polarisation and Rabi parameters</span>
+<span class="n">Q_ellipse</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">rabi_factors_lhc</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]</span>
+<span class="n">rabi_scaling_lhc</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.75</span><span class="o">*</span><span class="mf">0.75</span><span class="o">+</span><span class="mf">0.25</span><span class="o">*</span><span class="mf">0.25</span><span class="p">)</span>
+
+<span class="c1"># Create laser-atom system</span>
+<span class="n">calcium_system_lhc</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ellipse</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
+                                 <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">intensity_ca</span><span class="p">,</span> <span class="n">rabi_scaling</span> <span class="o">=</span> <span class="n">rabi_scaling_lhc</span><span class="p">,</span>
+                                    <span class="n">rabi_factors</span> <span class="o">=</span> <span class="n">rabi_factors_lhc</span><span class="p">)</span>
+
+<span class="c1"># Time eveolve system</span>
+<span class="n">calcium_system_lhc</span><span class="o">.</span><span class="n">timeEvolution</span><span class="p">(</span><span class="n">time_ca</span><span class="p">)</span>
+
+<span class="c1"># Plot all excited states</span>
+<span class="n">rho_e</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system_lhc</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">)]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">E_ca</span><span class="p">]</span>
+<span class="n">fig_ca_lhc</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rho</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rho_e</span><span class="p">):</span>
+    <span class="n">fig_ca_lhc</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                <span class="n">y</span> <span class="o">=</span> <span class="n">rho</span><span class="p">,</span>
+                                <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;m_F = </span><span class="si">{</span><span class="n">E_ca</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                               <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lines&#39;</span><span class="p">))</span>
+
+<span class="n">fig_ca_lhc</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Calcium: Time Evolution of Upper States with Elliptical Polarisation (L, R) = (0.75, 0.25)&quot;</span><span class="p">,</span>
+                 <span class="n">xaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Time (ns)&quot;</span><span class="p">,</span>
+                 <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
+                <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">))</span>
+<span class="n">fig_ca_lhc</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SavedPlots/tutorial1-ellipselhc.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SavedPlots/tutorial1-ellipselhc.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Populating ground states equally as the initial condition.
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial1-SimpleCalcium_23_1.png" src="../_images/tutorials_Tutorial1-SimpleCalcium_23_1.png" />
+</div>
+</div>
+<p>Now, model a system with a slightly more RHC elliptcal polarisation.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Rabi parameters</span>
+<span class="n">rabi_factors_rhc</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">]</span>
+<span class="n">rabi_scaling_rhc</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.1</span><span class="o">*</span><span class="mf">0.1</span><span class="o">+</span><span class="mf">0.9</span><span class="o">*</span><span class="mf">0.9</span><span class="p">)</span>
+
+<span class="c1"># Create laser-atom system</span>
+<span class="n">calcium_system_rhc</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ellipse</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
+                                 <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">intensity_ca</span><span class="p">,</span> <span class="n">rabi_scaling</span> <span class="o">=</span> <span class="n">rabi_scaling_rhc</span><span class="p">,</span>
+                                    <span class="n">rabi_factors</span> <span class="o">=</span> <span class="n">rabi_factors_rhc</span><span class="p">)</span>
+
+<span class="c1"># Time eveolve system</span>
+<span class="n">calcium_system_rhc</span><span class="o">.</span><span class="n">timeEvolution</span><span class="p">(</span><span class="n">time_ca</span><span class="p">)</span>
+
+<span class="c1"># Plot all excited states</span>
+<span class="n">rho_e</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system_rhc</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">)]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">E_ca</span><span class="p">]</span>
+<span class="n">fig_ca_rhc</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rho</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rho_e</span><span class="p">):</span>
+    <span class="n">fig_ca_rhc</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                <span class="n">y</span> <span class="o">=</span> <span class="n">rho</span><span class="p">,</span>
+                                <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;m_F = </span><span class="si">{</span><span class="n">E_ca</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                               <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lines&#39;</span><span class="p">))</span>
+
+<span class="n">fig_ca_rhc</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Calcium: Time Evolution of Upper States with Elliptical Polarisation (L, R) = (0.45, 0.55)&quot;</span><span class="p">,</span>
+                 <span class="n">xaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Time (ns)&quot;</span><span class="p">,</span>
+                 <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
+                <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">))</span>
+<span class="n">fig_ca_rhc</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SavedPlots/tutorial1-ellipserhc.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SavedPlots/tutorial1-ellipserhc.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Populating ground states equally as the initial condition.
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial1-SimpleCalcium_25_1.png" src="../_images/tutorials_Tutorial1-SimpleCalcium_25_1.png" />
+</div>
+</div>
+<p>If L = R then this would be the same as a linear polarisation in the reference frame where the laser beam is travelling down the quantisation axis. This is called the natural frame. To put this in the collision frame, where the polarisation vector is along the quantisation axis, then rotations must be used.</p>
 </div>
 </div>
 

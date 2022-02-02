@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: LASED
-Version: 0.3.2
+Version: 0.4
 Summary: LASED
 Home-page: UNKNOWN
 Author: Manish Patel
@@ -29,6 +29,12 @@ Description: # LASED: Laser Atom interaction Simulator using quantum ElectroDyna
         ## Tutorials
         
         Check out readthedocs for detailed tutorials and a guide for how to use the library: https://lased.readthedocs.io/en/latest/
+        
+        ## Version History
+        
+        **v0.4**:
+        - Ability to model decay to other states not coupled to by the laser (e.g. non-radiative decay) using the keyword `tau_b` when instantiating the laser-atom system.
+        - Can export the symbolic printing of the equations of motion as a .tex and/or a .pdf file file using the keyword `pretty_print_eq_tex = True` and `pretty_print_eq_pdf = True` when performing a `timeEvolution` but the keyword `pretty_print_eq_filename` must be given a string to give the new file(s) a name. Note: to export to pdf `pdflatex` must be installed on your system to convert the .tex file to a .pdf file. 
         
         ## Acknowledgements
         

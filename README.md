@@ -22,6 +22,12 @@ In this simulator a user defines a `State` object with all quantum numbers defin
 
 Check out readthedocs for detailed tutorials and a guide for how to use the library: https://lased.readthedocs.io/en/latest/
 
+## Version History
+
+**v0.4**:
+- Ability to model decay to other states not coupled to by the laser (e.g. non-radiative decay) using the keyword `tau_b` when instantiating the laser-atom system.
+- Can export the symbolic printing of the equations of motion as a .tex and/or a .pdf file file using the keyword `pretty_print_eq_tex = True` and `pretty_print_eq_pdf = True` when performing a `timeEvolution` but the keyword `pretty_print_eq_filename` must be given a string to give the new file(s) a name. Note: to export to pdf `pdflatex` must be installed on your system to convert the .tex file to a .pdf file. 
+
 ## Acknowledgements
 
 Thank you to Professor Andrew Murray, Dr Matthew Harvey, and Parinya Udommai for their continued support with this library and project.
