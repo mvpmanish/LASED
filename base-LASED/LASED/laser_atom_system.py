@@ -28,7 +28,7 @@ class LaserAtomSystem:
         laser_power (float): Power of the laser in mW. This is needed for Gaussian averaging of beam profile.
         tau_f (float): Upper state lifetime to states outside of laser coupling in nanoseconds.
         tau_b (float): Ground state lifetime to states outside of laser coupling in nanoseconds.
-        rho_0 (ndarray): 2D array creating the density matrix at t = 0.
+        rho_0 (list of list): 2D array creating the density matrix at t = 0.
         rabi_scaling (float): The normalisation of the Rabi frequency. The half-Rabi frequency is divided by this number. Use this if there are more than one polarisations to normalise the population.
         rabi_factors (list): Elements of this list are multiplies by the half-Rabi frequency for each polarisation. This is used to obtain elliptical polarisation or align the polarisation of the laser to a different axis e.g. rabi_factors = [1*cos(pi/2)+1*j*sin(pi/2), 2*cos(pi/2+2*j*sin(pi/2))] for Q = [1, -1] gives a more LH elliptical polarisation aligned by 45 deg to the x-axis.
     """
@@ -143,6 +143,7 @@ class LaserAtomSystem:
         Parameters:
             i (State): First state index
             j (State): Second state index
+            value (np.complex): Sets the value of rho_ij to the complex value here
         """
         if(value > 1):
             print("Cannot set an element of a density matrix > 1!")
@@ -151,22 +152,23 @@ class LaserAtomSystem:
             row = index(i, j, self.n)
             self.rho_0[row, 0] = value
 
-    def appendDensityMatrixToRho_0(self, density_rho):
+    def appendDensityMatrixToRho_0(self, density_rho, state_type):
         """Sets the laser-atom system density matrix at t=0 to the matrix given.
 
         Parameters:
             density_rho (ndarray): 2D array of the system density matrix.
+            state_type (char): Defines whether the density matrix is for the ground or excited state. Either an "e" or "g" for excited and ground state density matrices respectively.
 
         Note:
             Density matrix input must be square and the size of the matrix must match with E or G.
         """
         size = len(density_rho)
-        if(size == len(self.G)):
+        if(size == len(self.G) and state_type == "g"):
             sub_states = self.G
-        elif(size == len(self.E)):
+        elif(size == len(self.E) and state_type == "e"):
             sub_states = self.E
         else:
-            print("Size of density_rho does not match with excited or ground states")
+            print("Size of density_rho does not match with state_type given.")
             return
         appendDensityMatrixToFlatCoupledMatrix(self.rho_0, density_rho, sub_states, self.n)
 
