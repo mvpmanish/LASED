@@ -43,4 +43,6 @@ def dopplerDelta(e, g, w_q, lambda_q, v_z):
         float: The detuning between ground and excited states including the doppler detuning due to a given atomic velocity.
     
     """
-    return w_q - v_z/lambda_q - e.w + g.w
+    # Convert the atomic velocity detuning to Grad/s
+    atomic_velocity_detuning = 2*PI*v_z/(lambda_q*1e9)
+    return w_q - atomic_velocity_detuning - e.w + g.w
