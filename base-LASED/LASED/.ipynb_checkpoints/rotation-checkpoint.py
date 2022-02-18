@@ -6,9 +6,8 @@ Date created: 12/05/2021
 from LASED.density_matrix import *
 import numpy as np
 import math
-import copy
 
-def wigner_D(J, alpha, beta, gamma):
+def wigner_D(J, mu, m, alpha, beta, gamma):
     """Calculates the Wigner D-matrix for rotation by Eueler angles (alpha, beta, gamma).
     
     Parameters:
@@ -21,14 +20,10 @@ def wigner_D(J, alpha, beta, gamma):
     Returns:
         ndarray: A square matrix of size 2J+1.
     """
-    size = 2*J+1  # Number of sub-states
-    m = np.linspace(-J, J, size, dtype=int)  # Projections of J
-    D = np.zeros((size, size), dtype = complex)  # Set up D-matrix
-    for i, mp in enumerate(m):
-        for j, mpp in enumerate(m):
-            alpha_const = math.cos(-mp*alpha)+1.j*math.sin(-mp*alpha)
-            gamma_const = math.cos(-mpp*gamma)+1.j*math.sin(-mpp*gamma)
-            D[i, j] = alpha_const*small_Wigner_D(J, beta, mp, mpp)*gamma_const
+    alpha_const = math.cos(-mu*alpha)+1.j*math.sin(-mu*alpha)
+    gamma_const = math.cos(-m*gamma)+1.j*math.sin(-m*gamma)
+    D = alpha_const*small_Wigner_D(J, beta, mu, m)*gamma_const
+    
     return D
 
 def small_Wigner_D(J, beta, mp, m):
@@ -56,26 +51,58 @@ def small_Wigner_D(J, beta, mp, m):
     
     return const*d_sum
 
-def rotation(rho, J, alpha, beta, gamma):
-    """Rotates a density matrix by the wigner D-matrix.
-    
-    The rotation is determined by Euler angles (alpha, beta, gamma). (rho_newframe) = (D)(rho)(D*).
+def createDictionaryOfSubStates(E, G):
+    """Creates a dictionary of sub-states with (F, m) as the key and the State object as the value.
     
     Parameters:
-        J (int): total angular momentum quantum number of the state which will be rotated with the 
-        resulting D-matrix.
+        E (list of States): List of excited sub-states in the laser-atom system.
+        G (list of States): List of ground sub-states in the laser-atom system
+    
+    Returns:
+        dictionary: A dictionary with (F, m) as the keys and the corresponding State object as the value
+    """
+    sub_state_list = []  # List of values
+    key_list = []
+    for e in E:  # Appen excited states
+        sub_state_list.append(e)
+    for g in G:  # Append ground states
+        sub_state_list.append(g)
+    for sub_state in sub_state_list:  # Append F and m values to create key values
+        key_list.append((sub_state.F, sub_state.m))  # Each key is a tuple of (F, m)
+    return dict(zip(key_list, sub_state_list))
+
+def rotateElement(rho, i, j, n, E, G, alpha, beta, gamma):
+    """Rotates an element of a density matrix rho_ij by the euler angles given.
+    
+    Parameters:
+        rho (complex): The density matrix to be rotated.
+        i (state): A sub-state of the laser-atom system.
+        j (state): A sub-state of the laser-atom system.
+        n (int): Total number of sub-states in the system.
         alpha (float): rotation around z-axis in radians.
         beta (float): rotation about the y'-axis in radians.
         gamma (float): rotation about the z''-axis in radians.
     
     Returns:
-        ndarray: The rotated density matrix.
+        complex: The rotated density matrix element.
     """
-    D_matrix = np.transpose(wigner_D(J, alpha, beta, gamma))
-    D_conj = np.transpose(np.conj(D_matrix))
-    return np.dot(D_matrix, np.dot(rho, D_conj))
+    F = i.F
+    Fp = j.F
+    m = i.m
+    mp = j.m
+    mu_list = np.linspace(-F, F, 2*F+1, dtype = int)
+    mup_list = np.linspace(-Fp, Fp, 2*Fp+1, dtype = int)
+    sub_state_dict = createDictionaryOfSubStates(E, G)  # Dictionary to retrive states by only using (F, m) values
+    rho_new_frame = 0  # Initialise the summation to zero
+    for mu in mu_list:
+        for mup in mup_list:
+            D_mu_m = wigner_D(F, mu, m, alpha, beta, gamma)
+            D_mup_mp = wigner_D(Fp, mup, mp, alpha, beta, gamma)
+            rho_FmuFmup = rho[index(sub_state_dict.get((F, mu)), sub_state_dict.get((Fp, mup)), n), 0]  # Retrieve the density matrix element
+            rho_new_frame += np.conj(D_mu_m)*rho_FmuFmup*D_mup_mp          
+    return rho_new_frame
 
-def rotateInitialMatrix(flat_rho, n, E, G, alpha, beta, gamma):
+def rotateFlatDensityMatrix(flat_rho, n, E, G, alpha, beta, gamma):
     """Rotate the excited and ground state populations by the Euler angles.
     
     Parameters:
@@ -90,16 +117,27 @@ def rotateInitialMatrix(flat_rho, n, E, G, alpha, beta, gamma):
     Returns:
         list of lists: A rotated flattened 2D density matrix
     """
-    # Make a copy to return
-    rotated_rho = copy.deepcopy(flat_rho)
+    rotated_rho = np.zeros((n*n, 1), dtype = complex)  # Placeholder for rotated density matrix
     # Rotate the excited state populations and atomic coherences
-    J_E = JNumber(E)
-    rotated_excited_rho = rotation(getSingleStateMatrix(rotated_rho, n, E), J_E, alpha, beta, gamma)
-    appendDensityMatrixToFlatCoupledMatrix(rotated_rho, rotated_excited_rho, E, n)
-    
-    # Rotate the ground state populations and atomic coherences
-    J_G = JNumber(G)
-    rotated_ground_rho = rotation(getSingleStateMatrix(rotated_rho, n, G), J_G, alpha, beta, gamma)
-    appendDensityMatrixToFlatCoupledMatrix(rotated_rho, rotated_ground_rho, G, n)
-    
+    # rho_gg''
+    for g in G:
+        for gpp in G:
+            rho_ggpp_new_frame = rotateElement(flat_rho, g, gpp, n, E, G, alpha, beta, gamma)
+            rotated_rho[index(g, gpp, n), 0] = rho_ggpp_new_frame
+    # rho_ee''
+    for e in E:
+        for epp in E:
+            rho_eepp_new_frame = rotateElement(flat_rho, e, epp, n, E, G, alpha, beta, gamma)
+            rotated_rho[index(e, epp, n), 0] = rho_eepp_new_frame
+    # rho_ge
+    for g in G:
+        for e in E:
+            rho_ge_new_frame = rotateElement(flat_rho, g, e, n, E, G, alpha, beta, gamma)
+            rotated_rho[index(g, e, n), 0] = rho_ge_new_frame
+    # rho_eg
+    for e in E:
+        for g in G:
+            rho_eg_new_frame = rotateElement(flat_rho, e, g, n, E, G, alpha, beta, gamma)
+            rotated_rho[index(e, g, n), 0] = rho_eg_new_frame
+
     return rotated_rho
