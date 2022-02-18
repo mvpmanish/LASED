@@ -7,8 +7,8 @@ from LASED.density_matrix import *
 from LASED.index import *
 from LASED.generate_sub_states import *
 from LASED.save_to_csv import *
+from LASED.rotation import *
 
-import LASED.rotation as rot
 import numpy as np
 
 
@@ -28,11 +28,10 @@ class LaserAtomSystem:
         laser_power (float): Power of the laser in mW. This is needed for Gaussian averaging of beam profile.
         tau_f (float): Upper state lifetime to states outside of laser coupling in nanoseconds.
         tau_b (float): Ground state lifetime to states outside of laser coupling in nanoseconds.
-        rho_0 (ndarray): 2D array creating the density matrix at t = 0.
+        rho_0 (list of list): 2D array creating the density matrix at t = 0.
         rabi_scaling (float): The normalisation of the Rabi frequency. The half-Rabi frequency is divided by this number. Use this if there are more than one polarisations to normalise the population.
-        rabi_factors (list): Elements of this list are multiplies by the half-Rabi frequency for each polarisation. This is used to obtain elliptical polarisation or align the polarisation of the laser to a different axis e.g. rabi_factors = [1*cos(pi/2)+1*j*sin(pi/2), 2*cos(pi/2+2*j*sin(pi/2))] for Q = [1, -1] gives a more LH elliptical polarisation aligned by 45 deg to the x-axis.
+        rabi_factors (list): Elements of this list are multiplies by the half-Rabi frequency for each polarisation. This can be used to obtain elliptical polarisation.
     """
-
     Q_decay = [1, 0 ,-1]
     rho_t = []
     time = []
@@ -143,6 +142,7 @@ class LaserAtomSystem:
         Parameters:
             i (State): First state index
             j (State): Second state index
+            value (np.complex): Sets the value of rho_ij to the complex value here
         """
         if(value > 1):
             print("Cannot set an element of a density matrix > 1!")
@@ -151,22 +151,23 @@ class LaserAtomSystem:
             row = index(i, j, self.n)
             self.rho_0[row, 0] = value
 
-    def appendDensityMatrixToRho_0(self, density_rho):
+    def appendDensityMatrixToRho_0(self, density_rho, state_type):
         """Sets the laser-atom system density matrix at t=0 to the matrix given.
 
         Parameters:
             density_rho (ndarray): 2D array of the system density matrix.
+            state_type (char): Defines whether the density matrix is for the ground or excited state. Either an "e" or "g" for excited and ground state density matrices respectively.
 
         Note:
             Density matrix input must be square and the size of the matrix must match with E or G.
         """
         size = len(density_rho)
-        if(size == len(self.G)):
+        if(size == len(self.G) and state_type == "g"):
             sub_states = self.G
-        elif(size == len(self.E)):
+        elif(size == len(self.E) and state_type == "e"):
             sub_states = self.E
         else:
-            print("Size of density_rho does not match with excited or ground states")
+            print("Size of density_rho does not match with state_type given.")
             return
         appendDensityMatrixToFlatCoupledMatrix(self.rho_0, density_rho, sub_states, self.n)
 
@@ -199,22 +200,8 @@ class LaserAtomSystem:
             alpha: rotation (in radians) around z-axis
             beta: rotation (in radians) about the y'-axis
             gamma: rotation (in radians) about the z''-axis
-
-        Note:
-            Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation
-            and not in F-representation.
         """
-        # Check if any state is in F-representation
-        sum_I = 0
-        for e in self.E:
-            sum_I += e.I
-        for g in self.G:
-            sum_I += g.I
-        if(sum_I > 0):
-            print("Warning:  Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation and not in F-representation! ")
-            return
-
-        self.rho_0 = rot.rotateInitialMatrix(self.rho_0, self.n, self.E, self.G, alpha, beta, gamma)
+        self.rho_0 = rotateFlatDensityMatrix(self.rho_0, self.n, self.E, self.G, alpha, beta, gamma)
 
     def rotateRho_t(self, alpha, beta, gamma):
         """ Rotate rho_0 by the Euler angles alpha, beta, and gamma.
@@ -223,30 +210,14 @@ class LaserAtomSystem:
             alpha: rotation (in radians) around z-axis
             beta: rotation (in radians) about the y'-axis
             gamma: rotation (in radians) about the z''-axis
-
-        Note:
-            Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation
-            and not in F-representation.
         """
-        print("Optical coherences are preserved under rotation. To obtain these in a new reference frame, rotate rho_0 and then evolve in the new reference frame with the correct polarisation.")
-
-        # Check if any state is in F-representation
-        sum_I = 0
-        for e in self.E:
-            sum_I += e.I
-        for g in self.G:
-            sum_I += g.I
-        if(sum_I > 0):
-            print("Warning:  Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation and not in F-representation! ")
-            return
-
         rotated_rho_t = []
         # Flip to loop over all rho
         for rho in np.transpose(self.rho_t):
             new_rho = np.zeros((self.n*self.n, 1), dtype = complex)  # Placeholder
             for i, element in enumerate(new_rho):
                 new_rho[i, 0] = rho[i]
-            new_rho = rot.rotateInitialMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma)
+            new_rho = rotateFlatDensityMatrix(new_rho, self.n, self.E, self.G, alpha, beta, gamma)
             rotated_rho_t.append(new_rho)
         # Flip this back to the structure of rho_t
         self.rho_t = np.transpose(rotated_rho_t)[0]
@@ -257,7 +228,7 @@ class LaserAtomSystem:
                     n_beam_averaging = None, doppler_width = None, doppler_detunings = None,
                      pretty_print_eq = None, pretty_print_eq_tex = None,
                     pretty_print_eq_pdf = None, pretty_print_eq_filename = None):
-        """ Evolves the laser-atom system over time.
+        """Evolves the laser-atom system over time.
 
         Produces a list of flattened 2D density matrices which correspond to the time array. This is stored in rho_t.
 
@@ -349,7 +320,7 @@ class LaserAtomSystem:
 
 
     def saveToCSV(self, filename, precision = None):
-        """Saves rho_t as a csv file
+        """Saves rho_t as a csv file.
 
         Parameters:
             filename (string): Name of the csv file created.

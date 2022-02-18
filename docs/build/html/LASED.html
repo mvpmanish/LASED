@@ -647,7 +647,7 @@ Generates sub-states of a quantum state</p>
 <dd><p>2D array creating the density matrix at t = 0.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>ndarray</p>
+<dd class="field-odd"><p>list of list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -666,7 +666,7 @@ Generates sub-states of a quantum state</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.rabi_factors">
 <span class="sig-name descname"><span class="pre">rabi_factors</span></span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.rabi_factors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Elements of this list are multiplies by the half-Rabi frequency for each polarisation. This is used to obtain elliptical polarisation or align the polarisation of the laser to a different axis e.g. rabi_factors = [1*cos(pi/2)+1*j*sin(pi/2), 2*cos(pi/2+2*j*sin(pi/2))] for Q = [1, -1] gives a more LH elliptical polarisation aligned by 45 deg to the x-axis.</p>
+<dd><p>Elements of this list are multiplies by the half-Rabi frequency for each polarisation. This can be used to obtain elliptical polarisation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>list</p>
@@ -726,11 +726,14 @@ to label 1 and 2 respectively.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.appendDensityMatrixToRho_0">
-<span class="sig-name descname"><span class="pre">appendDensityMatrixToRho_0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">density_rho</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.appendDensityMatrixToRho_0" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">appendDensityMatrixToRho_0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">density_rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.appendDensityMatrixToRho_0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the laser-atom system density matrix at t=0 to the matrix given.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>density_rho</strong> (<em>ndarray</em>) – 2D array of the system density matrix.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>density_rho</strong> (<em>ndarray</em>) – 2D array of the system density matrix.</p></li>
+<li><p><strong>state_type</strong> (<em>char</em>) – Defines whether the density matrix is for the ground or excited state. Either an “e” or “g” for excited and ground state density matrices respectively.</p></li>
+</ul>
 </dd>
 </dl>
 <div class="admonition note">
@@ -833,11 +836,6 @@ to label 1 and 2 respectively.</p>
 </ul>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation
-and not in F-representation.</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -853,17 +851,12 @@ and not in F-representation.</p>
 </ul>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Rotation can only be performed if isospin is zero i.e. rotation is only in J-representation
-and not in F-representation.</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="LASED.laser_atom_system.LaserAtomSystem.saveToCSV">
 <span class="sig-name descname"><span class="pre">saveToCSV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.laser_atom_system.LaserAtomSystem.saveToCSV" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves rho_t as a csv file</p>
+<dd><p>Saves rho_t as a csv file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -886,6 +879,7 @@ and not in F-representation.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>i</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – First state index</p></li>
 <li><p><strong>j</strong> (<a class="reference internal" href="#LASED.state.State" title="LASED.state.State"><em>State</em></a>) – Second state index</p></li>
+<li><p><strong>value</strong> (<em>np.complex</em>) – Sets the value of rho_ij to the complex value here</p></li>
 </ul>
 </dd>
 </dl>
@@ -979,8 +973,53 @@ and not in F-representation.</p>
 Author: Manish Patel
 Date created: 12/05/2021</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="LASED.rotation.rotateInitialMatrix">
-<span class="sig-prename descclassname"><span class="pre">LASED.rotation.</span></span><span class="sig-name descname"><span class="pre">rotateInitialMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flat_rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.rotation.rotateInitialMatrix" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="LASED.rotation.createDictionaryOfSubStates">
+<span class="sig-prename descclassname"><span class="pre">LASED.rotation.</span></span><span class="sig-name descname"><span class="pre">createDictionaryOfSubStates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.rotation.createDictionaryOfSubStates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a dictionary of sub-states with (F, m) as the key and the State object as the value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>E</strong> (<em>list of States</em>) – List of excited sub-states in the laser-atom system.</p></li>
+<li><p><strong>G</strong> (<em>list of States</em>) – List of ground sub-states in the laser-atom system</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with (F, m) as the keys and the corresponding State object as the value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.rotation.rotateElement">
+<span class="sig-prename descclassname"><span class="pre">LASED.rotation.</span></span><span class="sig-name descname"><span class="pre">rotateElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.rotation.rotateElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotates an element of a density matrix rho_ij by the euler angles given.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rho</strong> (<em>complex</em>) – The density matrix to be rotated.</p></li>
+<li><p><strong>i</strong> (<em>state</em>) – A sub-state of the laser-atom system.</p></li>
+<li><p><strong>j</strong> (<em>state</em>) – A sub-state of the laser-atom system.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Total number of sub-states in the system.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – rotation around z-axis in radians.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – rotation about the y’-axis in radians.</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – rotation about the z’’-axis in radians.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The rotated density matrix element.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>complex</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="LASED.rotation.rotateFlatDensityMatrix">
+<span class="sig-prename descclassname"><span class="pre">LASED.rotation.</span></span><span class="sig-name descname"><span class="pre">rotateFlatDensityMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flat_rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.rotation.rotateFlatDensityMatrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rotate the excited and ground state populations by the Euler angles.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -999,30 +1038,6 @@ Date created: 12/05/2021</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list of lists</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="LASED.rotation.rotation">
-<span class="sig-prename descclassname"><span class="pre">LASED.rotation.</span></span><span class="sig-name descname"><span class="pre">rotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.rotation.rotation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rotates a density matrix by the wigner D-matrix.</p>
-<p>The rotation is determined by Euler angles (alpha, beta, gamma). (rho_newframe) = (D)(rho)(D*).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>J</strong> (<em>int</em>) – total angular momentum quantum number of the state which will be rotated with the</p></li>
-<li><p><strong>D-matrix.</strong> (<em>resulting</em>) – </p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – rotation around z-axis in radians.</p></li>
-<li><p><strong>beta</strong> (<em>float</em>) – rotation about the y’-axis in radians.</p></li>
-<li><p><strong>gamma</strong> (<em>float</em>) – rotation about the z’’-axis in radians.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The rotated density matrix.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1051,7 +1066,7 @@ Date created: 12/05/2021</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="LASED.rotation.wigner_D">
-<span class="sig-prename descclassname"><span class="pre">LASED.rotation.</span></span><span class="sig-name descname"><span class="pre">wigner_D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.rotation.wigner_D" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">LASED.rotation.</span></span><span class="sig-name descname"><span class="pre">wigner_D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LASED.rotation.wigner_D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the Wigner D-matrix for rotation by Eueler angles (alpha, beta, gamma).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

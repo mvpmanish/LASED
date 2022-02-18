@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Tutorial 1: Simple Calcium &mdash; LASED 0.3 documentation</title>
+  <title>Tutorial 1: The Basics with Simple Calcium &mdash; LASED 0.3 documentation</title>
   
 
   
@@ -44,7 +44,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Tutorial 2: D to P Exciation in Helium with Atomic Doppler Profile Avergaing, Gaussian Beam Averaging, and Rotation" href="Tutorial2-HeRotation.html" />
+    <link rel="next" title="Tutorial 2: D to P Exciation in Helium" href="Tutorial2-HeRotation.html" />
     <link rel="prev" title="Tutorials" href="../tutorials.html" /> 
 </head>
 
@@ -94,14 +94,21 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Tutorial 1: Simple Calcium</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tutorial 1: The Basics with Simple Calcium</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Setting-up-the-System">Setting up the System</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Time-Evolution-of-the-System">Time Evolution of the System</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Saving-and-Plotting">Saving and Plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Elliptical-Polarisation">Elliptical Polarisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Setting-the-Initial-Conditions">Setting the Initial Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Gaussian-Laser-Beam-Profiles">Gaussian Laser Beam Profiles</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Doppler-Detuning-from-the-Atomic-Velocity-Profile">Doppler Detuning from the Atomic Velocity Profile</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="Tutorial2-HeRotation.html">Tutorial 2: D to P Exciation in Helium with Atomic Doppler Profile Avergaing, Gaussian Beam Averaging, and Rotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Doppler-Detuning-and-Gaussian-Beam-Profile">Doppler Detuning and Gaussian Beam Profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Exporting-the-Equations-of-Motion">Exporting the Equations of Motion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial2-HeRotation.html">Tutorial 2: D to P Exciation in Helium</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Tutorial3-MetastableHe.html">Tutorial 3: Initialisation of Metastable He Excitation with Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Tutorial4-SodiumDLine.html">Tutorial 4: Hyperfine Structure of Sodium D2 Line</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Tutorial5-Rubidium85DLine.html">Tutorial 5: Rubidium-85 D Line</a></li>
@@ -159,7 +166,7 @@
         
           <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
         
-      <li>Tutorial 1: Simple Calcium</li>
+      <li>Tutorial 1: The Basics with Simple Calcium</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -448,8 +455,8 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Tutorial-1:-Simple-Calcium">
-<h1>Tutorial 1: Simple Calcium<a class="headerlink" href="#Tutorial-1:-Simple-Calcium" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Tutorial-1:-The-Basics-with-Simple-Calcium">
+<h1>Tutorial 1: The Basics with Simple Calcium<a class="headerlink" href="#Tutorial-1:-The-Basics-with-Simple-Calcium" title="Permalink to this headline">¶</a></h1>
 <p>The system of calcium’s ground state excited to its first excited state with an on-resonance laser is one of the simplest systems to model as there is only a ground S-state and an excited P-state with no hyperfine structure. We can verify results already published by <a class="reference external" href="https://iopscience.iop.org/article/10.1088/0953-4075/36/24/011/meta">Murray 2003</a> by using the <code class="docutils literal notranslate"><span class="pre">LASED</span></code> package. In this paper the transition between the ground S-state and the first excited singlet P-state is modelled with the
 laser on-resonance and 200 MHz &amp; 500 MHz detuned from resonance.</p>
 <p>First, we’ll set up the states. A diagram of the system we are going to model is seen below. The ground S-state is represented by one sub-state lebelled as <span class="math notranslate nohighlight">\(|1\rangle\)</span> and the excited P-state is represented by three sub-states labelled as <span class="math notranslate nohighlight">\(|2\rangle\)</span>, <span class="math notranslate nohighlight">\(|3\rangle\)</span>, and <span class="math notranslate nohighlight">\(|4\rangle\)</span>.</p>
@@ -476,7 +483,7 @@ laser on-resonance and 200 MHz &amp; 500 MHz detuned from resonance.</p>
 <p>First, we must declare the system’s variables: wavelength of the transition, lifetime of the excited state, isospin, etc.</p>
 <p><strong>Note</strong>: LASED has a timescale of nanoseconds so all times will be input in nanoseconds. If I want a lifetime of 4.6e-9 s then I have to input 4.6 into my <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> object.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -491,7 +498,7 @@ laser on-resonance and 200 MHz &amp; 500 MHz detuned from resonance.</p>
 <p>Each sub-state must be labelled with its corresponding quantum numbers: orbital angular momentum <code class="docutils literal notranslate"><span class="pre">L</span></code>, spin <code class="docutils literal notranslate"><span class="pre">S</span></code>, projection of total angular momentum <code class="docutils literal notranslate"><span class="pre">m</span></code>. The isospin <code class="docutils literal notranslate"><span class="pre">I</span></code> is assumed to be zero if not specified. The total angular momentum (without isospin) can be specified with keyword <code class="docutils literal notranslate"><span class="pre">J</span></code> and is calculated as <code class="docutils literal notranslate"><span class="pre">J=L+S</span></code> if not specified. The total angular momentum with isospin can be specified with keyword <code class="docutils literal notranslate"><span class="pre">F</span></code> and if not specifed is calculated as <code class="docutils literal notranslate"><span class="pre">F=J+I</span></code>.</p>
 <p>To create the ground or excited state you must insert each sub-state in an ordered list starting with the smallest labelled state to the highest labelled state.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -527,7 +534,7 @@ This is known as the collision frame in scattering experiments.</p>
 constant by giving the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> an attribute called <code class="docutils literal notranslate"><span class="pre">rabi_scaling</span></code>. In this case of two simultaneous Rabi frequencies, the correct time evolution would be scaled by <code class="docutils literal notranslate"><span class="pre">1/np.sqrt(2)</span></code>. If <code class="docutils literal notranslate"><span class="pre">n</span></code> simultaneous polarisations are used then it must be scaled by <code class="docutils literal notranslate"><span class="pre">1/np.sqrt(n)</span></code>. You must also apply the <code class="docutils literal notranslate"><span class="pre">rabi_factors</span></code> attribute as the simultaneous combination of LHC and RHC Rabi frequencies is only equal to a linear exciation if the total Rabi frequency is
 <span class="math notranslate nohighlight">\(1/\sqrt(2)(\Omega^{-1}-\Omega^{+1})\)</span> so the RHC Rabi frequency must be multiplied by -1. This is achieved by setting the <code class="docutils literal notranslate"><span class="pre">rabi_factors</span></code> attribute to <code class="docutils literal notranslate"><span class="pre">rabi_factors</span> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">-1]</span></code> if using a <code class="docutils literal notranslate"><span class="pre">Q</span></code> as stated above. Each element of <code class="docutils literal notranslate"><span class="pre">Q</span></code> is multiplied by the corresponding element in <code class="docutils literal notranslate"><span class="pre">rabi_factors</span></code>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -540,7 +547,7 @@ constant by giving the <code class="docutils literal notranslate"><span class="p
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">time</span></code> over which the simulation run must be sepcified. It must be specified with a list with every discrete time step (in nanoseconds) in it. Numpy’s <code class="docutils literal notranslate"><span class="pre">linspace</span></code> is handy for this task.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -554,7 +561,7 @@ constant by giving the <code class="docutils literal notranslate"><span class="p
 </div>
 <p>Create a <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> object by using the variables stated above. Three system’s are created here for different detunings.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -572,9 +579,9 @@ constant by giving the <code class="docutils literal notranslate"><span class="p
 <h2>Time Evolution of the System<a class="headerlink" href="#Time-Evolution-of-the-System" title="Permalink to this headline">¶</a></h2>
 <p>Perform a <code class="docutils literal notranslate"><span class="pre">timeEvolution</span></code> of each system. The <code class="docutils literal notranslate"><span class="pre">pretty_print_eq</span></code> keyword is used here to print out the system’s equations of motion using <code class="docutils literal notranslate"><span class="pre">Sympy</span></code>. There are many other keywords which can be used with <code class="docutils literal notranslate"><span class="pre">timeEvolution</span></code> including averaging over the doppler profile of the atoms, averaging the Gaussian laser beam profile, and numerically printing the equations.</p>
 <p>I have just timed this piece of code to see how long it takes.</p>
-<p><strong>Note</strong>: And initial density matrix can be specified at t = 0 to evolve. If none is stated then all ground sub-states are populated equally with no coherence between sub-states.</p>
+<p><strong>Note</strong>: An initial condition density matrix can be specified at t = 0 to evolve. If none is stated then <strong>all ground sub-states are populated equally with no coherence between sub-states</strong>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -717,7 +724,7 @@ $\displaystyle \dot{\rho}_{41} = - \frac{\rho_{41}}{2 \tau} + i \rho_{43} \Omega
 <div class="highlight"><pre>
 Populating ground states equally as the initial condition.
 Populating ground states equally as the initial condition.
-The code finished in 9.7780 seconds
+The code finished in 6.0219 seconds
 </pre></div></div>
 </div>
 </div>
@@ -726,7 +733,7 @@ The code finished in 9.7780 seconds
 <p>We can save the data to a .csv file and now plot the data generated to see the time evolution.</p>
 <p>To save to csv use the <code class="docutils literal notranslate"><span class="pre">saveToCSV(&quot;filename&quot;)</span></code> function on your <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> object.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -739,7 +746,7 @@ The code finished in 9.7780 seconds
 <p>Now, we can plot the evolution of Calcium with no detuning, 200 MHz detuning, and 500 MHz detuning.</p>
 <p>To access the density matrix elements over the time evolution use the function <code class="docutils literal notranslate"><span class="pre">Rho_t(e,</span> <span class="pre">g)</span></code> on the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code>. This gives a list of the element <span class="math notranslate nohighlight">\(\rho_{eg}\)</span> for each interval in <code class="docutils literal notranslate"><span class="pre">time</span></code>. Each element of the density matrix is <code class="docutils literal notranslate"><span class="pre">complex</span></code> so the real part is taken by using the <code class="docutils literal notranslate"><span class="pre">abs()</span></code> function.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -785,7 +792,7 @@ The code finished in 9.7780 seconds
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -802,15 +809,15 @@ The code finished in 9.7780 seconds
 <p>The Rabi frequency for elliptically polarisation follows from the expression above and is the superposition of the Rabi frequency for RHC and LHC light with differing weights:</p>
 <div class="math notranslate nohighlight">
 \[\Omega^{\epsilon}=\frac{1}{\sqrt{L^2+R^2}}(L\Omega^{-1}-R\Omega^{+1})\]</div>
-<p>To encode this in <code class="docutils literal notranslate"><span class="pre">LASED</span></code> the polarisation key word <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">[-1,</span> <span class="pre">1]</span></code> with <code class="docutils literal notranslate"><span class="pre">rabi_factors</span> <span class="pre">=</span> <span class="pre">[L,</span> <span class="pre">R]</span></code> and <code class="docutils literal notranslate"><span class="pre">rabi_scaling</span> <span class="pre">=</span> <span class="pre">1/np.sqrt(L*L+R*R)</span></code> for normalisation. With this description of the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> the laser beam’s direction of travel is down the quantisation axis. As an exmaple, the simple calcium system will be modelled with different weights: one system with more a more LHC ellipse and the other with a more RHC ellipse.</p>
+<p>To encode this in <code class="docutils literal notranslate"><span class="pre">LASED</span></code> the polarisation key word <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">-1]</span></code> with <code class="docutils literal notranslate"><span class="pre">rabi_factors</span> <span class="pre">=</span> <span class="pre">[L,</span> <span class="pre">R]</span></code> and <code class="docutils literal notranslate"><span class="pre">rabi_scaling</span> <span class="pre">=</span> <span class="pre">1/np.sqrt(L*L+R*R)</span></code> for normalisation. With this description of the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> the laser beam’s direction of travel is down the quantisation axis. As an exmaple, the simple calcium system will be modelled with different weights: one system with more a more LHC ellipse and the other with a more RHC ellipse.</p>
 <p>For the first system, use values of L = 0.75 and R = 0.25.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Declare polarisation and Rabi parameters</span>
-<span class="n">Q_ellipse</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">Q_ellipse</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">rabi_factors_lhc</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]</span>
 <span class="n">rabi_scaling_lhc</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.75</span><span class="o">*</span><span class="mf">0.75</span><span class="o">+</span><span class="mf">0.25</span><span class="o">*</span><span class="mf">0.25</span><span class="p">)</span>
 
@@ -850,7 +857,7 @@ Populating ground states equally as the initial condition.
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -859,13 +866,13 @@ Populating ground states equally as the initial condition.
 </div>
 <p>Now, model a system with a slightly more RHC elliptcal polarisation.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Rabi parameters</span>
 <span class="n">rabi_factors_rhc</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">]</span>
-<span class="n">rabi_scaling_rhc</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.1</span><span class="o">*</span><span class="mf">0.1</span><span class="o">+</span><span class="mf">0.9</span><span class="o">*</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">rabi_scaling_rhc</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.45</span><span class="o">*</span><span class="mf">0.45</span><span class="o">+</span><span class="mf">0.55</span><span class="o">*</span><span class="mf">0.55</span><span class="p">)</span>
 
 <span class="c1"># Create laser-atom system</span>
 <span class="n">calcium_system_rhc</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ellipse</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
@@ -903,7 +910,7 @@ Populating ground states equally as the initial condition.
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -911,6 +918,544 @@ Populating ground states equally as the initial condition.
 </div>
 </div>
 <p>If L = R then this would be the same as a linear polarisation in the reference frame where the laser beam is travelling down the quantisation axis. This is called the natural frame. To put this in the collision frame, where the polarisation vector is along the quantisation axis, then rotations must be used.</p>
+</div>
+<div class="section" id="Setting-the-Initial-Conditions">
+<h2>Setting the Initial Conditions<a class="headerlink" href="#Setting-the-Initial-Conditions" title="Permalink to this headline">¶</a></h2>
+<p>There are two ways to specify the initial condition <span class="math notranslate nohighlight">\(\rho_0\)</span> in <code class="docutils literal notranslate"><span class="pre">LASED</span></code>: one way is to set the entire density matrix for the system in one function using the object’s variable <code class="docutils literal notranslate"><span class="pre">rho_0</span></code> directly and the other way is to set the initial condition for each sub-state equally using the function <code class="docutils literal notranslate"><span class="pre">setRho_0(s1,s2,</span> <span class="pre">value)</span></code> where <code class="docutils literal notranslate"><span class="pre">s1</span></code> and <code class="docutils literal notranslate"><span class="pre">s2</span></code> are state objects specifying the density matrix element which is initialised to <code class="docutils literal notranslate"><span class="pre">value</span></code>. In the example below calcium will be initialised with two
+different conditions.</p>
+<p>The sum of the populations of the density matrix must be equal to 1 and the coherences must be set so that <span class="math notranslate nohighlight">\(\rho_{eg} = \rho_{ge}^*\)</span>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">calcium_system_init1</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ca</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
+                                 <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">intensity_ca</span><span class="p">)</span>
+
+<span class="c1"># Set the populations of the ground state 1 and excited state 3 to 0.5 each with no coherences between them</span>
+<span class="n">calcium_system_init1</span><span class="o">.</span><span class="n">setRho_0</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+<span class="n">calcium_system_init1</span><span class="o">.</span><span class="n">setRho_0</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
+<span class="c1"># Perform time evolution</span>
+<span class="n">calcium_system_init1</span><span class="o">.</span><span class="n">timeEvolution</span><span class="p">(</span><span class="n">time_ca</span><span class="p">)</span>
+<span class="c1"># Plot the excited population</span>
+<span class="n">rho_33_init1</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system_init1</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<p>Now, we are going to build a flattened density matrix <code class="docutils literal notranslate"><span class="pre">rho_0</span></code> and input this straight into the system. To build the initial density matrix we must input the density matrix elements in the correct position. To do this, use the <code class="docutils literal notranslate"><span class="pre">index(e,</span> <span class="pre">g,</span> <span class="pre">n)</span></code> function to find the index which the density matrix element will sit in a flattened density matrix.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">calcium_system_init2</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ca</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
+                                 <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">intensity_ca</span><span class="p">)</span>
+
+<span class="c1"># Set out the density matrix elements to be initialised</span>
+<span class="n">rho_11_t0</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">rho_33_t0</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">rho_13_t0</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">+</span><span class="mf">0.5</span><span class="n">j</span>  <span class="c1"># These coherences can be complex!</span>
+<span class="n">rho_31_t0</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">-</span><span class="mf">0.5</span><span class="n">j</span>
+
+<span class="c1"># Now build a flattened density matrix with these conditions</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">4</span> <span class="c1"># nunber of sub-states in the Calcium system</span>
+<span class="n">rho_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">)</span> <span class="c1"># Make an empty 2D array with only one column</span>
+<span class="n">rho_0</span><span class="p">[</span><span class="n">las</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho_11_t0</span>
+<span class="n">rho_0</span><span class="p">[</span><span class="n">las</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho_33_t0</span>
+<span class="n">rho_0</span><span class="p">[</span><span class="n">las</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s3</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho_13_t0</span>
+<span class="n">rho_0</span><span class="p">[</span><span class="n">las</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho_31_t0</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rho_0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[[0.2+0.j ]
+ [0. +0.j ]
+ [0.5+0.5j]
+ [0. +0.j ]
+ [0. +0.j ]
+ [0. +0.j ]
+ [0. +0.j ]
+ [0. +0.j ]
+ [0.5-0.5j]
+ [0. +0.j ]
+ [0.8+0.j ]
+ [0. +0.j ]
+ [0. +0.j ]
+ [0. +0.j ]
+ [0. +0.j ]
+ [0. +0.j ]]
+</pre></div></div>
+</div>
+<p>Above is the correct form of <code class="docutils literal notranslate"><span class="pre">rho_0</span></code> we want to input. We can directly input this into the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code> object by using the key identifier <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem.rho_0</span></code>.</p>
+<p><strong>Note</strong>: be careful here as there is no safety conditions which have to be met to input this variable. Make sure that this is the correct size and format of the flattened density matrix.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">calcium_system_init2</span><span class="o">.</span><span class="n">rho_0</span> <span class="o">=</span> <span class="n">rho_0</span>  <span class="c1"># Set the variable directly</span>
+
+<span class="c1"># Perform time evolution</span>
+<span class="n">calcium_system_init2</span><span class="o">.</span><span class="n">timeEvolution</span><span class="p">(</span><span class="n">time_ca</span><span class="p">)</span>
+<span class="c1"># Plot the excited population</span>
+<span class="n">rho_33_init2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system_init2</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">)]</span>
+<span class="n">fig_ca_init</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                 <span class="n">y</span> <span class="o">=</span> <span class="n">rho_33_init1</span><span class="p">,</span>
+                                 <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+                                    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ρ&lt;sub&gt;33&lt;/sub&gt; No Coherences at t=0&quot;</span><span class="p">,</span>
+                                    <span class="n">marker</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                                <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+                                <span class="n">symbol</span> <span class="o">=</span> <span class="s1">&#39;cross&#39;</span>
+                            <span class="p">)))</span>
+<span class="n">fig_ca_init</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                 <span class="n">y</span> <span class="o">=</span> <span class="n">rho_33_init2</span><span class="p">,</span>
+                                 <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+                                    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ρ&lt;sub&gt;33&lt;/sub&gt; Coherences</span><span class="se">\n</span><span class="s2"> at t=0&quot;</span><span class="p">,</span>
+                                    <span class="n">marker</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                                <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                                <span class="n">symbol</span> <span class="o">=</span> <span class="s1">&#39;circle&#39;</span>
+                            <span class="p">)))</span>
+<span class="n">fig_ca_init</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Calcium: Time Evolution with Differnt Initial Conditions&quot;</span><span class="p">,</span>
+                 <span class="n">xaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Time (ns)&quot;</span><span class="p">,</span>
+                 <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
+                <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">))</span>
+
+<span class="n">fig_ca_init</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ca-init.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ca-init.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial1-SimpleCalcium_32_0.png" src="../_images/tutorials_Tutorial1-SimpleCalcium_32_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Gaussian-Laser-Beam-Profiles">
+<h2>Gaussian Laser Beam Profiles<a class="headerlink" href="#Gaussian-Laser-Beam-Profiles" title="Permalink to this headline">¶</a></h2>
+<p>A laser beam usually does not have a flat beam profile (known as a “top-hat” distribution) in intensity. As the beam has spatial variation in intensity the atoms being excited experience a non-uniform time evolution. To model the effects of the beam profile the beam can be split up into regions of approximate uniform intensity and each spatial portion of the beam is used to time-evolve a part of the system being illuminated. Then, each part of the system is summed together and normalised which
+results in the entire system being modelled.</p>
+<p><code class="docutils literal notranslate"><span class="pre">LASED</span></code> supports the modelling of a Gaussian TEM<span class="math notranslate nohighlight">\(_{00}\)</span> laser beam profile. The 2D standard deviation of the Gaussian must be declared with keyword <code class="docutils literal notranslate"><span class="pre">r_sigma</span></code> when performing the <code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code> of the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code>. The number of portions which the beam is split into must be chosen as well. This is declared with the keyword <code class="docutils literal notranslate"><span class="pre">n_beam_averaging</span></code> when using <code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code>. The Gaussian averaging is applied to the time evolution of the system only if it is declared that
+<code class="docutils literal notranslate"><span class="pre">beam_profile_averaging</span> <span class="pre">=</span> <span class="pre">True</span></code> inside the <code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code> function. If these are left out then a “top-hat” distribution of laser intensity is assumed. Also, to use the Gaussian avergaing over the beam profile, the keyword <code class="docutils literal notranslate"><span class="pre">laser_power</span></code> must be defined in the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code>. This is the total power which the laser delivers as opposed to the intensity over a mm<span class="math notranslate nohighlight">\(^2\)</span>.</p>
+<p>Below, the laser parameters are declared for this system and the simple calcium system is modelled using these parameters.</p>
+<p><strong>Note</strong>: If using this averaging the model will loop over the time evolution with the number defined in <code class="docutils literal notranslate"><span class="pre">n_intensity</span></code> so the model will be much slower if a larger number is input. The larger number also results in a more accurate representation of the beam profile. Usually, a <code class="docutils literal notranslate"><span class="pre">n_intensity</span></code> of around 50 is enough for most cases.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Laser parameters</span>
+<span class="n">laser_power</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># laser intensity in mW</span>
+<span class="n">r_sigma</span> <span class="o">=</span> <span class="mf">0.75</span>  <span class="c1"># radial distance to 2D standard deviation in mm</span>
+<span class="n">n_intensity</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="n">calcium_system_gaussian</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ca</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
+                                 <span class="n">laser_power</span> <span class="o">=</span> <span class="n">laser_power</span><span class="p">)</span>
+<span class="n">calcium_system_gaussian</span><span class="o">.</span><span class="n">timeEvolution</span><span class="p">(</span><span class="n">time_ca</span><span class="p">,</span>
+                            <span class="n">r_sigma</span> <span class="o">=</span> <span class="n">r_sigma</span><span class="p">,</span>
+                            <span class="n">n_beam_averaging</span> <span class="o">=</span> <span class="n">n_intensity</span><span class="p">,</span>
+                            <span class="n">beam_profile_averaging</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Plot the excited population</span>
+<span class="n">rho_33_gaussian</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system_gaussian</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Populating ground states equally as the initial condition.
+</pre></div></div>
+</div>
+<p>Now, we can plot the result and compare to the time evolution when excited with a “top-hat” beam profile.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig_ca_gauss</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+<span class="n">fig_ca_gauss</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                 <span class="n">y</span> <span class="o">=</span> <span class="n">rho_33</span><span class="p">,</span>
+                                 <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+                                <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ρ&lt;sub&gt;33&lt;/sub&gt; Top Hat Beam Profile&quot;</span><span class="p">,</span>
+                                <span class="n">marker</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                                    <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                                    <span class="n">symbol</span> <span class="o">=</span> <span class="s1">&#39;circle&#39;</span>
+                            <span class="p">)))</span>
+<span class="n">fig_ca_gauss</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                 <span class="n">y</span> <span class="o">=</span> <span class="n">rho_33_gaussian</span><span class="p">,</span>
+                                 <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;lines&quot;</span><span class="p">,</span>
+                                 <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ρ&lt;sub&gt;33&lt;/sub&gt; Gaussian Beam Profile&quot;</span><span class="p">,</span>
+                                 <span class="n">marker</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                                     <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+                                     <span class="n">symbol</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span>
+                                 <span class="p">)))</span>
+<span class="n">fig_ca_gauss</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Calcium: Time Evolution with Differnt Beam Profiles&quot;</span><span class="p">,</span>
+                 <span class="n">xaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Time (ns)&quot;</span><span class="p">,</span>
+                 <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
+                <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">))</span>
+<span class="n">fig_ca_gauss</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ca-gaussian.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ca-gaussian.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial1-SimpleCalcium_36_0.png" src="../_images/tutorials_Tutorial1-SimpleCalcium_36_0.png" />
+</div>
+</div>
+<div class="section" id="Doppler-Detuning-from-the-Atomic-Velocity-Profile">
+<h3>Doppler Detuning from the Atomic Velocity Profile<a class="headerlink" href="#Doppler-Detuning-from-the-Atomic-Velocity-Profile" title="Permalink to this headline">¶</a></h3>
+<p>When using <code class="docutils literal notranslate"><span class="pre">LASED</span></code> the atoms being excited are usually defined as being stationary unless specified. If the atoms are not stationary and have some velocity with respect to the laser beam then the frequency of the laser is detuned from resonance due to the fixed velocity. In experiments an atomic beam is sometimes used to provide the atoms to some interaction region where the laser-excitation takes place. If a velocity component is in (or opposite to) the direction of the laser beam then
+detuning occurs. The velocity component can be specified using the <code class="docutils literal notranslate"><span class="pre">atomic_velocity</span></code> keyword in the <code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code>. This is specified in units of m/s in the direction of the laser beam. If the direction is opposite to this then the <code class="docutils literal notranslate"><span class="pre">atomic_velocity</span></code> is negative.</p>
+<p>Detuning can also occur due to the Maxwell-Boltzmann distribution of atomic velocities. This results in a Gaussian detuning profile. This can be modelled by splitting the detuning due to the velocity distribution of atoms into uniform sections and time-evolving the system with these uniform detunings and then summing up the time evolution for each detuning and normalising. The detuning due to this Doppler broadening can be modelled in <code class="docutils literal notranslate"><span class="pre">LASED</span></code> by defining a <code class="docutils literal notranslate"><span class="pre">doppler_width</span></code> in Grad/s in
+<code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code> and a list with all the detunings to be used for the averaging process called <code class="docutils literal notranslate"><span class="pre">doppler_detunings</span></code>. The more elements in <code class="docutils literal notranslate"><span class="pre">doppler_detunings</span></code> the more the time evolution of the system is calculated and the more time it will take to model the system.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Model the atomic velocity introducing a Doppler shift</span>
+<span class="n">atomic_velocity</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># Velocity component of atoms in direction of laser beam in m/s</span>
+<span class="c1"># Set up the system</span>
+<span class="n">calcium_system_atomic_velocity</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ca</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
+                                 <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">intensity_ca</span><span class="p">)</span>
+<span class="c1"># Perform time evolution</span>
+<span class="n">calcium_system_atomic_velocity</span><span class="o">.</span><span class="n">timeEvolution</span><span class="p">(</span><span class="n">time_ca</span><span class="p">,</span> <span class="n">atomic_velocity</span> <span class="o">=</span> <span class="n">atomic_velocity</span><span class="p">)</span>
+<span class="c1"># Plot the excited state population</span>
+<span class="n">rho_33_atomic_velocity</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system_atomic_velocity</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Populating ground states equally as the initial condition.
+</pre></div></div>
+</div>
+<p>Detuning can also occur due to the Maxwell-Boltzmann distribution of atomic velocities. This results in a Gaussian detuning profile. This can be modelled by splitting the detuning due to the velocity distribution of atoms into uniform sections and time-evolving the system with these uniform detunings and then summing up the time evolution for each detuning and normalising. The detuning due to this Doppler broadening can be modelled in <code class="docutils literal notranslate"><span class="pre">LASED</span></code> by defining a <code class="docutils literal notranslate"><span class="pre">doppler_width</span></code> in Grad/s in
+<code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code> and a list with all the detunings to be used for the averaging process called <code class="docutils literal notranslate"><span class="pre">doppler_detunings</span></code>. The more elements in <code class="docutils literal notranslate"><span class="pre">doppler_detunings</span></code> the more the time evolution of the system is calculated and the more time it will take to model the system. Then, use the statement <code class="docutils literal notranslate"><span class="pre">doppler_averaging</span> <span class="pre">=</span> <span class="pre">True</span></code> in the <code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code> function.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Declare the Doppler profile parameters</span>
+<span class="n">doppler_width</span> <span class="o">=</span> <span class="mf">0.3</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="c1"># doppler width here is 300 MHz but have to convert it into Grad/s so multiply by 2*PI and scale</span>
+<span class="n">delta_upper</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="n">doppler_width</span>
+<span class="n">delta_lower</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">doppler_width</span>
+<span class="n">doppler_steps</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">doppler_detunings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">delta_lower</span><span class="p">,</span> <span class="n">delta_upper</span><span class="p">,</span> <span class="n">doppler_steps</span><span class="p">)</span>
+<span class="c1"># Set up the system</span>
+<span class="n">calcium_system_doppler</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ca</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
+                                 <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">intensity_ca</span><span class="p">)</span>
+<span class="c1"># Perform time evolution</span>
+<span class="n">calcium_system_doppler</span><span class="o">.</span><span class="n">timeEvolution</span><span class="p">(</span><span class="n">time_ca</span><span class="p">,</span>
+                            <span class="n">doppler_width</span> <span class="o">=</span> <span class="n">doppler_width</span><span class="p">,</span>
+                            <span class="n">doppler_detunings</span> <span class="o">=</span> <span class="n">doppler_detunings</span><span class="p">,</span>
+                            <span class="n">doppler_averaging</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Plot the excited state population</span>
+<span class="n">rho_33_doppler</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system_doppler</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Populating ground states equally as the initial condition.
+</pre></div></div>
+</div>
+<p>Plot the results to compare.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig_ca_doppler</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+<span class="n">fig_ca_doppler</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                 <span class="n">y</span> <span class="o">=</span> <span class="n">rho_33</span><span class="p">,</span>
+                                 <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+                                <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ρ&lt;sub&gt;33&lt;/sub&gt; No Doppler&quot;</span><span class="p">,</span>
+                                <span class="n">marker</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                                    <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                                    <span class="n">symbol</span> <span class="o">=</span> <span class="s1">&#39;circle&#39;</span>
+                            <span class="p">)))</span>
+<span class="n">fig_ca_doppler</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                 <span class="n">y</span> <span class="o">=</span> <span class="n">rho_33_atomic_velocity</span><span class="p">,</span>
+                                 <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;lines&quot;</span><span class="p">,</span>
+                                 <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ρ&lt;sub&gt;33&lt;/sub&gt; 50 m/s Atomic Velocity&quot;</span><span class="p">,</span>
+                                 <span class="n">marker</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                                     <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+                                     <span class="n">symbol</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span>
+                                 <span class="p">)))</span>
+<span class="n">fig_ca_doppler</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                 <span class="n">y</span> <span class="o">=</span> <span class="n">rho_33_doppler</span><span class="p">,</span>
+                                 <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;lines&quot;</span><span class="p">,</span>
+                                 <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ρ&lt;sub&gt;33&lt;/sub&gt; 300 MHz Doppler Profile&quot;</span><span class="p">,</span>
+                                 <span class="n">marker</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                                     <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span>
+                                     <span class="n">symbol</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span>
+                                 <span class="p">)))</span>
+<span class="n">fig_ca_doppler</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Calcium: Time Evolution with Doppler Detunings&quot;</span><span class="p">,</span>
+                 <span class="n">xaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Time (ns)&quot;</span><span class="p">,</span>
+                 <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
+                <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">))</span>
+<span class="n">fig_ca_doppler</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ca-doppler.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ca-doppler.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial1-SimpleCalcium_42_0.png" src="../_images/tutorials_Tutorial1-SimpleCalcium_42_0.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Doppler-Detuning-and-Gaussian-Beam-Profile">
+<h2>Doppler Detuning and Gaussian Beam Profile<a class="headerlink" href="#Doppler-Detuning-and-Gaussian-Beam-Profile" title="Permalink to this headline">¶</a></h2>
+<p>In <code class="docutils literal notranslate"><span class="pre">LASED</span></code> Doppler profile and Gaussian beam averaging can be modelled in the same system.</p>
+<p><strong>Note</strong>: When using <em>both</em> Doppler and Gaussian beam averaging the number of times the system is time evolved will be <code class="docutils literal notranslate"><span class="pre">n_intensity</span></code> multiplied by the number of elements in <code class="docutils literal notranslate"><span class="pre">doppler_detunings</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Set up system</span>
+<span class="n">calcium_system_gauss_and_dopp</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ca</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
+                                 <span class="n">laser_power</span> <span class="o">=</span> <span class="n">laser_power</span><span class="p">)</span>
+<span class="c1"># Time evolve the system</span>
+<span class="n">calcium_system_gauss_and_dopp</span><span class="o">.</span><span class="n">timeEvolution</span><span class="p">(</span><span class="n">time_ca</span><span class="p">,</span>
+                            <span class="n">r_sigma</span> <span class="o">=</span> <span class="n">r_sigma</span><span class="p">,</span>
+                            <span class="n">n_beam_averaging</span> <span class="o">=</span> <span class="n">n_intensity</span><span class="p">,</span>
+                            <span class="n">doppler_width</span> <span class="o">=</span> <span class="n">doppler_width</span><span class="p">,</span>
+                            <span class="n">doppler_detunings</span> <span class="o">=</span> <span class="n">doppler_detunings</span><span class="p">,</span>
+                            <span class="n">doppler_averaging</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                            <span class="n">beam_profile_averaging</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Plot the excited state population</span>
+<span class="n">rho_33_gauss_and_dopp</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system_gauss_and_dopp</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Populating ground states equally as the initial condition.
+</pre></div></div>
+</div>
+<p>Now, plot the results.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig_ca_gauss_and_dopp</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+<span class="n">fig_ca_gauss_and_dopp</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                 <span class="n">y</span> <span class="o">=</span> <span class="n">rho_33</span><span class="p">,</span>
+                                 <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+                                <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ρ&lt;sub&gt;33&lt;/sub&gt; No Doppler or Gaussian&quot;</span><span class="p">,</span>
+                                <span class="n">marker</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                                    <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                                    <span class="n">symbol</span> <span class="o">=</span> <span class="s1">&#39;circle&#39;</span>
+                            <span class="p">)))</span>
+<span class="n">fig_ca_gauss_and_dopp</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                 <span class="n">y</span> <span class="o">=</span> <span class="n">rho_33_gaussian</span><span class="p">,</span>
+                                 <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;lines&quot;</span><span class="p">,</span>
+                                 <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ρ&lt;sub&gt;33&lt;/sub&gt; Gaussian Beam Profile&quot;</span><span class="p">,</span>
+                                 <span class="n">marker</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                                     <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+                                     <span class="n">symbol</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span>
+                                 <span class="p">)))</span>
+<span class="n">fig_ca_gauss_and_dopp</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
+                                 <span class="n">y</span> <span class="o">=</span> <span class="n">rho_33_gauss_and_dopp</span><span class="p">,</span>
+                                 <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;lines&quot;</span><span class="p">,</span>
+                                 <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ρ&lt;sub&gt;33&lt;/sub&gt; 300 MHz Doppler+Gaussian&quot;</span><span class="p">,</span>
+                                 <span class="n">marker</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                                     <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span>
+                                     <span class="n">symbol</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span>
+                                 <span class="p">)))</span>
+<span class="n">fig_ca_gauss_and_dopp</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Calcium: Time Evolution with Doppler and Gaussian Averaging&quot;</span><span class="p">,</span>
+                 <span class="n">xaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Time (ns)&quot;</span><span class="p">,</span>
+                 <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
+                <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">))</span>
+<span class="n">fig_ca_gauss_and_dopp</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ca-gauss-and-dopp.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ca-gauss-and-dopp.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial1-SimpleCalcium_46_0.png" src="../_images/tutorials_Tutorial1-SimpleCalcium_46_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Exporting-the-Equations-of-Motion">
+<h2>Exporting the Equations of Motion<a class="headerlink" href="#Exporting-the-Equations-of-Motion" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">LASED</span></code> can print the equations of motion and/or export the equations to a .tex and a .pdf file. Note, that you must have a filename included if you want to export to a .tex file or .pdf file. Use the key idenifier <code class="docutils literal notranslate"><span class="pre">pretty_print_eq_filename</span></code> in <code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code>.</p>
+<p><strong>Note</strong>: You must have <code class="docutils literal notranslate"><span class="pre">pdflatex</span></code> installed on your system to generate a .pdf file. This is used to convert the .tex file produced to a .pdf file. You can do this on Windows or Mac by installing MiKTeX on your system.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">calcium_system_to_print</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E_ca</span><span class="p">,</span> <span class="n">G_ca</span><span class="p">,</span> <span class="n">tau_ca</span><span class="p">,</span> <span class="n">Q_ca</span><span class="p">,</span> <span class="n">wavelength_ca</span><span class="p">,</span>
+                                 <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">intensity_ca</span><span class="p">)</span>
+<span class="n">calcium_system_to_print</span><span class="o">.</span><span class="n">timeEvolution</span><span class="p">(</span><span class="n">time_ca</span><span class="p">,</span>
+                                    <span class="n">pretty_print_eq</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">pretty_print_eq_tex</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">pretty_print_eq_pdf</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">pretty_print_eq_filename</span> <span class="o">=</span> <span class="s2">&quot;CalciumSystemEquations&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Populating ground states equally as the initial condition.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{11} = i \rho_{13} \Omega{\left(3,1,0 \right)} + \frac{1.0 \rho_{22}}{\tau} - i \rho_{31} \Omega{\left(3,1,0 \right)} + \frac{1.0 \rho_{33}}{\tau} + \frac{1.0 \rho_{44}}{\tau}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{22} = - \frac{\rho_{22}}{\tau}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{23} = i \rho_{21} \Omega{\left(3,1,0 \right)} - \frac{\rho_{23}}{\tau}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{24} = - \frac{\rho_{24}}{\tau}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{32} = - i \rho_{12} \Omega{\left(3,1,0 \right)} - \frac{\rho_{32}}{\tau}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{33} = - i \rho_{13} \Omega{\left(3,1,0 \right)} + i \rho_{31} \Omega{\left(3,1,0 \right)} - \frac{\rho_{33}}{\tau}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{34} = - i \rho_{14} \Omega{\left(3,1,0 \right)} - \frac{\rho_{34}}{\tau}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{42} = - \frac{\rho_{42}}{\tau}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{43} = i \rho_{41} \Omega{\left(3,1,0 \right)} - \frac{\rho_{43}}{\tau}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{44} = - \frac{\rho_{44}}{\tau}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{12} = - \frac{\rho_{12}}{2 \tau} - i \rho_{32} \Omega{\left(3,1,0 \right)}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{13} = - i \rho_{11} \Omega{\left(3,1,0 \right)} - \frac{\rho_{13}}{2 \tau} - i \rho_{33} \Omega{\left(3,1,0 \right)}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{14} = - \frac{\rho_{14}}{2 \tau} - i \rho_{34} \Omega{\left(3,1,0 \right)}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{21} = - \frac{\rho_{21}}{2 \tau} + i \rho_{23} \Omega{\left(3,1,0 \right)}$</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{31} = i \rho_{11} \Omega{\left(3,1,0 \right)} - \frac{\rho_{31}}{2 \tau} + i \rho_{33} \Omega{\left(3,1,0 \right)}$</div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="math notranslate nohighlight">
+$\displaystyle \dot{\rho}_{41} = - \frac{\rho_{41}}{2 \tau} + i \rho_{43} \Omega{\left(3,1,0 \right)}$</div></div>
+</div>
 </div>
 </div>
 
@@ -920,7 +1465,7 @@ Populating ground states equally as the initial condition.
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="Tutorial2-HeRotation.html" class="btn btn-neutral float-right" title="Tutorial 2: D to P Exciation in Helium with Atomic Doppler Profile Avergaing, Gaussian Beam Averaging, and Rotation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Tutorial2-HeRotation.html" class="btn btn-neutral float-right" title="Tutorial 2: D to P Exciation in Helium" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="../tutorials.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

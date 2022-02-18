@@ -34,9 +34,9 @@ Using LASED
 
 Start by going to :doc:`tutorials`.
 
-The first tutorial is a guide on how to simulate one of the simplest excitations of an atom with a laser and shows how to use LASED.
+The first tutorial is a guide on how to simulate one of the simplest excitations of an atom with a laser and shows how to use most of the functionality of LASED.
 
-The second tutorial shows how average over the laser beam and doppler profile of the atoms. It also introduces rotating the system to different reference frames using the Wigner rotation matrix.
+The second tutorial shows how to simulate decays to other states not in the laser-excitation manifold. It also introduces rotating the system to different reference frames using the Wigner rotation matrix and hence introduces simulating a polarisation angle.
 
 The third tutorial simulates a metastable Helium atom with some real data on what the initial state looks like and how to initialise the system to this state.
 
