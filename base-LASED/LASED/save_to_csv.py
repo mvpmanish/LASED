@@ -42,7 +42,7 @@ def stateLabel(s, state_type):
             state_type (string): either 'e' or 'g' for excited state or ground state. The ground state is primed.
             
         Returns:
-            stringe: "J=k;m_J=l" if k and l are J and m quantum numbers. If the state has isospin then it is "F=k;m_F=l"
+            string: "J=k;m_J=l" if k and l are J and m quantum numbers. If the state has isospin then it is "F=k;m_F=l"
         """
         
         if(s.I != None):
@@ -53,7 +53,7 @@ def stateLabel(s, state_type):
         if(state_type == "g"):  # Prime the letter if a ground state
             letter += "'"
             
-        return f"{letter}={s.J};m_{letter}={s.m}"
+        return f"{letter}={s.F};m_{letter}={s.m}"
 
 def saveRhotAsCSV(n, E, G, time, rho_t, filename, precision = None):
     """Saves rho_t to a csv file.
