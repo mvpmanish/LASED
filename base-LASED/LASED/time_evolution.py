@@ -13,14 +13,6 @@ import numpy as np
 import scipy.linalg as la
 
 
-
-
-
-
-
-
-
-
 def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, time, rho0, rho_output,
                     tau_f = None, tau_b = None, detuning = None, rabi_scaling = None, rabi_factors = None,
                     print_eq = None, atomic_velocity = None, pretty_print_eq = None, pretty_print_eq_tex = None,
