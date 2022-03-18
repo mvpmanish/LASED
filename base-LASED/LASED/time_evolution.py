@@ -12,6 +12,15 @@ from LASED.time_evolution_matrix import *
 import numpy as np
 import scipy.linalg as la
 
+
+
+
+
+
+
+
+
+
 def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, time, rho0, rho_output,
                     tau_f = None, tau_b = None, detuning = None, rabi_scaling = None, rabi_factors = None,
                     print_eq = None, atomic_velocity = None, pretty_print_eq = None, pretty_print_eq_tex = None,
@@ -30,18 +39,17 @@ def timeEvolution(n, E, G, Q, Q_decay, tau, laser_intensity, laser_wavelength, t
                         pretty_print_eq = pretty_print_eq, pretty_print_eq_tex = pretty_print_eq_tex,
                         pretty_print_eq_pdf = pretty_print_eq_pdf, pretty_print_eq_filename = pretty_print_eq_filename)
 
-    # Compute the diagonalised matrix D and matrix of eigenvectors V
-    D = diagonalise(A)
-    V = matrixOfEigenvec(A)
+    # Compute the flattened diagonalised matrix D in vector form (d) and matrix of eigenvectors V
+    d, V = la.eig(A)
     f = np.dot(la.inv(V), rho0)  # Compute V^-1*rho(0)
 
     # Calculate the exponential
     for position, t in enumerate(time, start = 0):
-        # Use expm() which computes the matrix exponential using the Pade approximation
-        expS = la.expm(D*t) # Compute exp(D*t), this takes the longest so needs speeding up
+
+        expS = np.diag(np.exp(d*t)) # Compute exp(D*t) directly from the diagonised matrix
         VexpDt = np.dot(V, expS)
         rho_t = np.dot(VexpDt, f)
-
+        
         # Append density matrix elements
         # rho(t)_ee
         for e in E:
@@ -100,15 +108,15 @@ def timeEvolutionDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_intensity, las
                         pretty_print_eq = pretty_print_eq, pretty_print_eq_tex = pretty_print_eq_tex,
                         pretty_print_eq_pdf = pretty_print_eq_pdf, pretty_print_eq_filename = pretty_print_eq_filename)
 
-            # Compute the diagonalised matrix D and matrix of eigenvectors V
-            D = diagonalise(A)
-            V = matrixOfEigenvec(A)
+            # Compute the flattened diagonalised matrix D in vector form (d) and matrix of eigenvectors V
+            d, V = la.eig(A)
             f = np.dot(la.inv(V), rho0)  # Compute V^-1*rho(0)
-
+        
             # Calculate the exponential
             for position, t in enumerate(time, start = 0):
-                # Use expm() which computes the matrix exponential using the Pade approximation
-                VexpDt = np.dot(V, la.expm(D*t))  # Can I make this is faster?
+        
+                expS = np.diag(np.exp(d*t)) # Compute exp(D*t) directly from the diagonised matrix
+                VexpDt = np.dot(V, expS)
                 rho_t = np.dot(VexpDt, f)
 
                 # Append density matrix for each ring and each detuning fraction
@@ -158,15 +166,15 @@ def timeEvolutionGaussianAveraging(n, E, G, Q, Q_decay, tau, laser_power, r_sigm
                         pretty_print_eq = pretty_print_eq, pretty_print_eq_tex = pretty_print_eq_tex,
                         pretty_print_eq_pdf = pretty_print_eq_pdf, pretty_print_eq_filename = pretty_print_eq_filename)
 
-            # Compute the diagonalised matrix D and matrix of eigenvectors V
-            D = diagonalise(A)
-            V = matrixOfEigenvec(A)
+            # Compute the flattened diagonalised matrix D in vector form (d) and matrix of eigenvectors V
+            d, V = la.eig(A)
             f = np.dot(la.inv(V), rho0)  # Compute V^-1*rho(0)
-
+        
             # Calculate the exponential
             for position, t in enumerate(time, start = 0):
-                # Use expm() which computes the matrix exponential using the Pade approximation
-                VexpDt = np.dot(V, la.expm(D*t))  # Can I make this faster?
+        
+                expS = np.diag(np.exp(d*t)) # Compute exp(D*t) directly from the diagonised matrix
+                VexpDt = np.dot(V, expS)
                 rho_t = np.dot(VexpDt, f)
 
                 # Append density matrix for each ring
@@ -234,15 +242,15 @@ def timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, Q_decay, tau, laser_pow
                         pretty_print_eq = pretty_print_eq, pretty_print_eq_tex = pretty_print_eq_tex,
                         pretty_print_eq_pdf = pretty_print_eq_pdf, pretty_print_eq_filename = pretty_print_eq_filename)
 
-            # Compute the diagonalised matrix D and matrix of eigenvectors V
-            D = diagonalise(A)
-            V = matrixOfEigenvec(A)
+            # Compute the flattened diagonalised matrix D in vector form (d) and matrix of eigenvectors V
+            d, V = la.eig(A)
             f = np.dot(la.inv(V), rho0)  # Compute V^-1*rho(0)
-
+        
             # Calculate the exponential
             for position, t in enumerate(time, start = 0):
-                # Use expm() which computes the matrix exponential using the Pade approximation
-                VexpDt = np.dot(V, la.expm(D*t))  # Can I make this faster?
+        
+                expS = np.diag(np.exp(d*t)) # Compute exp(D*t) directly from the diagonised matrix
+                VexpDt = np.dot(V, expS)
                 rho_t = np.dot(VexpDt, f)
 
                 # Append density matrix for each ring and each detuning fraction
