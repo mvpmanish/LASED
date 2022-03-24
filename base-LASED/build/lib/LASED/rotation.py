@@ -71,13 +71,14 @@ def createDictionaryOfSubStates(E, G):
         key_list.append((sub_state.F, sub_state.m))  # Each key is a tuple of (F, m)
     return dict(zip(key_list, sub_state_list))
 
-def rotateElement(rho, i, j, n, E, G, alpha, beta, gamma):
+def rotateElement(rho, i, j, n, sub_state_dict, alpha, beta, gamma):
     """Rotates an element of a density matrix rho_ij by the euler angles given.
     
     Parameters:
         rho (complex): The density matrix to be rotated.
         i (state): A sub-state of the laser-atom system.
         j (state): A sub-state of the laser-atom system.
+        sub_state_dict (dict of State): Dictionary of States with (F,m) tuple as the keys and the corresponding State object as the value.
         n (int): Total number of sub-states in the system.
         alpha (float): rotation around z-axis in radians.
         beta (float): rotation about the y'-axis in radians.
@@ -92,7 +93,6 @@ def rotateElement(rho, i, j, n, E, G, alpha, beta, gamma):
     mp = j.m
     mu_list = np.linspace(-F, F, 2*F+1, dtype = int)
     mup_list = np.linspace(-Fp, Fp, 2*Fp+1, dtype = int)
-    sub_state_dict = createDictionaryOfSubStates(E, G)  # Dictionary to retrive states by only using (F, m) values
     rho_new_frame = 0  # Initialise the summation to zero
     for mu in mu_list:
         for mup in mup_list:
@@ -118,26 +118,27 @@ def rotateFlatDensityMatrix(flat_rho, n, E, G, alpha, beta, gamma):
         list of lists: A rotated flattened 2D density matrix
     """
     rotated_rho = np.zeros((n*n, 1), dtype = complex)  # Placeholder for rotated density matrix
+    sub_state_dict = createDictionaryOfSubStates(E, G)  # Dictionary to retrive states by only using (F, m) values
     # Rotate the excited state populations and atomic coherences
     # rho_gg''
     for g in G:
         for gpp in G:
-            rho_ggpp_new_frame = rotateElement(flat_rho, g, gpp, n, E, G, alpha, beta, gamma)
+            rho_ggpp_new_frame = rotateElement(flat_rho, g, gpp, n, sub_state_dict, alpha, beta, gamma)
             rotated_rho[index(g, gpp, n), 0] = rho_ggpp_new_frame
     # rho_ee''
     for e in E:
         for epp in E:
-            rho_eepp_new_frame = rotateElement(flat_rho, e, epp, n, E, G, alpha, beta, gamma)
+            rho_eepp_new_frame = rotateElement(flat_rho, e, epp, n, sub_state_dict, alpha, beta, gamma)
             rotated_rho[index(e, epp, n), 0] = rho_eepp_new_frame
     # rho_ge
     for g in G:
         for e in E:
-            rho_ge_new_frame = rotateElement(flat_rho, g, e, n, E, G, alpha, beta, gamma)
+            rho_ge_new_frame = rotateElement(flat_rho, g, e, n, sub_state_dict, alpha, beta, gamma)
             rotated_rho[index(g, e, n), 0] = rho_ge_new_frame
     # rho_eg
     for e in E:
         for g in G:
-            rho_eg_new_frame = rotateElement(flat_rho, e, g, n, E, G, alpha, beta, gamma)
+            rho_eg_new_frame = rotateElement(flat_rho, e, g, n, sub_state_dict, alpha, beta, gamma)
             rotated_rho[index(e, g, n), 0] = rho_eg_new_frame
 
     return rotated_rho

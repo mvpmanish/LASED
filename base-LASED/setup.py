@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.4.2'
+VERSION = '0.4.3'
 DESCRIPTION = 'LASED'
 LONG_DESCRIPTION = 'A Laser-Atom Interaction Simulator using Quantum Electrodynamics'
 
@@ -27,11 +27,12 @@ setup(
 
         keywords=['python', 'laser-atom', 'simulation', 'quantum', 'quantum electrodynamics', 'physics'],
         classifiers= [
-            "Development Status :: 1 - Planning",
+            "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Science/Research",
             "Programming Language :: Python :: 2",
             "Programming Language :: Python :: 3",
             "Operating System :: OS Independent",
-            "Natural Language :: English"
+            "Natural Language :: English",
+            "Topic :: Scientific/Engineering :: Physics"
         ]
 )
