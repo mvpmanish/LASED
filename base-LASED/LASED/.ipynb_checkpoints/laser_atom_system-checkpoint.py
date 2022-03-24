@@ -8,6 +8,7 @@ from LASED.index import *
 from LASED.generate_sub_states import *
 from LASED.save_to_csv import *
 from LASED.rotation import *
+from LASED.angular_shape import *
 
 import numpy as np
 
