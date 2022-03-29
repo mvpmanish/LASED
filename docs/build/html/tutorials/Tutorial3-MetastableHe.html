@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Tutorial 3: Initialisation of Metastable He Excitation with Data &mdash; LASED 0.3 documentation</title>
+  <title>Tutorial 3: He Excitation: Initialisation with Data and Angular Shape &mdash; LASED 0.3 documentation</title>
   
 
   
@@ -96,11 +96,12 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Tutorial1-SimpleCalcium.html">Tutorial 1: The Basics with Simple Calcium</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Tutorial2-HeRotation.html">Tutorial 2: D to P Exciation in Helium</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Tutorial 3: Initialisation of Metastable He Excitation with Data</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tutorial 3: He Excitation: Initialisation with Data and Angular Shape</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Setting-up-the-System">Setting up the System</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Initialisating-the-Laser-Atom-System-with-Data">Initialisating the Laser-Atom System with Data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Time-Evolution">Time Evolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Plotting-and-Saving-Data">Plotting and Saving Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Plotting-the-Angular-Shape">Plotting the Angular Shape</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="Tutorial4-SodiumDLine.html">Tutorial 4: Hyperfine Structure of Sodium D2 Line</a></li>
@@ -159,7 +160,7 @@
         
           <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
         
-      <li>Tutorial 3: Initialisation of Metastable He Excitation with Data</li>
+      <li>Tutorial 3: He Excitation: Initialisation with Data and Angular Shape</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -448,9 +449,9 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Tutorial-3:-Initialisation-of-Metastable-He-Excitation-with-Data">
-<h1>Tutorial 3: Initialisation of Metastable He Excitation with Data<a class="headerlink" href="#Tutorial-3:-Initialisation-of-Metastable-He-Excitation-with-Data" title="Permalink to this headline">¶</a></h1>
-<p>In this tutorial a more relaistic system will be simulated which could be the process in an experiment. Let’s say that helium is excited to a metastable D-state via electron impact from its ground state whilst a laser excites these electron-excited atoms into a high-lying P-state. A level diagram of the system is shown below.</p>
+<div class="section" id="Tutorial-3:-He-Excitation:-Initialisation-with-Data-and-Angular-Shape">
+<h1>Tutorial 3: He Excitation: Initialisation with Data and Angular Shape<a class="headerlink" href="#Tutorial-3:-He-Excitation:-Initialisation-with-Data-and-Angular-Shape" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial a more relaistic system will be simulated which could be the process in an experiment and the angular shape of the electron cloud will be plotted and a video of the angular shape of the electron cloud over time will be plotted. Let’s say that helium is excited to the 3D-state via electron impact from its ground state whilst a laser excites these electron-excited atoms into a high-lying 10P-state. A level diagram of the system is shown below.</p>
 <img alt="HeMetastableStateExcitation" src="../_images/HeMetastableStateExcitation.png" />
 <p>Let’s import all the libraries needed. We will need a library to read in data from a datafile. <code class="docutils literal notranslate"><span class="pre">pandas</span></code> is a good library to do this.</p>
 <div class="nbinput nblast docutils container">
@@ -469,16 +470,21 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Setting-up-the-System">
 <h2>Setting up the System<a class="headerlink" href="#Setting-up-the-System" title="Permalink to this headline">¶</a></h2>
 <p>This is a very similar system to last tutorial except for the lifetime and laser wavelength. Both of these values are taken from looking at the transition on the National Institute of Standards and Technology’s (NIST) atomic database. The page for He can be found
-<a class="reference external" href="https://physics.nist.gov/cgi-bin/ASD/lines1.pl?spectra=He+I&amp;limits_type=0&amp;low_w=&amp;upp_w=&amp;unit=1&amp;submit=Retrieve+Data&amp;de=0&amp;format=0&amp;line_out=0&amp;en_unit=0&amp;output=0&amp;bibrefs=1&amp;page_size=15&amp;show_obs_wl=1&amp;show_calc_wl=1&amp;unc_out=1&amp;order_out=0&amp;max_low_enrg=&amp;show_av=3&amp;max_upp_enrg=&amp;tsb_value=0&amp;min_str=&amp;A_out=0&amp;intens_out=on&amp;max_str=&amp;allowed_out=1&amp;forbid_out=1&amp;min_accur=&amp;min_intens=&amp;conf_out=on&amp;term_out=on&amp;enrg_out=on&amp;J_out=on">here</a>.</p>
+<a class="reference external" href="https://physics.nist.gov/cgi-bin/ASD/lines1.pl?spectra=He+I&amp;limits_type=0&amp;low_w=&amp;upp_w=&amp;unit=1&amp;submit=Retrieve+Data&amp;de=0&amp;format=0&amp;line_out=0&amp;en_unit=0&amp;output=0&amp;bibrefs=1&amp;page_size=15&amp;show_obs_wl=1&amp;show_calc_wl=1&amp;unc_out=1&amp;order_out=0&amp;max_low_enrg=&amp;show_av=3&amp;max_upp_enrg=&amp;tsb_value=0&amp;min_str=&amp;A_out=0&amp;intens_out=on&amp;max_str=&amp;allowed_out=1&amp;forbid_out=1&amp;min_accur=&amp;min_intens=&amp;conf_out=on&amp;term_out=on&amp;enrg_out=on&amp;J_out=on">here</a>. The 10P state data is found
+<a class="reference external" href="https://physics.nist.gov/cgi-bin/ASD/lines1.pl?spectra=He%20I&amp;limits_type=0&amp;unit=1&amp;submit=Retrieve%20Data&amp;de=0&amp;format=0&amp;line_out=0&amp;en_unit=1&amp;output=0&amp;bibrefs=1&amp;page_size=15&amp;show_obs_wl=1&amp;show_calc_wl=1&amp;unc_out=1&amp;order_out=0&amp;show_av=3&amp;tsb_value=0&amp;A_out=0&amp;intens_out=on&amp;allowed_out=1&amp;forbid_out=1&amp;conf_out=on&amp;term_out=on&amp;enrg_out=on&amp;J_out=on&amp;level_id=002001.000187">here</a> and the 3D data is found
+<a class="reference external" href="https://physics.nist.gov/cgi-bin/ASD/lines1.pl?spectra=He%20I&amp;limits_type=0&amp;unit=1&amp;submit=Retrieve%20Data&amp;de=0&amp;format=0&amp;line_out=0&amp;en_unit=1&amp;output=0&amp;bibrefs=1&amp;page_size=15&amp;show_obs_wl=1&amp;show_calc_wl=1&amp;unc_out=1&amp;order_out=0&amp;show_av=3&amp;tsb_value=0&amp;A_out=0&amp;intens_out=on&amp;allowed_out=1&amp;forbid_out=1&amp;conf_out=on&amp;term_out=on&amp;enrg_out=on&amp;J_out=on&amp;level_id=002001.000016">here</a>.</p>
+<p>To calculate the total lifetime for <span class="math notranslate nohighlight">\(\tau_f\)</span> and <span class="math notranslate nohighlight">\(\tau_b\)</span> sum the decay rates <span class="math notranslate nohighlight">\(A_{ki}\)</span> for each transition from the upper state and lower state to states not in the laser-excitation and then take the reciprocal of this to get the total lifetime. For example, <span class="math notranslate nohighlight">\(\tau_f\)</span> for the 10P state of He has many decays to lower states however the largest decay rates will contribute the most so the first three are</p>
+<div class="math notranslate nohighlight">
+\[\tau_f = \frac{1}{\Gamma_{f, total}} \approx \frac{1}{\Gamma_{f,1}+\Gamma_{f,2}+\Gamma_{f,3}}\]</div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">tau</span> <span class="o">=</span> <span class="mf">57.7e3</span> <span class="c1"># lifetime in ns (take from NIST 1/A_ki as this is in rad/s)</span>
-<span class="n">tau_f</span> <span class="o">=</span> <span class="mf">100e3</span> <span class="c1"># estimated non-radiative lifetime of rydberg upper state to other states in ns</span>
-<span class="n">tau_b</span> <span class="o">=</span> <span class="mf">100e3</span>  <span class="c1"># estimated non-radiative lifetime of metastable state</span>
-<span class="n">laser_wavelength</span> <span class="o">=</span> <span class="mf">921.258e-9</span> <span class="c1"># wavelength of laser 3D to 9P state from NIST</span>
+<span></span><span class="n">tau</span> <span class="o">=</span> <span class="mf">80.7e3</span> <span class="c1"># lifetime in ns (take from NIST 1/A_ki as this is in rad/s)</span>
+<span class="n">tau_f</span> <span class="o">=</span> <span class="mf">59.6</span> <span class="c1"># lifetime of upper state to other states in ns</span>
+<span class="n">tau_b</span> <span class="o">=</span> <span class="mf">15.7</span> <span class="c1"># lifetime of lower state decay to other states in ns</span>
+<span class="n">laser_wavelength</span> <span class="o">=</span> <span class="mf">900e-9</span> <span class="c1"># wavelength of laser 3D to 9P state from NIST</span>
 
 <span class="n">w_e</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">angularFreq</span><span class="p">(</span><span class="n">laser_wavelength</span><span class="p">)</span>  <span class="c1"># Converted to angular frequency in Grad/s</span>
 
@@ -498,14 +504,12 @@ div.rendered_html tbody tr:hover {
 
 <span class="c1"># Simulation parameters</span>
 <span class="n">start_time</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">stop_time</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># in ns</span>
-<span class="n">steps</span> <span class="o">=</span> <span class="mi">1001</span>
+<span class="n">stop_time</span> <span class="o">=</span> <span class="mi">200</span> <span class="c1"># in ns</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">201</span>
 <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">stop_time</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
 
 <span class="c1"># Laser parameters</span>
-<span class="n">laser_power</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># laser intensity in mW</span>
-<span class="n">r_sigma</span> <span class="o">=</span> <span class="mf">0.75</span>  <span class="c1"># radial distance to 2D standard deviation in mm</span>
-<span class="n">n_intensity</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">laser_intensity</span> <span class="o">=</span> <span class="mi">1500</span> <span class="c1"># laser intensity in mW/mm^2</span>
 </pre></div>
 </div>
 </div>
@@ -516,7 +520,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">helium_system</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">LaserAtomSystem</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">laser_wavelength</span><span class="p">,</span> <span class="n">tau_f</span> <span class="o">=</span> <span class="n">tau_f</span><span class="p">,</span>
-                                 <span class="n">tau_b</span> <span class="o">=</span> <span class="n">tau_b</span><span class="p">,</span> <span class="n">laser_power</span> <span class="o">=</span> <span class="n">laser_power</span><span class="p">)</span>
+                                 <span class="n">tau_b</span> <span class="o">=</span> <span class="n">tau_b</span><span class="p">,</span> <span class="n">laser_intensity</span> <span class="o">=</span> <span class="n">laser_intensity</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -524,8 +528,8 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Initialisating-the-Laser-Atom-System-with-Data">
 <h2>Initialisating the Laser-Atom System with Data<a class="headerlink" href="#Initialisating-the-Laser-Atom-System-with-Data" title="Permalink to this headline">¶</a></h2>
 <p>Now, we need to extract the data from the datafile. This is scattering amplitude data kindly given by Igor Brey who has calculated these amplitudes from a model. The model is quite accurate for helium and gives amplitudes for various impact angles.</p>
-<p>Igor calculated electron impact excitation amplitudes for all angles to the 3<span class="math notranslate nohighlight">\(^1\)</span>D state. With this data we can generate an initial density matrix to excite from real data. The data was generated in the collison frame.</p>
-<p>The density matrix elements correspond to <span class="math notranslate nohighlight">\(\rho_{M,M'} = \sum_{m'}{\langle}Mm'_f|\rho_f|M'm'_f{\rangle} = {\langle}f(M)f^*(M'){\rangle} = \sigma(M)\)</span></p>
+<p>Igor calculated electron impact excitation amplitudes for all angles to the 3<span class="math notranslate nohighlight">\(^1\)</span>D<span class="math notranslate nohighlight">\(_2\)</span> state. With this data we can generate an initial density matrix to excite from real data. The data was generated in the collison frame.</p>
+<p>The density matrix elements correspond to <span class="math notranslate nohighlight">\(\rho_{M,M'} = \sum_{m'}{\langle}Mm'_f|\rho_f|M'm'_f{\rangle} = {\langle}f(M)f^*(M'){\rangle}\)</span></p>
 <p>where <span class="math notranslate nohighlight">\(f(M)\)</span> is the scattering amplitude for state <span class="math notranslate nohighlight">\(|J M \rangle\)</span>.</p>
 <p>Select data from the scattering angle of 45 degrees.</p>
 <div class="nbinput docutils container">
@@ -728,15 +732,12 @@ The initial ρ for the laser-atom system is:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">helium_system</span><span class="o">.</span><span class="n">timeEvolution</span><span class="p">(</span><span class="n">time</span><span class="p">,</span>
-                            <span class="n">r_sigma</span> <span class="o">=</span> <span class="n">r_sigma</span><span class="p">,</span>
-                            <span class="n">n_beam_averaging</span> <span class="o">=</span> <span class="n">n_intensity</span><span class="p">,</span>
-                           <span class="n">beam_profile_averaging</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span></span><span class="n">helium_system</span><span class="o">.</span><span class="n">timeEvolution</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <p>Rotate back:</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
@@ -745,14 +746,6 @@ The initial ρ for the laser-atom system is:
 <span class="n">helium_system</span><span class="o">.</span><span class="n">rotateRho_t</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="o">-</span><span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Optical coherences are preserved under rotation. To obtain these in a new reference frame, rotate rho_0 and then evolve in the new reference frame with the correct polarisation.
-</pre></div></div>
 </div>
 </div>
 <div class="section" id="Plotting-and-Saving-Data">
@@ -763,12 +756,12 @@ Optical coherences are preserved under rotation. To obtain these in a new refere
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">helium_system</span><span class="o">.</span><span class="n">saveToCSV</span><span class="p">(</span><span class="s2">&quot;SavedData/MetastableHeBrey100mWTEM00Averaged.csv&quot;</span><span class="p">)</span>
+<span></span><span class="n">helium_system</span><span class="o">.</span><span class="n">saveToCSV</span><span class="p">(</span><span class="s2">&quot;SavedData/MetastableHeBrey1500mW.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -802,7 +795,7 @@ Optical coherences are preserved under rotation. To obtain these in a new refere
                                 <span class="n">symbol</span> <span class="o">=</span> <span class="s1">&#39;circle&#39;</span><span class="p">,</span>
                            <span class="p">)))</span>
 
-<span class="n">fig_upper</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Upper Atomic Populations: He 9&lt;sup&gt;1&lt;/sup&gt;P&lt;sub&gt;1&lt;/sub&gt; to 3&lt;sup&gt;1&lt;/sup&gt;D&lt;sub&gt;2&lt;/sub&gt;, P = </span><span class="si">{:0.0f}</span><span class="s2">mW, π, 𝜏 = </span><span class="si">{:0.0f}</span><span class="s2">us, 𝜏&lt;sub&gt;NR&lt;/sub&gt; = </span><span class="si">{:0.0f}</span><span class="s2">us&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">laser_power</span><span class="p">,</span> <span class="n">tau</span><span class="o">/</span><span class="mf">1e3</span><span class="p">,</span> <span class="n">tau_f</span><span class="o">/</span><span class="mf">1e3</span><span class="p">),</span>
+<span class="n">fig_upper</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Upper Atomic Populations: He 10&lt;sup&gt;1&lt;/sup&gt;P&lt;sub&gt;1&lt;/sub&gt; to 3&lt;sup&gt;1&lt;/sup&gt;D&lt;sub&gt;2&lt;/sub&gt;, I = </span><span class="si">{:0.0f}</span><span class="s2">mW, π-polarised 30° to QA&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">laser_intensity</span><span class="p">,</span> <span class="n">tau</span><span class="o">/</span><span class="mf">1e3</span><span class="p">,</span> <span class="n">tau_f</span><span class="o">/</span><span class="mf">1e3</span><span class="p">),</span>
                  <span class="n">xaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Time (ns)&quot;</span><span class="p">,</span>
                  <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
                 <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
@@ -814,7 +807,7 @@ Optical coherences are preserved under rotation. To obtain these in a new refere
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -822,7 +815,7 @@ Optical coherences are preserved under rotation. To obtain these in a new refere
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -873,7 +866,7 @@ Optical coherences are preserved under rotation. To obtain these in a new refere
                                 <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span>
                                 <span class="n">symbol</span> <span class="o">=</span> <span class="s1">&#39;square&#39;</span><span class="p">,</span>
                             <span class="p">)))</span>
-<span class="n">fig_lower</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Lower Atomic Populations: He 9&lt;sup&gt;1&lt;/sup&gt;P&lt;sub&gt;1&lt;/sub&gt;, P = </span><span class="si">{:0.0f}</span><span class="s2">mW, π, 𝜏 = </span><span class="si">{:0.0f}</span><span class="s2">us, 𝜏&lt;sub&gt;NR&lt;/sub&gt; = </span><span class="si">{:0.0f}</span><span class="s2">us&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">laser_power</span><span class="p">,</span> <span class="n">tau</span><span class="o">/</span><span class="mf">1e3</span><span class="p">,</span> <span class="n">tau_f</span><span class="o">/</span><span class="mf">1e3</span><span class="p">),</span>
+<span class="n">fig_lower</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Lower Atomic Populations: He 10&lt;sup&gt;1&lt;/sup&gt;P&lt;sub&gt;1&lt;/sub&gt;, I = </span><span class="si">{:0.0f}</span><span class="s2">mW, π-polarised 30° to QA&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">laser_intensity</span><span class="p">,</span> <span class="n">tau</span><span class="o">/</span><span class="mf">1e3</span><span class="p">,</span> <span class="n">tau_f</span><span class="o">/</span><span class="mf">1e3</span><span class="p">),</span>
                         <span class="n">xaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Time (ns)&quot;</span><span class="p">,</span>
                         <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">)</span>
 
@@ -883,12 +876,105 @@ Optical coherences are preserved under rotation. To obtain these in a new refere
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <img alt="../_images/tutorials_Tutorial3-MetastableHe_24_0.png" src="../_images/tutorials_Tutorial3-MetastableHe_24_0.png" />
 </div>
+</div>
+</div>
+<div class="section" id="Plotting-the-Angular-Shape">
+<h2>Plotting the Angular Shape<a class="headerlink" href="#Plotting-the-Angular-Shape" title="Permalink to this headline">¶</a></h2>
+<p>We can plot the angular “shape” of the states <span class="math notranslate nohighlight">\(W(\theta, \phi)\)</span> as they evolve over time <a class="reference external" href="https://journals.aps.org/pra/abstract/10.1103/PhysRevA.77.013409">Murray 2008</a>:</p>
+<div class="math notranslate nohighlight">
+\[W(\theta, \phi) = \sum_{m_J, m_J'}\rho_{m_J, m_J'}Y_{J, m_J}(\theta, \phi)Y*_{J,m_J'}(\theta, \phi)\]</div>
+<p>, where <span class="math notranslate nohighlight">\(Y_{J, m_J}(\theta, \phi)\)</span> are the spherical harmonics for the state with total angular momentum <span class="math notranslate nohighlight">\(J\)</span> and projection <span class="math notranslate nohighlight">\(m_J\)</span>.</p>
+<p><strong>Note</strong>: this only works for a single angular momentum state so will not produce the correct results for multiple <span class="math notranslate nohighlight">\(F\)</span>-states but will be correct for a single <span class="math notranslate nohighlight">\(J\)</span>-state.</p>
+<p>In LASED we can plot the initial shape of the atomic state using the <code class="docutils literal notranslate"><span class="pre">angularShape_0()</span></code> function which takes the argument of <code class="docutils literal notranslate"><span class="pre">theta</span></code> and <code class="docutils literal notranslate"><span class="pre">phi</span></code> lists for the azimuthal (0 to 2<span class="math notranslate nohighlight">\(\pi\)</span>) and polar coordinates (0 to <span class="math notranslate nohighlight">\(\pi\)</span>) respectively as well as a <code class="docutils literal notranslate"><span class="pre">state</span></code> argument which equals either “g” or “e” depending on whether the angular shape of the excited or lower state in the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem()</span></code> will be calculated. The “angular shape” is the radius of the electron charge cloud as the
+azimuthal and polar coordinate are varied.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">W</span> <span class="o">=</span> <span class="n">helium_system</span><span class="o">.</span><span class="n">angularShape_0</span><span class="p">(</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The angular shape can now be plotted using the plotting package desired. Here, I use <code class="docutils literal notranslate"><span class="pre">Plotly</span></code>. Before plotting, a mesh grid must be made for <code class="docutils literal notranslate"><span class="pre">theta</span></code> and <code class="docutils literal notranslate"><span class="pre">phi</span></code> and these must be converted to cartesian coordinates along with the radial coordinate calculated. A helpful function is the <code class="docutils literal notranslate"><span class="pre">SphericalToCartesian</span></code> function which is provided by <code class="docutils literal notranslate"><span class="pre">LASED</span></code> which takes the meshgrid and radius as inputs and provides x,y,z coordinates to be plotted.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>  <span class="c1"># Create a mesh grid using numpy</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">SphericalToCartesian</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>  <span class="c1"># Create cartesian coords</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Surface</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)])</span>  <span class="c1"># Plot the result</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial3-HeAngularShapeDStatet=0.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial3-HeAngularShapeDStatet=0.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_Tutorial3-MetastableHe_28_0.png" src="../_images/tutorials_Tutorial3-MetastableHe_28_0.png" />
+</div>
+</div>
+<p>We can make a video for the evolution of the 3D-state’s electron cloud as it evolves over time in the laser-atom system. To do this, we have to generate the angular shape of the time evolution using the function <code class="docutils literal notranslate"><span class="pre">angularShape_t</span></code> which gives an array of angular shapes. Each angular shape must then be plotted and the images saved. Once all the images are saved they must be stitched together to create a video file. This can be done using any software package, <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code> is used here.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">W_t</span> <span class="o">=</span> <span class="n">helium_system</span><span class="o">.</span><span class="n">angularShape_t</span><span class="p">(</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+<span class="n">phi</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+<span class="c1"># Generate the images</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">W</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">W_t</span><span class="p">):</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">las</span><span class="o">.</span><span class="n">SphericalToCartesian</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+    <span class="c1"># Plot the result</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Surface</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)])</span>
+    <span class="n">camera</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">up</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">center</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+    <span class="n">eye</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">1.25</span><span class="p">,</span> <span class="n">y</span><span class="o">=-</span><span class="mf">1.25</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">1.5</span><span class="p">))</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">scene_camera</span><span class="o">=</span><span class="n">camera</span><span class="p">)</span>
+
+    <span class="n">filenumber</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%0.5d</span><span class="s2">&quot;</span><span class="o">%</span><span class="k">i</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Videos/3DShape&quot;</span> <span class="o">+</span> <span class="n">filenumber</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">2.2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Generate mp4 using ffpmeg</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span>
+        <span class="s1">&#39;ffmpeg&#39;</span><span class="p">,</span> <span class="s1">&#39;-framerate&#39;</span><span class="p">,</span> <span class="s1">&#39;8&#39;</span><span class="p">,</span> <span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;Videos/3DShape</span><span class="si">%05d</span><span class="s1">.png&#39;</span><span class="p">,</span> <span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;30&#39;</span><span class="p">,</span> <span class="s1">&#39;-pix_fmt&#39;</span><span class="p">,</span> <span class="s1">&#39;yuv420p&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;He3DState1500mWCollFrame30deg.mp4&#39;</span>
+    <span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0
+</pre></div></div>
 </div>
 </div>
 </div>

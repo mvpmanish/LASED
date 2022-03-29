@@ -195,22 +195,22 @@ class LaserAtomSystem:
         return self.rho_t[index(i, j, self.n)]
 
     def rotateRho_0(self, alpha, beta, gamma):
-        """ Rotate rho_0 by the Euler angles alpha, beta, and gamma.
+        """Rotate rho_0 by the Euler angles alpha, beta, and gamma.
 
         Parameters:
-            alpha: rotation (in radians) around z-axis
-            beta: rotation (in radians) about the y'-axis
-            gamma: rotation (in radians) about the z''-axis
+            alpha (float): rotation (in radians) around z-axis
+            beta (float): rotation (in radians) about the y'-axis
+            gamma (float): rotation (in radians) about the z''-axis
         """
         self.rho_0 = rotateFlatDensityMatrix(self.rho_0, self.n, self.E, self.G, alpha, beta, gamma)
 
     def rotateRho_t(self, alpha, beta, gamma):
-        """ Rotate rho_0 by the Euler angles alpha, beta, and gamma.
+        """Rotate rho_0 by the Euler angles alpha, beta, and gamma.
 
         Parameters:
-            alpha: rotation (in radians) around z-axis
-            beta: rotation (in radians) about the y'-axis
-            gamma: rotation (in radians) about the z''-axis
+            alpha (float): rotation (in radians) around z-axis
+            beta (float): rotation (in radians) about the y'-axis
+            gamma (float): rotation (in radians) about the z''-axis
         """
         rotated_rho_t = []
         # Flip to loop over all rho
@@ -222,7 +222,56 @@ class LaserAtomSystem:
             rotated_rho_t.append(new_rho)
         # Flip this back to the structure of rho_t
         self.rho_t = np.transpose(rotated_rho_t)[0]
-
+        
+    def angularShape_0(self, state, theta, phi):
+        """Gets the angular shape (radius) of the atomic state given at t = 0.
+        
+        Parameters:
+            state (char): Either "e" or "g" specifying the excited or lower state.
+            theta (array_like): Azimuthal (longitudinal) coordinate in [0, 2*pi].
+            phi (array_like): Polar (colatitudinal) coordinate in [0, pi].
+        
+        Returns:
+            (2D array): A list of lists with the radius of the angular shape of the atomic state given at t = 0.
+            
+        Example:
+            calcium.angularShape("g", theta, phi) for a pre-defined calcium system gives the angular shape of the lower state density matrix.
+        """
+        if((self.E[0].I or self.G[0].I) != 0):
+            print("Error: Cannot visualise charge cloud in F-representation! I must be zero.")
+        if(state == "g"):
+            sub_states = self.G
+        elif(state == "e"):
+            sub_states = self.E
+        else:
+            print("Error: Must enter e or g when defining the state!")
+            return
+        return angularShape(self.rho_0, self.n, sub_states, theta, phi)
+    
+    def angularShape_t(self, state, theta, phi):
+        """Gets the time evolution of the angular shape (radius) of the atomic state given.
+        
+        Parameters:
+            state (char): Either "e" or "g" specifying the excited or lower state.
+            theta (array_like): Azimuthal (longitudinal) coordinate in [0, 2*pi].
+            phi (array_like): Polar (colatitudinal) coordinate in [0, pi].
+        
+        Returns:
+            (List of 2D array): List of 2D arrays of the radius of the angular shape of the atomic state for a given time in the evolution of the laser-atom system.
+        """
+        if((self.E[0].I or self.G[0].I) != 0):
+            print("Error: Cannot visualise charge cloud in F-representation! I must be zero.")
+        if(state == "g"):
+            sub_states = self.G
+        elif(state == "e"):
+            sub_states = self.E
+        else:
+            print("Error: Must enter e or g when defining the state!")
+            return
+        n = self.n
+        flat_rho_t = getFlattenedRhot(self.rho_t, n)  # Get the flattened rho_t
+        W_t = [angularShape(flat_rho, n, sub_states, theta, phi) for flat_rho in flat_rho_t]
+        return W_t
 
     def timeEvolution(self, time, beam_profile_averaging = None, doppler_averaging = None,
                     print_eq = None, detuning = None, atomic_velocity = None, r_sigma = None,

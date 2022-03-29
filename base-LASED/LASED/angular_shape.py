@@ -7,8 +7,26 @@ from LASED.density_matrix import *
 import numpy as np
 from scipy.special import sph_harm
 
-def angularShape(flat_rho, n, sub_states, J, theta, phi):
-    """ Computes the angular shape of the single atomic state |J, m>.
+def getFlattenedRhot(rho_t, n):
+    """Flatten a density matrix over time rho(t).
+    
+    Parameters:
+        rho_t (list of list): List of lists of time evolution of density matrix elements.
+        n (int): Number of states in total laser-coupled system.
+        
+    Returns:
+        (List of (list of lists)): List of flattened density matrices for the time evolution.
+    """
+    flat_rho_t = []
+    for rho in np.transpose(rho_t):
+        new_rho = np.zeros((n*n, 1), dtype = complex)  # Placeholder
+        for i, element in enumerate(new_rho):
+            new_rho[i, 0] = rho[i]
+        flat_rho_t.append(new_rho)
+    return flat_rho_t
+
+def angularShape(flat_rho, n, sub_states, theta, phi):
+    """Computes the angular shape of the single atomic state |J, m>.
     
     Parameters:
         flat_rho (list of list): Flattened 2D density matrix of coupled E & G states with the laser.
@@ -21,12 +39,12 @@ def angularShape(flat_rho, n, sub_states, J, theta, phi):
     Returns:
         (array_like): The radius of the angular shape of the input atomic state |J, m>.
     """
-    
-    getSingleStateMatrix(flat_rho, n, sub_states)  # Get the single state density matrix
+    J = sub_states[0].F  # Get the total angular momentum
+    rho = getSingleStateMatrix(flat_rho, n, sub_states)  # Get the single state density matrix
     W = []
-    for ph in phi:
+    for thta in theta:
         Wrow = []
-        for thta in theta:
+        for ph in phi:
             Wsum = 0
             for i, sub_state in enumerate(sub_states):
                 for j, sub_state_p in enumerate(sub_states):
@@ -34,3 +52,19 @@ def angularShape(flat_rho, n, sub_states, J, theta, phi):
             Wrow.append(abs(Wsum))
         W.append(Wrow)
     return W
+
+def SphericalToCartesian(r, theta, phi):
+    """Turns spherical coordinates to cartesian coordianates.
+    
+    Parameters:
+        r (float): Radius from 0 to infinity.
+        theta (array_like): Azimuthal (longitudinal) coordinate in [0, 2*pi].
+        phi (array_like): Polar (colatitudinal) coordinate in [0, pi].
+        
+    Returns:
+        x,y,z (tuple): The cartesian coordinates.
+    """
+    x = r* np.cos(theta)* np.sin(phi)
+    y = r* np.sin(theta)* np.sin(phi)
+    z = r* np.cos(phi)
+    return x, y, z

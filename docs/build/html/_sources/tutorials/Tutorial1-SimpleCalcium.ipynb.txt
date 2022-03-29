@@ -473,7 +473,7 @@
      "text": [
       "Populating ground states equally as the initial condition.\n",
       "Populating ground states equally as the initial condition.\n",
-      "The code finished in 6.0219 seconds\n"
+      "The code finished in 4.0091 seconds\n"
      ]
     }
    ],
@@ -510,7 +510,7 @@
    "source": [
     "calcium_system.saveToCSV(\"SavedData/SimpleCalciumNoDetuning.csv\")\n",
     "calcium_system200MHzdetuned.saveToCSV(\"SavedData/SimpleCalcium200MHzDetuning.csv\")\n",
-    "calcium_system500MHzdetuned.saveToCSV(\"SavedData/SimpleCalcium200MHzDetuning.csv\")"
+    "calcium_system500MHzdetuned.saveToCSV(\"SavedData/SimpleCalcium500MHzDetuning.csv\")"
    ]
   },
   {
@@ -595,7 +595,7 @@
     "\\epsilon = \\frac{1}{\\sqrt{L^2+R^2}}(L\\sigma^-+R\\sigma^+)\n",
     "$$\n",
     "\n",
-    "where $R$ and $L$ are weights with a value of 0 to 1 denoting how elliptically polarised the light is in either right or left-handed direction. If $R = L$ then the light is just linearly polarised.\n",
+    "where $R$ and $L$ are weights denoting how elliptically polarised the light is in either right or left-handed direction. If $R = L$ then the light is just linearly polarised. The ratio of L to R determines how elliptically polarised the light is.\n",
     "\n",
     "The Rabi frequency for elliptically polarisation follows from the expression above and is the superposition of the Rabi frequency for RHC and LHC light with differing weights:\n",
     "\n",
@@ -661,8 +661,8 @@
     "                 yaxis_title = \"Population\",\n",
     "                font = dict(\n",
     "                    size = 11))\n",
-    "fig_ca_lhc.write_image(f\"SavedPlots/tutorial1-ellipselhc.png\")\n",
-    "Image(f\"SavedPlots/tutorial1-ellipselhc.png\")"
+    "fig_ca_lhc.write_image(\"SavedPlots/tutorial1-ellipselhc.png\")\n",
+    "Image(\"SavedPlots/tutorial1-ellipselhc.png\")"
    ]
   },
   {
@@ -725,8 +725,8 @@
     "                 yaxis_title = \"Population\",\n",
     "                font = dict(\n",
     "                    size = 11))\n",
-    "fig_ca_rhc.write_image(f\"SavedPlots/tutorial1-ellipserhc.png\")\n",
-    "Image(f\"SavedPlots/tutorial1-ellipserhc.png\")"
+    "fig_ca_rhc.write_image(\"SavedPlots/tutorial1-ellipserhc.png\")\n",
+    "Image(\"SavedPlots/tutorial1-ellipserhc.png\")"
    ]
   },
   {

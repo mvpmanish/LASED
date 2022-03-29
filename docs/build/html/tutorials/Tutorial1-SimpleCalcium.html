@@ -109,7 +109,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="Tutorial2-HeRotation.html">Tutorial 2: D to P Exciation in Helium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Tutorial3-MetastableHe.html">Tutorial 3: Initialisation of Metastable He Excitation with Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial3-MetastableHe.html">Tutorial 3: He Excitation: Initialisation with Data and Angular Shape</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Tutorial4-SodiumDLine.html">Tutorial 4: Hyperfine Structure of Sodium D2 Line</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Tutorial5-Rubidium85DLine.html">Tutorial 5: Rubidium-85 D Line</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Tutorial6-Caesium133DLine.html">Tutorial 6: Caesium-133 D Line</a></li>
@@ -724,7 +724,7 @@ $\displaystyle \dot{\rho}_{41} = - \frac{\rho_{41}}{2 \tau} + i \rho_{43} \Omega
 <div class="highlight"><pre>
 Populating ground states equally as the initial condition.
 Populating ground states equally as the initial condition.
-The code finished in 6.0219 seconds
+The code finished in 4.0091 seconds
 </pre></div></div>
 </div>
 </div>
@@ -739,7 +739,7 @@ The code finished in 6.0219 seconds
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">calcium_system</span><span class="o">.</span><span class="n">saveToCSV</span><span class="p">(</span><span class="s2">&quot;SavedData/SimpleCalciumNoDetuning.csv&quot;</span><span class="p">)</span>
 <span class="n">calcium_system200MHzdetuned</span><span class="o">.</span><span class="n">saveToCSV</span><span class="p">(</span><span class="s2">&quot;SavedData/SimpleCalcium200MHzDetuning.csv&quot;</span><span class="p">)</span>
-<span class="n">calcium_system500MHzdetuned</span><span class="o">.</span><span class="n">saveToCSV</span><span class="p">(</span><span class="s2">&quot;SavedData/SimpleCalcium200MHzDetuning.csv&quot;</span><span class="p">)</span>
+<span class="n">calcium_system500MHzdetuned</span><span class="o">.</span><span class="n">saveToCSV</span><span class="p">(</span><span class="s2">&quot;SavedData/SimpleCalcium500MHzDetuning.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -805,7 +805,7 @@ The code finished in 6.0219 seconds
 <p>To excite an atomic system with ellipticaly polarised light use the relation that elliptically polarisaed light can be composed of right-hand circular (RHC) <span class="math notranslate nohighlight">\(\sigma^+\)</span> and left-hand circular (LHC) <span class="math notranslate nohighlight">\(\sigma^-\)</span> light in varying weights. So, elliptical light can be described as:</p>
 <div class="math notranslate nohighlight">
 \[\epsilon = \frac{1}{\sqrt{L^2+R^2}}(L\sigma^-+R\sigma^+)\]</div>
-<p>where <span class="math notranslate nohighlight">\(R\)</span> and <span class="math notranslate nohighlight">\(L\)</span> are weights with a value of 0 to 1 denoting how elliptically polarised the light is in either right or left-handed direction. If <span class="math notranslate nohighlight">\(R = L\)</span> then the light is just linearly polarised.</p>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> and <span class="math notranslate nohighlight">\(L\)</span> are weights denoting how elliptically polarised the light is in either right or left-handed direction. If <span class="math notranslate nohighlight">\(R = L\)</span> then the light is just linearly polarised. The ratio of L to R determines how elliptically polarised the light is.</p>
 <p>The Rabi frequency for elliptically polarisation follows from the expression above and is the superposition of the Rabi frequency for RHC and LHC light with differing weights:</p>
 <div class="math notranslate nohighlight">
 \[\Omega^{\epsilon}=\frac{1}{\sqrt{L^2+R^2}}(L\Omega^{-1}-R\Omega^{+1})\]</div>
@@ -843,8 +843,8 @@ The code finished in 6.0219 seconds
                  <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
                 <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                     <span class="n">size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">))</span>
-<span class="n">fig_ca_lhc</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SavedPlots/tutorial1-ellipselhc.png&quot;</span><span class="p">)</span>
-<span class="n">Image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SavedPlots/tutorial1-ellipselhc.png&quot;</span><span class="p">)</span>
+<span class="n">fig_ca_lhc</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ellipselhc.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ellipselhc.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -896,8 +896,8 @@ Populating ground states equally as the initial condition.
                  <span class="n">yaxis_title</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
                 <span class="n">font</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
                     <span class="n">size</span> <span class="o">=</span> <span class="mi">11</span><span class="p">))</span>
-<span class="n">fig_ca_rhc</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SavedPlots/tutorial1-ellipserhc.png&quot;</span><span class="p">)</span>
-<span class="n">Image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SavedPlots/tutorial1-ellipserhc.png&quot;</span><span class="p">)</span>
+<span class="n">fig_ca_rhc</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ellipserhc.png&quot;</span><span class="p">)</span>
+<span class="n">Image</span><span class="p">(</span><span class="s2">&quot;SavedPlots/tutorial1-ellipserhc.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
