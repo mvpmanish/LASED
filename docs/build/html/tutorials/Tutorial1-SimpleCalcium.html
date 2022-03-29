@@ -100,10 +100,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#Saving-and-Plotting">Saving and Plotting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Elliptical-Polarisation">Elliptical Polarisation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Setting-the-Initial-Conditions">Setting the Initial Conditions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Gaussian-Laser-Beam-Profiles">Gaussian Laser Beam Profiles</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#Doppler-Detuning-from-the-Atomic-Velocity-Profile">Doppler Detuning from the Atomic Velocity Profile</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="#Gaussian-Laser-Beam-Profiles">Gaussian Laser Beam Profiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Doppler-Detuning-from-the-Atomic-Velocity-Profile">Doppler Detuning from the Atomic Velocity Profile</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Doppler-Detuning-and-Gaussian-Beam-Profile">Doppler Detuning and Gaussian Beam Profile</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Exporting-the-Equations-of-Motion">Exporting the Equations of Motion</a></li>
 </ul>
@@ -1118,8 +1116,9 @@ Populating ground states equally as the initial condition.
 <img alt="../_images/tutorials_Tutorial1-SimpleCalcium_36_0.png" src="../_images/tutorials_Tutorial1-SimpleCalcium_36_0.png" />
 </div>
 </div>
+</div>
 <div class="section" id="Doppler-Detuning-from-the-Atomic-Velocity-Profile">
-<h3>Doppler Detuning from the Atomic Velocity Profile<a class="headerlink" href="#Doppler-Detuning-from-the-Atomic-Velocity-Profile" title="Permalink to this headline">¶</a></h3>
+<h2>Doppler Detuning from the Atomic Velocity Profile<a class="headerlink" href="#Doppler-Detuning-from-the-Atomic-Velocity-Profile" title="Permalink to this headline">¶</a></h2>
 <p>When using <code class="docutils literal notranslate"><span class="pre">LASED</span></code> the atoms being excited are usually defined as being stationary unless specified. If the atoms are not stationary and have some velocity with respect to the laser beam then the frequency of the laser is detuned from resonance due to the fixed velocity. In experiments an atomic beam is sometimes used to provide the atoms to some interaction region where the laser-excitation takes place. If a velocity component is in (or opposite to) the direction of the laser beam then
 detuning occurs. The velocity component can be specified using the <code class="docutils literal notranslate"><span class="pre">atomic_velocity</span></code> keyword in the <code class="docutils literal notranslate"><span class="pre">timeEvolution()</span></code>. This is specified in units of m/s in the direction of the laser beam. If the direction is opposite to this then the <code class="docutils literal notranslate"><span class="pre">atomic_velocity</span></code> is negative.</p>
 <p>Detuning can also occur due to the Maxwell-Boltzmann distribution of atomic velocities. This results in a Gaussian detuning profile. This can be modelled by splitting the detuning due to the velocity distribution of atoms into uniform sections and time-evolving the system with these uniform detunings and then summing up the time evolution for each detuning and normalising. The detuning due to this Doppler broadening can be modelled in <code class="docutils literal notranslate"><span class="pre">LASED</span></code> by defining a <code class="docutils literal notranslate"><span class="pre">doppler_width</span></code> in Grad/s in
@@ -1230,7 +1229,6 @@ Populating ground states equally as the initial condition.
 </div>
 <div class="output_area docutils container">
 <img alt="../_images/tutorials_Tutorial1-SimpleCalcium_42_0.png" src="../_images/tutorials_Tutorial1-SimpleCalcium_42_0.png" />
-</div>
 </div>
 </div>
 </div>

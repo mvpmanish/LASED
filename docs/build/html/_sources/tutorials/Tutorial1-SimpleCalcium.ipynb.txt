@@ -990,7 +990,7 @@
    "id": "a28ad891",
    "metadata": {},
    "source": [
-    "### Doppler Detuning from the Atomic Velocity Profile\n",
+    "## Doppler Detuning from the Atomic Velocity Profile\n",
     "\n",
     "When using `LASED` the atoms being excited are usually defined as being stationary unless specified. If the atoms are not stationary and have some velocity with respect to the laser beam then the frequency of the laser is detuned from resonance due to the fixed velocity. In experiments an atomic beam is sometimes used to provide the atoms to some interaction region where the laser-excitation takes place. If a velocity component is in (or opposite to) the direction of the laser beam then detuning occurs. The velocity component can be specified using the `atomic_velocity` keyword in the `timeEvolution()`. This is specified in units of m/s in the direction of the laser beam. If the direction is opposite to this then the `atomic_velocity` is negative. \n",
     "\n",
