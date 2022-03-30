@@ -1,5 +1,6 @@
 setup.py
 LASED/__init__.py
+LASED/angular_shape.py
 LASED/constants.py
 LASED/decay_constant.py
 LASED/density_matrix.py

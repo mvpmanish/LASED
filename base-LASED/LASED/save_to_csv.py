@@ -45,7 +45,7 @@ def stateLabel(s, state_type):
             string: "J=k;m_J=l" if k and l are J and m quantum numbers. If the state has isospin then it is "F=k;m_F=l"
         """
         
-        if(s.I != None):
+        if(s.I != 0):
             letter = "F"
         else:
             letter = "J"
@@ -53,7 +53,7 @@ def stateLabel(s, state_type):
         if(state_type == "g"):  # Prime the letter if a ground state
             letter += "'"
             
-        return f"{letter}={s.F};m_{letter}={s.m}"
+        return f"{letter}={s.F};m={s.m}"
 
 def saveRhotAsCSV(n, E, G, time, rho_t, filename, precision = None):
     """Saves rho_t to a csv file.
@@ -83,27 +83,27 @@ def saveRhotAsCSV(n, E, G, time, rho_t, filename, precision = None):
     
     for g in G:
         for gp in G:
-            headers.append(f"Re({stateLabel(g, g_state_type)},{stateLabel(gp, g_state_type)})")
+            headers.append(f"Re({stateLabel(g, g_state_type)}:{stateLabel(gp, g_state_type)})")
             sorted_rho_t.append([x.real for x in rho_t[index(g, gp, n)]])
-            headers.append(f"Im({stateLabel(g, g_state_type)},{stateLabel(gp, g_state_type)})")
+            headers.append(f"Im({stateLabel(g, g_state_type)}:{stateLabel(gp, g_state_type)})")
             sorted_rho_t.append([x.imag for x in rho_t[index(g, gp, n)]])
     for e in E:
         for ep in E:
-            headers.append(f"Re({stateLabel(e, e_state_type)},{stateLabel(ep, e_state_type)})")
+            headers.append(f"Re({stateLabel(e, e_state_type)}:{stateLabel(ep, e_state_type)})")
             sorted_rho_t.append([x.real for x in rho_t[index(e, ep, n)]])
-            headers.append(f"Im({stateLabel(e, e_state_type)},{stateLabel(ep, e_state_type)})")
+            headers.append(f"Im({stateLabel(e, e_state_type)}:{stateLabel(ep, e_state_type)})")
             sorted_rho_t.append([x.imag for x in rho_t[index(e, ep, n)]])
     for e in E:
         for g in G:
-            headers.append(f"Re({stateLabel(e, e_state_type)},{stateLabel(g, g_state_type)})")
+            headers.append(f"Re({stateLabel(e, e_state_type)}:{stateLabel(g, g_state_type)})")
             sorted_rho_t.append([x.real for x in rho_t[index(e, g, n)]])
-            headers.append(f"Im({stateLabel(e, e_state_type)},{stateLabel(g, g_state_type)})")
+            headers.append(f"Im({stateLabel(e, e_state_type)}:{stateLabel(g, g_state_type)})")
             sorted_rho_t.append([x.imag for x in rho_t[index(e, g, n)]])
     for g in G:
         for e in E:
-            headers.append(f"Re({stateLabel(g, g_state_type)},{stateLabel(e, e_state_type)})")
+            headers.append(f"Re({stateLabel(g, g_state_type)}:{stateLabel(e, e_state_type)})")
             sorted_rho_t.append([x.real for x in rho_t[index(g, e, n)]])
-            headers.append(f"Im({stateLabel(g, g_state_type)},{stateLabel(e, e_state_type)})")
+            headers.append(f"Im({stateLabel(g, g_state_type)}:{stateLabel(e, e_state_type)})")
             sorted_rho_t.append([x.imag for x in rho_t[index(g, e, n)]])
 
 
