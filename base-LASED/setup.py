@@ -9,12 +9,7 @@ LONG_DESCRIPTION = 'A Laser-Atom Interaction Simulator using Quantum Electrodyna
 with open("../README.md", "r") as fh:
     long_description = fh.read()
 
-
-
-
-
 # Setup the C++ module
-
 ext_modules = [
     Pybind11Extension("LASED.CppLASED",
         ["src/main.cpp"],
@@ -22,19 +17,6 @@ ext_modules = [
         define_macros = [('VERSION_INFO', VERSION)],
         ),
 ]
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # Setting up
 setup(
