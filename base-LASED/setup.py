@@ -18,6 +18,15 @@ ext_modules = [
         ),
 ]
 
+# Avoid a gcc warning below:
+# cc1plus: warning: command line option ‘-Wstrict-prototypes’ is valid
+# for C/ObjC but not for C++
+class BuildExt(build_ext):
+    def build_extensions(self):
+        if '-Wstrict-prototypes' in self.compiler.compiler_so:
+            self.compiler.compiler_so.remove('-Wstrict-prototypes')
+        super().build_extensions()
+
 # Setting up
 setup(
        # the name must match the folder name 'LASED'
@@ -37,6 +46,7 @@ setup(
         ], # add any additional packages that
         # needs to be installed along with your package. Eg: 'caer'
         ext_modules=ext_modules, # Setup the C++ module
+        cmdclass={'build_ext': BuildExt},  # Avoid gcc compiler warning
         keywords=['python', 'laser-atom', 'simulation', 'quantum', 'quantum electrodynamics', 'physics'],
         classifiers= [
             "Development Status :: 5 - Production/Stable",
