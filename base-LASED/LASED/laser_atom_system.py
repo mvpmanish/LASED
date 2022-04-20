@@ -125,14 +125,14 @@ class LaserAtomSystem:
         """Accessor for an element in rho_0.
 
         Parameters:
-            i (State): First state index.
-            j (State): Second state index.
+            i (State/int): First state index.
+            j (State/int): Second state index.
 
         Returns:
             complex: element of the laser-atom system density matrix at t=0.
 
         Example:
-            print(Rho_0(one, two))
+            print(Rho_0(one, two)) OR print(Rho_0(1, 2))
         """
         row = index(i, j, self.n)
         return self.rho_0[row, 0]
@@ -141,8 +141,8 @@ class LaserAtomSystem:
         """Sets a value to an element of rho_0.
 
         Parameters:
-            i (State): First state index
-            j (State): Second state index
+            i (State/int): First state index
+            j (State/int): Second state index
             value (np.complex): Sets the value of rho_ij to the complex value here
         """
         if(value > 1):
@@ -182,15 +182,14 @@ class LaserAtomSystem:
         """Accessor for an element in rho_t.
 
         Parameters:
-            i (State): First state index
-            j (State): Second state index
+            i (State/int): First state index
+            j (State/int): Second state index
 
         Returns:
             list: Array of an element in laser-atom system for all of the simulation time
 
         Example:
-            print(Rho_t(one, two)) prints element rho_12 if one and two are State objects corresponding
-            to label 1 and 2 respectively.
+            print(Rho_t(one, two)) OR print(Rho_t(1, 2)) prints the time evolution of rho_12
         """
         return self.rho_t[index(i, j, self.n)]
 
@@ -222,18 +221,18 @@ class LaserAtomSystem:
             rotated_rho_t.append(new_rho)
         # Flip this back to the structure of rho_t
         self.rho_t = np.transpose(rotated_rho_t)[0]
-        
+
     def angularShape_0(self, state, theta, phi):
         """Gets the angular shape (radius) of the atomic state given at t = 0.
-        
+
         Parameters:
             state (char): Either "e" or "g" specifying the excited or lower state.
             theta (array_like): Azimuthal (longitudinal) coordinate in [0, 2*pi].
             phi (array_like): Polar (colatitudinal) coordinate in [0, pi].
-        
+
         Returns:
             (2D array): A list of lists with the radius of the angular shape of the atomic state given at t = 0.
-            
+
         Example:
             calcium.angularShape("g", theta, phi) for a pre-defined calcium system gives the angular shape of the lower state density matrix.
         """
@@ -247,15 +246,15 @@ class LaserAtomSystem:
             print("Error: Must enter e or g when defining the state!")
             return
         return angularShape(self.rho_0, self.n, sub_states, theta, phi)
-    
+
     def angularShape_t(self, state, theta, phi):
         """Gets the time evolution of the angular shape (radius) of the atomic state given.
-        
+
         Parameters:
             state (char): Either "e" or "g" specifying the excited or lower state.
             theta (array_like): Azimuthal (longitudinal) coordinate in [0, 2*pi].
             phi (array_like): Polar (colatitudinal) coordinate in [0, pi].
-        
+
         Returns:
             (List of 2D array): List of 2D arrays of the radius of the angular shape of the atomic state for a given time in the evolution of the laser-atom system.
         """
