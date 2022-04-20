@@ -9,67 +9,58 @@
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
 
 
-// define types 
-//
-
+//----------------------TYPE AND CONSTANT DEFINITIONS--------------------------
+// Use Eigen boost library
+// Dynamic matrix of complex doubles type
 typedef Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic> MatrixXc;
+// Dynamic matrix of 8 columns to store States with (label, w, m, L, S, J = None, I = None, F = None)
 typedef Eigen::Matrix<double, Eigen::Dynamic, 8> States;
-// label, w, m, L, S, J = None, I = None, F = None):
-
-
 
 using namespace std::complex_literals;
 
-
-// define constants 
-
-std::vector<double> q_decay = { -1, 0, 1 };
+// Define constants
+std::vector<double> q_decay = { -1, 0, 1 }; // Selection rules
 constexpr double PI = 3.14159265358979323846264338327950288;
-constexpr double C = 299792458;
-constexpr double H = 6.62607015e-34;
-// simple helper functions
+constexpr double C = 299792458;  // Speed of light in m/s
+constexpr double H = 6.62607015e-34;  // Planck's constant in Js
 
+//---------------------------HELPER FUNCTIONS----------------------------------
+/**
+ * Calculates the half-Rabi frequency. This is a rewritten version of halfRabinFreq in half_rabi_freq.py.
+ * @brief Calculates the half - Rabi frequency in Grad / s.
+ * @param intensity The intensity of the laser in mW / mm ^ 2.
+ * @param lifetime The lifetime of the excited state to the ground state transition in nanoseconds.
+ * @param wavelength The wavelength(in metres) corresponding to the resonant transition from the ground to excited state.
+ * @return The half - Rabi frequency in Grad / s.
+ */
 double halfRabiFreq(double intensity, double lifetime, double wavelength, double rabi_scaling)
 {
-    /* This is a rewritten version of halfRabinFreq in half_rabi_freq.py
-    Calculates the half - Rabi frequency in Grad / s.
-
-    Parameters :
-    intensity : intensity of laser in mW / mm ^ 2
-    lifetime : lifetime of the excited state to the ground state transition in nanoseconds
-    wavelength : wavelength(in metres) corresponding to the resonant transition from the ground to excited state.
-
-    Returns :
-    float : The half - Rabi frequency in Grad / s.
-
-    */
     double I = intensity * 1000;  // Convert mW / mm ^ 2 to W / m ^ 2
     double h = 6.6260715e-34;  // Plank's constant
     double c = 299792458;  // Speed of light
     double tau = lifetime * 1e-9;  // Convert ns lfetime to s
-    if (rabi_scaling == 0)
-    {
-        return std::sqrt((3 * I * std::pow(wavelength, 3)) / (8 * PI * c * h * tau)) * 1e-9;
-    }
-    else
-    {
-        return std::sqrt((3 * I * std::pow(wavelength, 3)) / (8 * PI * c * h * tau)) * 1e-9 * rabi_scaling;
-    }
-}//Gives half - Rabi freq in Grad / s
+    if (rabi_scaling == 0){rabi_scaling = 1}
+    return std::sqrt((3 * I * std::pow(wavelength, 3)) / (8 * PI * c * h * tau)) * 1e-9 * rabi_scaling;
+}
 
-
-
+//---------------------------CLASS DEFINITIONS-------------------------
+/**
+ * Class containing the solution of the equations of motion for a laser-atom system.
+ */
 class Solution
 {
 public:
-    MatrixXc V;
-    MatrixXc V1;
-    MatrixXc D;
-    Solution(MatrixXc x, MatrixXc y, MatrixXc z)
+    MatrixXc V; /**< The matrix of eigenvectors of the laser-atom system's matrix A.*/
+    MatrixXc inv_V;  /**< The inverse of the matrix of eigenvectors.*/
+    MatrixXc D;  /**< The diagonalised form of the laser-atom system's matrix A.*/
+    /**
+     * A parameterised constructor.
+     */
+    Solution(MatrixXc V_, MatrixXc inv_V_, MatrixXc D_)
     { // Constructor with parameters
-        V = x;
-        V1 = y;
-        D = z;
+        V = V_;
+        inv_V = inv_V_;
+        D = D_;
     }
 
     static Solution create(MatrixXc x, MatrixXc y, MatrixXc z)
@@ -83,9 +74,9 @@ public:
         {
             rho0 = rho0.transpose();
         }
-        //MatrixXc rhot = V * ((time * D).array().exp().matrix().asDiagonal()) * V1 * rho0;
-        MatrixXc rhot = ((V * ((time * D).array().exp().matrix().asDiagonal())) * V1) * rho0;
-        // D is a vector in matrix form, transform it in to array form to perform 
+        //MatrixXc rhot = V * ((time * D).array().exp().matrix().asDiagonal()) * inv_V * rho0;
+        MatrixXc rhot = ((V * ((time * D).array().exp().matrix().asDiagonal())) * inv_V) * rho0;
+        // D is a vector in matrix form, transform it in to array form to perform
         // componentwise operation, then transform it back to matrix form and diagonal form.
         return  rhot;
     }
@@ -97,14 +88,14 @@ public:
     {
         return V;
     }
-    MatrixXc get_V1()
+    MatrixXc get_inv_V()
     {
-        return V1;
+        return inv_V;
     }
 };
 
 
-class SolveLaserSystem
+class SolveLaserAtomSystem
 {
 public:
     States E0;
@@ -129,7 +120,7 @@ public:
     double atomic_velocity;
     MatrixXc A;
 
-    SolveLaserSystem
+    SolveLaserAtomSystem
     (States E_,
         States G_,
         double tau_,
@@ -169,7 +160,7 @@ public:
         rabi = halfRabiFreq(laser_intensity, tau, laser_wavelength, rabi_scaling[0]);
     }
     //factory function
-    static SolveLaserSystem create(States E_,
+    static SolveLaserAtomSystem create(States E_,
         States G_,
         double tau_,
         std::vector<int> Q_,
@@ -187,7 +178,7 @@ public:
         double atomic_velocity = 0
     )
     {
-        return SolveLaserSystem(E_,
+        return SolveLaserAtomSystem(E_,
             G_,
             tau_,
             Q_,
@@ -238,7 +229,7 @@ public:
         {
             return couplingtable_q1(e, g);
         }
-        else 
+        else
         {
             return 0;
         }
@@ -296,7 +287,7 @@ public:
             if (coupling(ep, g, Q_decay[q]) * coupling(epp, g, Q_decay[q]) < 0)
             {
                 gamma_epeppg = -1 * gamma_epeppg;
-                
+
             }
         }
         return gamma_epeppg;
@@ -304,7 +295,7 @@ public:
 
     double dopplerDelta(size_t e, size_t g, double w_q, double lambda_q, double v_z)
     {
-        double atomic_velocity_detuning = 2 * 3.141592653589793238462 * v_z / (lambda_q * 1e9);
+        double atomic_velocity_detuning = 2 * PI * v_z / (lambda_q * 1e9);
         return w_q - atomic_velocity_detuning - E(e, 1) + G(g, 1);
     }
 
@@ -316,7 +307,7 @@ public:
         {
             if (tau_b == 0)
             {
-                return -1.0i * (G(i, 1) - G(j, 1)); // delta term 
+                return -1.0i * (G(i, 1) - G(j, 1)); // delta term
             }
             else
             {
@@ -433,10 +424,10 @@ public:
     std::complex<double> ge(size_t i, size_t j, size_t k, size_t l)
     {
         // i, j are g, e ; k, l could be e or g.
-        // ge term.  
+        // ge term.
         if (k == i && l == j)
         {
-            // this term also contains detuning 
+            // this term also contains detuning
             std::complex<double> result = -1.0i * dopplerDelta(j, i, angularFreq(laser_wavelength),
                 laser_wavelength, atomic_velocity) - 1 / (2 * tau);
             if (detuning != 0.0)
@@ -483,10 +474,10 @@ public:
     std::complex<double> eg(size_t i, size_t j, size_t k, size_t l)
     {
         // i, j are e, g ; k, l could be e or g.
-        // ge term.  
+        // ge term.
         if (k == i && l == j)
         {
-            // this term also contains detuning 
+            // this term also contains detuning
             std::complex<double> result = 1.0i * dopplerDelta(i, j, angularFreq(laser_wavelength),
                 laser_wavelength, atomic_velocity) - 1 / (2 * tau);
             if (detuning != 0.0)
@@ -551,7 +542,7 @@ public:
                         size_t I = i * n + j;
                         size_t J = k * n + l;
                         size_t I1 = j * n + i;
-                        
+
 
                         if (i < boundary && j < boundary)
                         {
@@ -584,9 +575,9 @@ public:
         MatrixXc A_ = AMatrix();
         ces.compute(A_);
         auto V = ces.eigenvectors();
-        MatrixXc V1 = V.inverse();
+        MatrixXc inv_V = V.inverse();
         MatrixXc D = ces.eigenvalues(); //vector
-        Solution solution(V, V1, D);
+        Solution solution(V, inv_V, D);
         return solution;
     }
     MatrixXc get_solution0()
@@ -595,13 +586,13 @@ public:
         MatrixXc A_ = AMatrix();
         ces.compute(A_);
         auto V = ces.eigenvectors();
-        MatrixXc V1 = V.inverse();
+        MatrixXc inv_V = V.inverse();
         MatrixXc D = ces.eigenvalues(); //vector
-        Solution solution(V, V1, D);
+        Solution solution(V, inv_V, D);
         return A_;
     }
 
-
+\
 
 };
 
@@ -626,39 +617,19 @@ PYBIND11_MODULE(CppLASED, m) {
         .def(py::init(&Solution::create))
         .def("get_D", &Solution::get_D)
         .def("get_V", &Solution::get_V)
-        .def("get_V1", &Solution::get_V1)
+        .def("get_inv_V", &Solution::get_inv_V)
         .def("timeEvolution", &Solution::timeEvolution);
         //.def("getName", &Pet::getName);
 
-    py::class_<SolveLaserSystem>(m, "SolveLaserSystem")
-        .def(py::init(&SolveLaserSystem::create))
-        .def("get_tau", &SolveLaserSystem::get_tau)
-        .def("get_Q", &SolveLaserSystem::get_Q)
-        //.def("ggpp", &SolveLaserSystem::ggpp)
-        .def("get_solution0", &SolveLaserSystem::get_solution0)
-        .def("get_solution", &SolveLaserSystem::get_solution);
+    py::class_<SolveLaserAtomSystem>(m, "SolveLaserAtomSystem")
+        .def(py::init(&SolveLaserAtomSystem::create))
+        .def("get_tau", &SolveLaserAtomSystem::get_tau)
+        .def("get_Q", &SolveLaserAtomSystem::get_Q)
+        //.def("ggpp", &SolveLaserAtomSystem::ggpp)
+        .def("get_solution0", &SolveLaserAtomSystem::get_solution0)
+        .def("get_solution", &SolveLaserAtomSystem::get_solution);
 
     //.def("getName", &Pet::getName);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
