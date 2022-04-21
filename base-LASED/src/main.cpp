@@ -51,84 +51,111 @@ class Solution
 {
 public:
     MatrixXc V; /**< The matrix of eigenvectors of the laser-atom system's matrix A.*/
-    MatrixXc inv_V;  /**< The inverse of the matrix of eigenvectors.*/
+    MatrixXc invV;  /**< The inverse of the matrix of eigenvectors.*/
     MatrixXc D;  /**< The diagonalised form of the laser-atom system's matrix A.*/
+
     /**
      * A parameterised constructor.
      */
-    Solution(MatrixXc V_, MatrixXc inv_V_, MatrixXc D_)
+    Solution(MatrixXc V_, MatrixXc invV_, MatrixXc D_)
     { // Constructor with parameters
         V = V_;
-        inv_V = inv_V_;
+        invV = invV_;
         D = D_;
     }
 
-    static Solution create(MatrixXc x, MatrixXc y, MatrixXc z)
+    /**
+     * A static constructor.
+     */
+    static Solution create(MatrixXc V_, MatrixXc inV_, MatrixXc D_)
     {
-        return Solution(x, y, z);
+        return Solution(V_, inv_, D_);
     }
 
+    /**
+     * Calculate the time evolution of a laser-atom system at a give time.
+     * @param rho0 The initial condition density matrix
+     * @param time The value of time which the time evolved system will be evaluated at.
+     * @return The time evolved density matrix at t = time.
+     */
     MatrixXc timeEvolution(MatrixXc rho0, double time)
     {
         if (static_cast<size_t>(rho0.cols() > 1))
         {
             rho0 = rho0.transpose();
         }
-        //MatrixXc rhot = V * ((time * D).array().exp().matrix().asDiagonal()) * inv_V * rho0;
-        MatrixXc rhot = ((V * ((time * D).array().exp().matrix().asDiagonal())) * inv_V) * rho0;
         // D is a vector in matrix form, transform it in to array form to perform
         // componentwise operation, then transform it back to matrix form and diagonal form.
+        //MatrixXc rhot = V * ((time * D).array().exp().matrix().asDiagonal()) * invV * rho0;
+        MatrixXc rhot = ((V * ((time * D).array().exp().matrix().asDiagonal())) * invV) * rho0;
         return  rhot;
     }
+
+    /**
+     * A getter for the diagonalised A matrix.
+     */
     MatrixXc get_D()
     {
         return D;
     }
+
+    /**
+     * A getter for the vector of eigenvalues.
+     */
     MatrixXc get_V()
     {
         return V;
     }
-    MatrixXc get_inv_V()
+
+    /**
+     * A getter for the inverse of the vector of eigenvalues.
+     */
+    MatrixXc get_invV()
     {
-        return inv_V;
+        return invV;
     }
 };
 
-
+/**
+ * A class to solve a laser-atom system.
+ */
 class SolveLaserAtomSystem
 {
 public:
-    States E0;
-    States G;
-    double tau;
-    std::vector<int> Q;
-    double laser_wavelength;
-    Eigen::MatrixXd couplingtable_q1;
-    Eigen::MatrixXd couplingtable_q0;
-    Eigen::MatrixXd couplingtable_qn1;
-    double detuning;
-    double laser_intensity = INFINITY;// change this later
-    double laser_power = INFINITY;
-    double tau_f = INFINITY;
-    double tau_b = INFINITY;
-    std::vector<double> rabi_scaling = { 0 };
-    std::vector<double> rabi_factors = { 0 };
-    std::vector<Eigen::MatrixXd> couplingtable;
-    size_t boundary;
-    double rabi;
-    std::vector<int> Q_decay = { -1, 0, 1 };
-    double atomic_velocity;
-    MatrixXc A;
+    States E0;  /**< The matrix containing information about the excited states of the laser-atom system.*/
+    States G;  /**< The matrix containing information about the excited states of the laser-atom system.*/
+    double tau;  /**< The lifetime of the transition in ns.*/
+    std::vector<int> Q;  /**< Stores the polarisation of the laser.*/
+    double laser_wavelength;  /**< Laser wavelength in m.*/
+    Eigen::MatrixXd coupling_table_q1;  /**< Table of all coupling coefficients for polarisation q = +1.*/
+    Eigen::MatrixXd coupling_table_q0;  /**< Table of all coupling coefficients for polarisation q = 0.*/
+    Eigen::MatrixXd coupling_table_qn1;  /**< Table of all coupling coefficients for polarisation q = -1.*/
+    double detuning;  /**< Detuning away from resonance in Grad/s.*/
+    double laser_intensity = INFINITY; /**< Laser intensity in mW/mm^2.*/ // change these later
+    double laser_power = INFINITY; /**< Power of the laser in mW.*/
+    double tau_f = INFINITY;  /**< Decay to other states from the excited state.*/
+    double tau_b = INFINITY;  /**< Decay to other states from the ground state.*/
+    std::vector<double> rabi_scaling = { 0 };  /**< Normalisation factor for multiple Rabi frequencies.*/
+    std::vector<double> rabi_factors = { 0 };  /**< Factors determining the superposition of the half-Rabi frequency.*/
+    std::vector<Eigen::MatrixXd> coupling_table;  /**< The table for all coupling coefficients.*/
+    size_t boundary;  /**< Sets the summation for generating the matrix A. Boundary states the index between excited and ground states in the matrix of States*/
+    double rabi;  /**< The half-Rabi frequency in Grad/s.*/
+    std::vector<int> Q_decay = { -1, 0, 1 };  /**< Allowed quantum polarisation numbers for a photon.*/
+    double atomic_velocity;  /**< The velocity component of the atoms in the direction of the laser beam in m/s.*/
+    MatrixXc A;  /**< Matrix storing all values to generate the equations of motion for the laser-atom system.*/
 
+    /**
+     * A parameterised constructor.
+     */
     SolveLaserAtomSystem
     (States E_,
         States G_,
         double tau_,
         std::vector<int> Q_,
         double laser_wavelength_,
-        Eigen::MatrixXd couplingtable_q1_,
-        Eigen::MatrixXd couplingtable_q0_,
-        Eigen::MatrixXd couplingtable_qn1_,
+        Eigen::MatrixXd coupling_table_q1_,
+        Eigen::MatrixXd coupling_table_q0_,
+        Eigen::MatrixXd coupling_table_qn1_,
         double detuning_,
         double laser_intensity_ = 0.0,
         double laser_power_ = 0.0,
@@ -144,9 +171,9 @@ public:
         tau = tau_;
         Q = Q_;
         laser_wavelength = laser_wavelength_;
-        couplingtable_q1 = couplingtable_q1_;
-        couplingtable_q0 = couplingtable_q0_;
-        couplingtable_qn1 = couplingtable_qn1_;
+        coupling_table_q1 = coupling_table_q1_;
+        coupling_table_q0 = coupling_table_q0_;
+        coupling_table_qn1 = coupling_table_qn1_;
         detuning = detuning_;
         laser_intensity = laser_intensity_;
         laser_power = laser_power_;
@@ -154,20 +181,21 @@ public:
         tau_b = tau_b_;
         rabi_scaling = rabi_scaling_;
         rabi_factors = rabi_factors_;
-        // make one coupling table from the three tables
-        //couplingtable = { couplingtable_qn1, couplingtable_q0, couplingtable_q1 };
-        boundary = static_cast<size_t>(G.rows());
+        boundary = static_cast<size_t>(G.rows());  // number of G substates
         rabi = halfRabiFreq(laser_intensity, tau, laser_wavelength, rabi_scaling[0]);
     }
-    //factory function
+
+    /**
+     * Static parameterised constructor.
+     */
     static SolveLaserAtomSystem create(States E_,
         States G_,
         double tau_,
         std::vector<int> Q_,
         double laser_wavelength_,
-        Eigen::MatrixXd couplingtable_q1_,
-        Eigen::MatrixXd couplingtable_q0_,
-        Eigen::MatrixXd couplingtable_qn1_,
+        Eigen::MatrixXd coupling_table_q1_,
+        Eigen::MatrixXd coupling_table_q0_,
+        Eigen::MatrixXd coupling_table_qn1_,
         double detuning_,
         double laser_intensity_ = 0.0,
         double laser_power_ = 0.0,
@@ -183,9 +211,9 @@ public:
             tau_,
             Q_,
             laser_wavelength_,
-            couplingtable_q1_,
-            couplingtable_q0_,
-            couplingtable_qn1_,
+            coupling_table_q1_,
+            coupling_table_q0_,
+            coupling_table_qn1_,
             detuning_,
             laser_intensity_,
             laser_power_ ,
@@ -196,66 +224,83 @@ public:
             atomic_velocity
         );
     }
-    // debug
 
+    /**
+     * Gets the value of the lifetime tau.
+     */
     double get_tau()
     {
         return tau;
     }
+
+    /**
+     * Gets the vector of polarisations of the laser Q.
+     */
     std::vector<int> get_Q()
     {
         return Q;
     }
 
-
-    // helper functions
-
+    /**
+     * Calculates the angular frequency in Grad/s.
+     * @param wavelength The wavelength of the transition in m.
+     * @return The angular frequency of the transition in Grad/s.
+     */
     double angularFreq(double wavelength)
     {
         return 2 * PI * C / wavelength * 1e-9;
     }
 
+    /**
+     * Looks up the coupling coefficients in the coupling coefficient table.
+     * @param e The index corresponding to the excited state
+     * @param g The index corresponding to the ground state.
+     * @param q polarisation of the laser for the coupling.
+     * @return The coupling coefficient C^q_eg
+     */
     double coupling(size_t e, size_t g, int q)
     {
         if (q == -1)
         {
-            return couplingtable_qn1(e, g);
+            return coupling_table_qn1(e, g);
         }
         else if (q == 0)
         {
-            return couplingtable_q0(e, g);
+            return coupling_table_q0(e, g);
         }
         else if (q == 1)
         {
-            return couplingtable_q1(e, g);
+            return coupling_table_q1(e, g);
         }
         else
         {
             return 0;
         }
     }
-    double E(size_t e, size_t g)
+
+    /**
+     * The parameters of the excited state.
+     * This is needed to retrieve the correct excited state from the matrix E0.
+     * @param e The label of the excited state.
+     * @param i The number corresponding to the parameter of the state e.
+     * @return A parameter of the excited state labelled e.
+     */
+    double E(size_t e, size_t i)
     {
         //change index
         e -= boundary;
-        return E0(e, g);
+        return E0(e, i);
     }
+
+    /**
+     * Calculates the branching ratio for the generalised decay constant.
+     * This ratio must be multiplied by 1 / tau to get the generalised decay constant in Grad / s.This is then used for evaluating vertical coherences.
+     * @param ep Excited state label.
+     * @param epp 2nd excited state label.
+     * @param Ground state label.
+     * @return Value of the branching ratio for the  generalised decay constant gamma_{ep, epp, g}.
+     */
     double generalisedDecayConstant(size_t ep, size_t epp, size_t g)
-        /*Calculates the branching ratio for the generalised decay constant.
-
-        This ratio must be multiplied by 1 / tau to get the generalised decay constant in Grad / s.This is then used for evaluating vertical coherences.
-
-        Parameters:
-        ep(State) : Excited State object
-        epp(State) : Excited State object
-        g(State) : Ground State object
-        G(list) : : List of all ground State objects
-        tau(float) : Lifetime of state in ns
-        Q_decay(list) : List of decay channel polarisations allowed by transition rules, usually[-1, 0, 1]
-
-        Returns :
-            Value of the branching ratio for the  generalised decay constant gamma_{ ep, epp, g }.
-        */
     {
         double sum_decay_channels_epg = 0;
         double sum_decay_channels_eppg = 0;
@@ -287,12 +332,20 @@ public:
             if (coupling(ep, g, Q_decay[q]) * coupling(epp, g, Q_decay[q]) < 0)
             {
                 gamma_epeppg = -1 * gamma_epeppg;
-
             }
         }
         return gamma_epeppg;
     }
 
+    /**
+     * The detuning due to the atomic velocity of the atoms.
+     * @param e The label of the excited state.
+     * @param g The label of the ground state.
+     * @param w_q The angular frequency of the laser radiation in Grad/s.
+     * @param lambda_q The wavelength of the laser in m.
+     * @param v_z The velocity component of the atoms in the direction of the laser beam in m/s.
+     * @return The detuning due to the atomic velocity of the atoms.
+     */
     double dopplerDelta(size_t e, size_t g, double w_q, double lambda_q, double v_z)
     {
         double atomic_velocity_detuning = 2 * PI * v_z / (lambda_q * 1e9);
@@ -311,9 +364,7 @@ public:
             }
             else
             {
-
                 return -1.0i * (G(i, 1) - G(j, 1)) - 1 / tau_b;
-
             }
         }
         // ge term k = g, l = e
@@ -575,9 +626,9 @@ public:
         MatrixXc A_ = AMatrix();
         ces.compute(A_);
         auto V = ces.eigenvectors();
-        MatrixXc inv_V = V.inverse();
+        MatrixXc invV = V.inverse();
         MatrixXc D = ces.eigenvalues(); //vector
-        Solution solution(V, inv_V, D);
+        Solution solution(V, invV, D);
         return solution;
     }
     MatrixXc get_solution0()
@@ -586,14 +637,11 @@ public:
         MatrixXc A_ = AMatrix();
         ces.compute(A_);
         auto V = ces.eigenvectors();
-        MatrixXc inv_V = V.inverse();
+        MatrixXc invV = V.inverse();
         MatrixXc D = ces.eigenvalues(); //vector
-        Solution solution(V, inv_V, D);
+        Solution solution(V, invV, D);
         return A_;
     }
-
-\
-
 };
 
 namespace py = pybind11;
@@ -617,7 +665,7 @@ PYBIND11_MODULE(CppLASED, m) {
         .def(py::init(&Solution::create))
         .def("get_D", &Solution::get_D)
         .def("get_V", &Solution::get_V)
-        .def("get_inv_V", &Solution::get_inv_V)
+        .def("get_invV", &Solution::get_invV)
         .def("timeEvolution", &Solution::timeEvolution);
         //.def("getName", &Pet::getName);
 
@@ -630,7 +678,6 @@ PYBIND11_MODULE(CppLASED, m) {
         .def("get_solution", &SolveLaserAtomSystem::get_solution);
 
     //.def("getName", &Pet::getName);
-
 
 
 #ifdef VERSION_INFO

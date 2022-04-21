@@ -109,11 +109,11 @@ class wrappingsol:
     def __init__(self, sol):
         self.D = sol.get_D()
         self.V = sol.get_V()
-        self.inv_V = sol.get_inv_V()
+        self.invV = sol.get_invV()
 
     def timeEvolution0(self, time, rho0):
 
-        return np.matmul(self.V, np.matmul(np.diag(np.exp(self.D.transpose()[0]*time)), np.matmul(self.inv_V, rho0)))
+        return np.matmul(self.V, np.matmul(np.diag(np.exp(self.D.transpose()[0]*time)), np.matmul(self.invV, rho0)))
 
     def timeEvolution1(self, timearray,rho0):
         result = np.empty((len(timearray), len(rho0)), dtype = np.complex128)
@@ -128,11 +128,6 @@ class wrappingsol:
         for i in range(len(result)):
             result[i] = self.timeEvolution0(timearray[i], rho0)[x,0]
         return result
-
-
-
-
-
 
 def get_S(angle, csv):
     f = np.empty(int((len(csv[0])-1)/2), dtype=np.complex128)

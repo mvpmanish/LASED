@@ -222,18 +222,18 @@ class LaserAtomSystem:
             rotated_rho_t.append(new_rho)
         # Flip this back to the structure of rho_t
         self.rho_t = np.transpose(rotated_rho_t)[0]
-        
+
     def angularShape_0(self, state, theta, phi):
         """Gets the angular shape (radius) of the atomic state given at t = 0.
-        
+
         Parameters:
             state (char): Either "e" or "g" specifying the excited or lower state.
             theta (array_like): Azimuthal (longitudinal) coordinate in [0, 2*pi].
             phi (array_like): Polar (colatitudinal) coordinate in [0, pi].
-        
+
         Returns:
             (2D array): A list of lists with the radius of the angular shape of the atomic state given at t = 0.
-            
+
         Example:
             calcium.angularShape("g", theta, phi) for a pre-defined calcium system gives the angular shape of the lower state density matrix.
         """
@@ -247,15 +247,15 @@ class LaserAtomSystem:
             print("Error: Must enter e or g when defining the state!")
             return
         return angularShape(self.rho_0, self.n, sub_states, theta, phi)
-    
+
     def angularShape_t(self, state, theta, phi):
         """Gets the time evolution of the angular shape (radius) of the atomic state given.
-        
+
         Parameters:
             state (char): Either "e" or "g" specifying the excited or lower state.
             theta (array_like): Azimuthal (longitudinal) coordinate in [0, 2*pi].
             phi (array_like): Polar (colatitudinal) coordinate in [0, pi].
-        
+
         Returns:
             (List of 2D array): List of 2D arrays of the radius of the angular shape of the atomic state for a given time in the evolution of the laser-atom system.
         """
@@ -288,6 +288,7 @@ class LaserAtomSystem:
             doppler_averaging (bool): Turn on averaging over the doppler profile of the atoms. Must have doppler_width and doppler_detunings as well.
             print_eq (bool): Turn on printing the coupled differential equatiuons numerically.
             atomic_velocity (float): The velocity component of the atoms in the direction of the laser beam in metres/second. This is used for doppler shifting the energy levels.
+            detuning (float): Detuning away from resonance in Grad/s.
             r_sigma (float): The radial distance to the 2D standard deviation in millimetres of the Gaussian beam profile of the laser.
             n_beam_averaging (int): The number of times the beam profile will be split to average over. The higher the number, the more accurate the beam profile averaging but it will be slower.
             doppler_width (float): The doppler width of the beam profile in Grad/s.
