@@ -8,7 +8,7 @@ Getting Started
 What is LASED?
 ---------------
 
-LASED stands for Laser-Atom interaction Simulator using quantum ElectroDynamics. LASED is a python library which can:
+LASED stands for Laser-Atom interaction Simulator derived from quantum ElectroDynamics. LASED is a python library which can:
 
 * Calculate the time evolution of an atomic system interacting with a laser.
 * Generate the equations of motion of an atom-laser system.
@@ -18,7 +18,7 @@ LASED can simulate any atomic system. The sub-states, angular momenta, spin, and
 
 Laser parameters also need to be specified to build the laser-atom system. These parameters include detuning from the transition frequency, polarisation, and laser intensity/power.
 
-LASED can simulate a Gaussian beam profile and doppler averaging over the atoms to provide a more accurate model of the atom-laser system. This is useful in many experiments using atoms and lasers.
+LASED can simulate a Gaussian beam profile and Doppler averaging over the atoms to provide a more accurate model of the atom-laser system. LASED can also simulate the angular shape of an atomic state over time as it is excited by a laser. This is useful in many experiments using atoms and lasers.
 
 Installation
 --------------

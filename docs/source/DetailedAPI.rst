@@ -1,4 +1,4 @@
-LASED package
+Detailed API
 =============
 
 Submodules

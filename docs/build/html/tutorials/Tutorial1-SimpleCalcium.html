@@ -113,7 +113,7 @@
 <li class="toctree-l2"><a class="reference internal" href="Tutorial6-Caesium133DLine.html">Tutorial 6: Caesium-133 D Line</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">LASED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Detailed API</a></li>
 </ul>
 
             
@@ -722,7 +722,7 @@ $\displaystyle \dot{\rho}_{41} = - \frac{\rho_{41}}{2 \tau} + i \rho_{43} \Omega
 <div class="highlight"><pre>
 Populating ground states equally as the initial condition.
 Populating ground states equally as the initial condition.
-The code finished in 4.0091 seconds
+The code finished in 4.8326 seconds
 </pre></div></div>
 </div>
 </div>
@@ -742,15 +742,17 @@ The code finished in 4.0091 seconds
 </div>
 </div>
 <p>Now, we can plot the evolution of Calcium with no detuning, 200 MHz detuning, and 500 MHz detuning.</p>
-<p>To access the density matrix elements over the time evolution use the function <code class="docutils literal notranslate"><span class="pre">Rho_t(e,</span> <span class="pre">g)</span></code> on the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code>. This gives a list of the element <span class="math notranslate nohighlight">\(\rho_{eg}\)</span> for each interval in <code class="docutils literal notranslate"><span class="pre">time</span></code>. Each element of the density matrix is <code class="docutils literal notranslate"><span class="pre">complex</span></code> so the real part is taken by using the <code class="docutils literal notranslate"><span class="pre">abs()</span></code> function.</p>
+<p>To access the density matrix elements over the time evolution use the function <code class="docutils literal notranslate"><span class="pre">Rho_t(e,</span> <span class="pre">g)</span></code> on the <code class="docutils literal notranslate"><span class="pre">LaserAtomSystem</span></code>. This gives a list of the element <span class="math notranslate nohighlight">\(\rho_{eg}\)</span> for each interval in <code class="docutils literal notranslate"><span class="pre">time</span></code>. Elements of <code class="docutils literal notranslate"><span class="pre">Rho_t()</span></code> and <code class="docutils literal notranslate"><span class="pre">Rho_0()</span></code>can also be accessed by addressing the labels of the states directly e.g. if a user wanted <span class="math notranslate nohighlight">\(\rho_{13}(t)\)</span> the would use <code class="docutils literal notranslate"><span class="pre">Rho_t(1,</span> <span class="pre">3)</span></code>. Each element of the density matrix is <code class="docutils literal notranslate"><span class="pre">complex</span></code> so the real part is taken by using the <code class="docutils literal notranslate"><span class="pre">abs()</span></code> function.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">rho_33</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">)]</span>
-<span class="n">rho_33_200MHzdetuned</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system200MHzdetuned</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">)]</span>
-<span class="n">rho_33_500MHzdetuned</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system500MHzdetuned</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">)]</span>
+<span></span><span class="c1"># Using state-based indexing to get rho_33(t)</span>
+<span class="n">rho_33</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">s3</span><span class="p">)]</span>
+<span class="c1"># Using label-based indexing to get rho_33(t)</span>
+<span class="n">rho_33_200MHzdetuned</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system200MHzdetuned</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]</span>
+<span class="n">rho_33_500MHzdetuned</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">calcium_system500MHzdetuned</span><span class="o">.</span><span class="n">Rho_t</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]</span>
 
 <span class="n">fig_ca</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
 <span class="n">fig_ca</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">time_ca</span><span class="p">,</span>
