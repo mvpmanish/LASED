@@ -13,6 +13,7 @@ LASED stands for Laser-Atom interaction Simulator derived from quantum ElectroDy
 * Calculate the time evolution of an atomic system interacting with a laser.
 * Generate the equations of motion of an atom-laser system.
 * Rotate an atomic system to a different reference frame.
+* Calculate the time evolution of the angular shape of an atomic state.
 
 LASED can simulate any atomic system. The sub-states, angular momenta, spin, and energies of the system are provided by the user to simulate the atomic system.
 
