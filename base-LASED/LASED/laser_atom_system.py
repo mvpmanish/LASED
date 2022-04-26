@@ -370,7 +370,7 @@ class LaserAtomSystem:
 
 
     def saveToCSV(self, filename, precision = None):
-        """Saves rho_t as a csv file.
+        """Saves rho_t as a csv file. Bypasses if filename path cannot be found.
 
         Parameters:
             filename (string): Name of the csv file created.
@@ -379,4 +379,10 @@ class LaserAtomSystem:
         Returns:
             Void.
         """
-        saveRhotAsCSV(self.n, self.E, self.G, self.time, self.rho_t, filename, precision = None)
+
+        try:
+            saveRhotAsCSV(self.n, self.E, self.G, self.time, self.rho_t, filename, precision=precision)
+        except FileNotFoundError:
+            print("Bypassed results save due to File Not Found - {}".format(filename)) # Warns that CSV save was skipped
+        else:
+            print("Results saved to file - {}".format(filename))
