@@ -4,6 +4,46 @@ Detailed API
 Submodules
 ----------
 
+LASED.engine module (multi-level, multi-laser Lindblad engine)
+--------------------------------------------------------------
+
+.. automodule:: LASED.engine
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+LASED.polarisation module
+-------------------------
+
+.. automodule:: LASED.polarisation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+LASED.pulses module
+-------------------
+
+.. automodule:: LASED.pulses
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+LASED.zeeman module
+-------------------
+
+.. automodule:: LASED.zeeman
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+LASED.\_backend module (numerical backends)
+-------------------------------------------
+
+.. automodule:: LASED._backend
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 LASED.constants module
 ----------------------
 

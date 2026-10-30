@@ -1,17 +1,95 @@
-b'''
+'''
 Defines functions to symbolically print the equations of motion of the laser-atom system.
 Author: Manish Patel
 Date created: 07/06/2021
+
+Since v2 the symbolic equations are generated from the same Hermitian Hamiltonian and Lindblad
+collapse operators that the numerical engine uses, so the printed equations are exactly the ones solved:
+
+    d rho/dt = -i[H, rho] + sum_q (C_q rho C_q^dag - 1/2 {C_q^dag C_q, rho}) - 1/2 {K, rho}
+
+Symbols: Omega(e, g, q) is the (real) dipole coupling of sub-states e and g for polarisation q times the
+half-Rabi frequency; the complex polarisation amplitudes appear as numbers multiplying it and are
+complex-conjugated in the H_ge elements. omega_L is the laser angular frequency, delta the detuning,
+k*v_z the Doppler shift, w_i the angular frequency of state i, tau the lifetime.
 '''
 
 from LASED.state import *
 from LASED.detuning import *
-from sympy import *
-from sympy import Symbol
-from LASED.half_rabi_freq import *
-from LASED.index import *
-from LASED.decay_constant import *
+from LASED.half_rabi_freq import coupling
+from sympy import (Symbol, Function, Matrix, Eq, I, S, conjugate, sqrt, latex, expand, Float, Integer,
+                   init_printing, zeros)
+import numpy as np
 import os
+
+try:  # IPython is optional
+    from IPython.display import display
+except ImportError:  # pragma: no cover
+    display = print
+
+
+def _number(x):
+    """A tidy sympy number from a float/complex."""
+    x = complex(x)
+
+    def part(v):
+        v = round(v, 10)
+        return Integer(int(v)) if v == int(v) else Float(v, 6)
+    return part(x.real) + I*part(x.imag)
+
+
+def symbolicEquations(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength,
+                      atomic_velocity, rabi_scaling, rabi_factors):
+    """Symbolic right-hand sides of the equations of motion.
+
+    Returns:
+        list of (sympy.Eq): One equation d rho_ij/dt = ... per density matrix element, ordered as index(i, j, n).
+    """
+    Omega = Function("Omega", real=True)
+    tau = Symbol("tau", positive=True)
+    omega_L, delta, k, v_z = Symbol("omega_L"), Symbol("delta"), Symbol("k"), Symbol("v_z")
+    rho = Matrix(n, n, lambda i, j: Symbol(f"rho_{i+1}{j+1}"))
+
+    H = zeros(n, n)
+    for g in G:
+        H[g.label-1, g.label-1] = Symbol(f"w_{g.label}")
+    for e in E:
+        shift = -omega_L + (k*v_z if atomic_velocity else 0) - (delta if detuning else 0)
+        H[e.label-1, e.label-1] = Symbol(f"w_{e.label}") + shift
+    scale = 1 if rabi_scaling is None else rabi_scaling
+    factors = [1]*len(Q) if rabi_factors is None else rabi_factors
+    for e in E:
+        for g in G:
+            V = 0
+            for q, f in zip(Q, factors):
+                if coupling(e, g, q) != 0:
+                    V += _number(scale*f)*Omega(e.label, g.label, q)
+            H[e.label-1, g.label-1] += V
+            H[g.label-1, e.label-1] += conjugate(V)
+
+    rhs = -I*(H*rho - rho*H)
+    for q in Q_decay:
+        Cq = zeros(n, n)
+        for e in E:
+            norm = sum(coupling(e, gp, qp)**2 for gp in G for qp in (-1, 0, 1))
+            if norm == 0:
+                continue
+            for g in G:
+                c = coupling(e, g, q)
+                if c != 0:
+                    Cq[g.label-1, e.label-1] = sqrt(_number(c**2/norm))*(1 if c > 0 else -1)/sqrt(tau)
+        if any(x != 0 for x in Cq):
+            CdC = Cq.H*Cq
+            rhs += Cq*rho*Cq.H - (CdC*rho + rho*CdC)/2
+    K = zeros(n, n)
+    if tau_f is not None:
+        for e in E:
+            K[e.label-1, e.label-1] = 1/Symbol("tau_f", positive=True)
+    if tau_b is not None:
+        for g in G:
+            K[g.label-1, g.label-1] = 1/Symbol("tau_b", positive=True)
+    rhs += -(K*rho + rho*K)/2
+    return [Eq(Symbol(f"rhodot_{i+1}{j+1}"), expand(rhs[i, j])) for i in range(n) for j in range(n)]
 
 
 def symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength,
@@ -19,164 +97,32 @@ def symbolicPrintSystem(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavel
                         pretty_print_eq = None, pretty_print_eq_tex = None,
                         pretty_print_eq_pdf = None, pretty_print_eq_filename = None):
     """Prints the equations of motion of the laser-atom system in full using Sympy.
+
+    Returns:
+        list of sympy.Eq: The equations (also displayed and/or written to .tex/.pdf as requested).
     """
-    if(pretty_print_eq):
-        init_printing() # Initialise the IPython environment for printing
     if((pretty_print_eq_pdf or pretty_print_eq_tex) and (not pretty_print_eq_filename)):
-        # Catch the case where the filename is not give
         print("""Need to have a filename for the .tex/.pdf files!
         \nUse the keyword \"pretty_print_eq_filename =\" and specify your filename.
         """)
-    else:
-        tex_file = None  # Placeholder for a file object
-        tex_file_handling = pretty_print_eq_pdf or pretty_print_eq_tex # bool to handle file actions
-        if(tex_file_handling):
-            # Create the tex file with the user's defined file name
-            tex_file = createTexFile(pretty_print_eq_filename)
-        symbolicPrintRhogg(n, E, G, Q, Q_decay, tau_b, rabi_scaling, rabi_factors,
-                            pretty_print_eq = pretty_print_eq, pretty_print_eq_file = tex_file)
-        symbolicPrintRhoee(n, E, G, Q, Q_decay, tau_f, rabi_scaling, rabi_factors,
-                            pretty_print_eq = pretty_print_eq, pretty_print_eq_file = tex_file)
-        symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength,
-                            atomic_velocity, rabi_scaling, rabi_factors,
-                            pretty_print_eq = pretty_print_eq, pretty_print_eq_file = tex_file)
-        symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength,
-                            atomic_velocity, rabi_scaling, rabi_factors,
-                            pretty_print_eq = pretty_print_eq, pretty_print_eq_file = tex_file)
-        if(tex_file_handling):
-            closeTexFile(tex_file)
-            if(pretty_print_eq_pdf):
-                callPdfLatex(pretty_print_eq_filename)
-
-def symbolicPrintRhogg(n, E, G, Q, Q_decay, tau_b, rabi_scaling, rabi_factors,
-                        pretty_print_eq = None, pretty_print_eq_file = None):
-        """Prints the density matrix elements rho_gg'' for the motion of the laser-atom system using Sympy.
-        """
-        # rho_gg''
-        for g in G:  # Start with looping over g and g'' for rho_gg''
-            for gpp in G:
-                rho_dot = 0
-                if(tau_b != None):
-                    rho_dot += S('-rho{}{}/tau_b'.format(g.label, gpp.label))
-                if(delta(g, gpp) != 0):
-                    rho_dot += S('Delta_{}{}*rho_{}{}'.format(g.label, gpp.label, g.label, gpp.label))
-                for e in E:
-                    for i,q in enumerate(Q):
-                        if(coupling(e, gpp, q) != 0):
-                            rho_dot += S('I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i], e.label, gpp.label, q, g.label, e.label))
-                for e in E:
-                    column = index(e, gpp, n)
-                    for i,q in enumerate(Q):
-                        if(coupling(e, g, q) != 0):
-                            rho_dot += S('-I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i],e.label, g.label, q, e.label, gpp.label))
-                for ep in E:
-                    for epp in E:
-                        column = index(epp, ep, n)
-                        column2 = index(ep, epp, n)
-                        sum_decay_channels = 0
-                        for gp in G:
-                            for qp in Q_decay:  # Sum over decay channel polarisations
-                                sum_decay_channels += abs(coupling(epp, gp, qp)*coupling(ep, gp, qp))
-                        if(sum_decay_channels != 0):
-                            if(ep.label == epp.label):
-                                for qp in Q_decay:
-                                    rho_dot += S('{}/(2*tau)*rho_{}{} + {}/(2*tau)*rho_{}{}'.format(abs(coupling(ep, gpp, qp)*coupling(epp,g, qp))/sum_decay_channels,epp.label, ep.label,
-                                                                                 abs(coupling(epp, gpp, qp)*coupling(ep, g, qp))/sum_decay_channels, ep.label, epp.label))
-                            else:
-                                # Gerneralised decay constant
-                                rho_dot += S(f'({generalisedDecayConstant(ep, epp, gpp, G, Q_decay)}/(2*tau))*rho_{epp.label}{ep.label} + ({generalisedDecayConstant(ep, epp, gpp, G, Q_decay)}/(2*tau))*rho_{ep.label}{epp.label}')
-                eq = Eq(S('rhodot_{}{}'.format(g.label, gpp.label)), rho_dot)
-                if(pretty_print_eq):
-                    display(eq)
-                if(pretty_print_eq_file):
-                     appendEqToTexFile(pretty_print_eq_file, latex(eq))
-
-
-def symbolicPrintRhoee(n, E, G, Q, Q_decay, tau_f, rabi_scaling, rabi_factors,
-                        pretty_print_eq = None, pretty_print_eq_file = None):
-        """Prints the density matrix elements rho_ee'' for the motion of the laser-atom system using Sympy.
-        """
-        # rho_ee''
-        for e in E:
-            for epp in E:
-                rho_dot = S('-1/tau*rho_{}{}'.format(e.label, epp.label))
-                if(tau_f != None):
-                    rho_dot += S('-rho{}{}/tau_f'.format(e.label, epp.label))
-                if(delta(e, epp) != 0):
-                    rho_dot += S('Delta_{}{}*rho_{}{}'.format(e.label, epp.label, e.label, epp.label))
-                for g in G:
-                    for i,q in enumerate(Q):
-                        if(coupling(epp, g, q) != 0):
-                            rho_dot += S('I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i], epp.label, g.label, q, e.label, g.label))
-                for g in G:
-                    for i,q in enumerate(Q):
-                        if(coupling(e, g, q) != 0):
-                            rho_dot += S('-I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i], e.label, g.label, q, g.label, epp.label))
-                eq = Eq(S('rhodot_{}{}'.format(e.label, epp.label)), rho_dot)
-                if(pretty_print_eq):
-                    display(eq)
-                if(pretty_print_eq_file):
-                     appendEqToTexFile(pretty_print_eq_file, latex(eq))
-
-def symbolicPrintRhoge(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength, atomic_velocity,
-                        rabi_scaling, rabi_factors, pretty_print_eq = None, pretty_print_eq_file = None):
-        """Prints the density matrix elements rho_ge for the motion of the laser-atom system using Sympy.
-        """
-        # rho_ge
-        for g in G:
-            for e in E:
-                rho_dot = S('-rho_{}{}/(2*tau)'.format(g.label, e.label))
-                if(tau_f != None):
-                    rho_dot += S('-rho{}{}/(2*tau_f)'.format(g.label, e.label))
-                if(tau_b != None):
-                    rho_dot += S('-rho{}{}/(2*tau_b)'.format(g.label, e.label))
-                if(dopplerDelta(e, g, w_q = angularFreq(laser_wavelength), lambda_q = laser_wavelength, v_z = atomic_velocity) != 0):
-                    rho_dot += S('-I*Delta({}, {}, omega_q, v_z)*rho_{}{}'.format(e.label, g.label, g.label, e.label))
-                if(detuning != None):
-                    rho_dot += S(f"-I*delta*rho_{g.label}{e.label}")
-                for ep in E:
-                    for i,q in enumerate(Q):
-                        if(coupling(ep, g, q) != 0):
-                            rho_dot += S('-I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i], ep.label, g.label, q, ep.label, e.label))
-                for gp in G:
-                    for i,q in enumerate(Q):
-                        if(coupling(e, gp, q) != 0):
-                            rho_dot += S('-I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i], e.label, gp.label, q, g.label, gp.label))
-                eq = Eq(S('rhodot_{}{}'.format(g.label, e.label)), rho_dot)
-                if(pretty_print_eq):
-                    display(eq)
-                if(pretty_print_eq_file):
-                     appendEqToTexFile(pretty_print_eq_file, latex(eq))
-
-def symbolicPrintRhoeg(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength, atomic_velocity,
-                        rabi_scaling, rabi_factors, pretty_print_eq = None, pretty_print_eq_file = None):
-        """Prints the density matrix elements rho_eg for the motion of the laser-atom system using Sympy.
-        """
-        # rho_eg
-        for e in E:
-            for g in G:
-                rho_dot = S('-rho_{}{}/(2*tau)'.format(e.label, g.label))
-                if(tau_f != None):
-                    rho_dot += S('-rho{}{}/(2*tau_f)'.format(e.label, g.label))
-                if(tau_b != None):
-                    rho_dot += S('-rho{}{}/(2*tau_b)'.format(e.label, g.label))
-                if(dopplerDelta(e, g, w_q = angularFreq(laser_wavelength), lambda_q = laser_wavelength, v_z = atomic_velocity) != 0):
-                    rho_dot += S('I*Delta({}, {}, omega_q, v_z)*rho_{}{}'.format(e.label, g.label, e.label, g.label))
-                if(detuning != None):
-                    rho_dot += S(f"I*delta*rho_{e.label}{g.label}")
-                for ep in E:
-                    for i,q in enumerate(Q):
-                        if(coupling(ep, g, q) != 0):
-                            rho_dot += S('I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i], ep.label, g.label, q, e.label, ep.label))
-                for gp in G:
-                    for q in Q:
-                        if(coupling(e, g, q) != 0):
-                            rho_dot += S('I*{}*{}*Omega({}, {}, {})*rho_{}{}'.format(rabi_scaling, rabi_factors[i], e.label, g.label, q, gp.label, g.label))
-                eq = Eq(S('rhodot_{}{}'.format(e.label, g.label)), rho_dot)
-                if(pretty_print_eq):
-                    display(eq)
-                if(pretty_print_eq_file):
-                     appendEqToTexFile(pretty_print_eq_file, latex(eq))
+        return None
+    if(pretty_print_eq):
+        init_printing() # Initialise the IPython environment for printing
+    equations = symbolicEquations(n, E, G, Q, Q_decay, tau_f, tau_b, detuning, laser_wavelength,
+                                  atomic_velocity, rabi_scaling, rabi_factors)
+    tex_file = None
+    if(pretty_print_eq_pdf or pretty_print_eq_tex):
+        tex_file = createTexFile(pretty_print_eq_filename)
+    for eq in equations:
+        if(pretty_print_eq):
+            display(eq)
+        if(tex_file):
+            appendEqToTexFile(tex_file, latex(eq))
+    if(tex_file):
+        closeTexFile(tex_file)
+        if(pretty_print_eq_pdf):
+            callPdfLatex(pretty_print_eq_filename)
+    return equations
 
 def createTexFile(filename):
     """Creates a .tex file with the filename given and returns a file
@@ -188,9 +134,9 @@ def createTexFile(filename):
         file: .tex file with filename
     """
     out_file = open(f'{filename}.tex', "w")
-    header = "\documentclass{article}\n\\begin{document}\n"
+    header = "\\documentclass{article}\n\\begin{document}\n"
     header += f"\\title{{{filename}}}\n"
-    header += "\maketitle\n"
+    header += "\\maketitle\n"
     out_file.write(header)
     return out_file
 
@@ -203,7 +149,7 @@ def appendEqToTexFile(file, input_str):
     """
     file.write("\\begin{equation}\n")
     file.write(input_str+"\n")
-    file.write("\end{equation}\n")
+    file.write("\\end{equation}\n")
 
 def closeTexFile(file):
     """Closes a .tex file which has been written to
@@ -211,7 +157,7 @@ def closeTexFile(file):
     Parameters:
         file (file): file object to be closed
     """
-    file.write("\end{document}")
+    file.write("\\end{document}")
     file.close()
 
 def callPdfLatex(filename):

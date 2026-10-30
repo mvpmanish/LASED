@@ -38,15 +38,15 @@ def small_Wigner_D(J, beta, mp, m):
     Returns:
         float: The small Wigner D-matrix elements
     """
-    const = np.sqrt((math.factorial(J+mp))*math.factorial(J-mp)*math.factorial(J+m)*math.factorial(J-m))
+    fact = lambda x: math.factorial(int(round(x)))  # arguments are integers even for half-integer J
+    const = np.sqrt(fact(J+mp)*fact(J-mp)*fact(J+m)*fact(J-m))
     d_sum = 0
     # Define limits so sum does not contain negative factorials
-    s_max = min(J+m, J-mp)
-    s_min = max(0, m-mp)
-    sum_index = np.linspace(s_min, s_max, )
+    s_max = int(round(min(J+m, J-mp)))
+    s_min = int(round(max(0, m-mp)))
     for s in range(s_min, s_max+1):  # Have to go to s_max+1 or will miss out on the s_max value
         numerator = np.power(-1, mp - m + s)*np.power(math.cos(beta/2), 2*J+m-mp-2*s)*np.power(math.sin(beta/2), mp-m+2*s)
-        denominator = math.factorial(J+m-s)*math.factorial(s)*math.factorial(mp-m+s)*math.factorial(J-mp-s)
+        denominator = fact(J+m-s)*fact(s)*fact(mp-m+s)*fact(J-mp-s)
         d_sum += numerator/denominator
     
     return const*d_sum
@@ -91,8 +91,8 @@ def rotateElement(rho, i, j, n, sub_state_dict, alpha, beta, gamma):
     Fp = j.F
     m = i.m
     mp = j.m
-    mu_list = np.linspace(-F, F, 2*F+1, dtype = int)
-    mup_list = np.linspace(-Fp, Fp, 2*Fp+1, dtype = int)
+    mu_list = [-F + k for k in range(int(round(2*F+1)))]
+    mup_list = [-Fp + k for k in range(int(round(2*Fp+1)))]
     rho_new_frame = 0  # Initialise the summation to zero
     for mu in mu_list:
         for mup in mup_list:

@@ -11,6 +11,10 @@ Welcome to LASED's documentation!
    :caption: Contents:
 
    gettingstarted
+   physics
+   timedependent
+   performance
+   agents
    tutorials
    modules
 

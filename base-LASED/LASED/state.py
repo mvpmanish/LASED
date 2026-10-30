@@ -6,7 +6,7 @@ class State():
     """An atomic state.
 
     Attributes:
-        label (int): Number labelling of state e.g. state |2> would have label 2.
+        label (int): Number labelling of state e.g. state ``|2>`` would have label 2.
         w (float): Angular frequency corresponding to energy of state in Grad/s.
         L (int): Orbital angular momentum quantum number.
         S (int): Spin quantum number.

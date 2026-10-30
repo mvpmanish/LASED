@@ -7,6 +7,8 @@ from LASED.state import *
 from LASED.constants import *
 from sympy.physics.wigner import wigner_3j
 from sympy.physics.wigner import wigner_6j
+from sympy import Rational
+from functools import lru_cache
 
 # 
 # Inputs: P_las is , r_sigma is , r is 
@@ -24,26 +26,53 @@ def gaussianIntensity(P_las, r_sigma, r):
     """
     return (P_las/(2*PI*r_sigma*r_sigma))*np.exp(-(r*r)/(2*r_sigma*r_sigma))
 
-# 
-# Input: e and g are State objects, q is the laser polarisation
-# Output: the coupling coefficient which is the Dipole matrix element
+def _is_triangle(a, b, c):
+    return abs(a - b) <= c <= a + b
+
+
+@lru_cache(maxsize=None)
+def _coupling_cached(eL, eS, eJ, eI, eF, em, gL, gS, gJ, gF, gm, q):
+    # Arguments are twice the quantum numbers (exact integers); q is the polarisation.
+    # Selection rules: skip the (slow, exact) sympy evaluation when the result is zero
+    if -em + 2*q + gm != 0 or not _is_triangle(eF, gF, 2) or not _is_triangle(eJ, gJ, 2) \
+            or not _is_triangle(eL, gL, 2):
+        return 0.0
+    eL, eS, eJ, eI, eF, em, gL, gS, gJ, gF, gm = (Rational(x, 2) for x in (eL, eS, eJ, eI, eF, em, gL, gS, gJ, gF, gm))
+    exponent = (q*(1+q)/2)+eF+gF+eJ+gJ+eI+eL+eS-em+1
+    sign = -1.0 if int(round(exponent)) % 2 else 1.0
+    factor = np.sqrt(float((2*eF+1)*(2*gF+1)*(2*eJ+1)*(2*gJ+1)*(2*eL+1)))
+    wig6j_1 = wigner_6j(eJ, eF, eI, gF, gJ, 1)
+    wig6j_2 = wigner_6j(eL, eJ, eS, gJ, gL, 1)
+    wig3j = wigner_3j(eF, 1, gF, -1*em, q, gm)
+    return float(sign*factor*wig6j_1*wig6j_2*wig3j)
+
+
 def coupling(e, g, q):
     """Coupling constants between states via laser radiation
-    
-    Parameters: 
+
+    This is the (dimensionless) dipole matrix element <e| d.u_q |g> between the sub-states in units of the
+    reduced matrix element, with u_{+1} = (x + iy)/sqrt(2), u_0 = z, u_{-1} = (x - iy)/sqrt(2).
+    Results are cached, so repeated calls are cheap.
+
+    Parameters:
         e (State): the excited state
         g (State): the ground state
         q (int): the laser polarisation coupling e and g. This can be -1 for LH circular, +1 for RH circular, or 0 for linear polarisation.
-        
+
         Returns:
             float: the coupling constant between an excited and ground state
     """
-    sign = np.power(-1, (q*(1+q)/2)+e.F+g.F+e.J+g.J+e.I+e.L+e.S-e.m+1)
-    factor = np.sqrt((2*e.F+1)*(2*g.F+1)*(2*e.J+1)*(2*g.J+1)*(2*e.L+1))
-    wig6j_1 = wigner_6j(e.J, e.F, e.I, g.F, g.J, 1)
-    wig6j_2 = wigner_6j(e.L, e.J, e.S, g.J, g.L, 1)
-    wig3j = wigner_3j(e.F, 1, g.F, -1*e.m, q, g.m)
-    return sign*factor*wig6j_1*wig6j_2*wig3j
+    return _coupling_cached(_twice(e.L), _twice(e.S), _twice(e.J), _twice(e.I), _twice(e.F), _twice(e.m),
+                            _twice(g.L), _twice(g.S), _twice(g.J), _twice(g.F), _twice(g.m), int(q))
+
+
+def _twice(x):
+    """Twice an integer or half-integer quantum number (possibly given as a float), as an exact int."""
+    r = int(round(2*float(x)))
+    if abs(r - 2*float(x)) > 1e-9:
+        raise ValueError(f"Quantum number {x} is not an integer or half-integer.")
+    return r
+
 
 # 
 # Inputs: intensity given in mW/mm^2, lifetime in ns, wavelength of laser in m

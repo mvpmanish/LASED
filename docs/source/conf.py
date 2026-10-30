@@ -12,19 +12,17 @@
 #
 import os
 import sys
-import sphinx_rtd_theme
-import nbsphinx
-sys.path.insert(0, os.path.abspath('../../base-LASED/LASED'))
+sys.path.insert(0, os.path.abspath('../../base-LASED'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'LASED'
-copyright = '2021, Manish'
+copyright = '2021-2026, Manish Patel'
 author = 'Manish'
 
 # The full version, including alpha/beta/rc tags
-release = '0.3'
+release = '2.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -32,7 +30,11 @@ release = '0.3'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'nbsphinx']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx.ext.mathjax', 'nbsphinx']
+
+# The compiled Rust extension is optional; LASED falls back to SciPy when it is missing
+autodoc_mock_imports = ['LASED._lased_rs']
+nbsphinx_execute = 'never'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -40,7 +42,7 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ['**.ipynb_checkpoints']
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -53,4 +55,7 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
+
+# Document dataclass fields once (from the docstring 'Attributes:' section)
+napoleon_use_ivar = True

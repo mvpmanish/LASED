@@ -9,6 +9,8 @@ from LASED.generate_sub_states import *
 from LASED.save_to_csv import *
 from LASED.rotation import *
 from LASED.angular_shape import *
+from LASED.engine import AtomicSystem, Ensemble
+from LASED.polarisation import fromRabiFactors, asPolarisation
 
 import numpy as np
 
@@ -31,15 +33,22 @@ class LaserAtomSystem:
         tau_b (float): Ground state lifetime to states outside of laser coupling in nanoseconds.
         rho_0 (list of list): 2D array creating the density matrix at t = 0.
         rabi_scaling (float): The normalisation of the Rabi frequency. The half-Rabi frequency is divided by this number. Use this if there are more than one polarisations to normalise the population.
-        rabi_factors (list): Elements of this list are multiplies by the half-Rabi frequency for each polarisation. This can be used to obtain elliptical polarisation.
+        rabi_factors (list): Elements of this list are multiplies by the half-Rabi frequency for each polarisation. This can be used to obtain elliptical polarisation. May be complex.
+        polarisation (dict): Alternative to Q/rabi_factors: spherical amplitudes {q: a_q} of the laser
+            polarisation, e.g. from ``LASED.linear``, ``LASED.circular``, ``LASED.elliptical`` or ``LASED.jones``.
+            Complex amplitudes (elliptical light) are fully supported.
+
+    Example:
+        >>> system = LaserAtomSystem(E, G, tau=4.6, Q=[1, -1], laser_wavelength=422.8e-9,
+        ...                          laser_intensity=100, polarisation=las.elliptical(0, 0.3))
+        >>> system.timeEvolution(np.linspace(0, 50, 501))
+        >>> system.rho_t_matrix.shape    # (501, n, n)
     """
     Q_decay = [1, 0 ,-1]
-    rho_t = []
-    time = []
 
-    def __init__(self, E, G, tau, Q, laser_wavelength, laser_intensity = None,
+    def __init__(self, E, G, tau, Q = None, laser_wavelength = None, laser_intensity = None,
                  laser_power = None, tau_f = None, tau_b = None, rabi_scaling = None,
-                rabi_factors = None):
+                rabi_factors = None, polarisation = None):
         """
         Inits LaserAtomSystem.
         """
@@ -55,6 +64,13 @@ class LaserAtomSystem:
         self.rho_0 = np.zeros((self.n*self.n, 1), dtype = complex)  # flattened density matrix
         self.rabi_scaling = rabi_scaling  # Normalisation factor of rabi frequencies for different polarisations
         self.rabi_factors = rabi_factors  # multiply these by rabi frequency for different polarisations
+        self.polarisation = polarisation  # spherical amplitudes {q: a_q}; overrides Q/rabi_factors if given
+        if(Q is None and polarisation is None):
+            raise ValueError("Give the laser polarisation with Q (and optionally rabi_factors) or polarisation.")
+        if(laser_wavelength is None):
+            raise ValueError("laser_wavelength (in metres) is required.")
+        self.rho_t = np.zeros((self.n*self.n, 0), dtype = complex)  # (n*n) x len(time) after timeEvolution
+        self.time = np.zeros(0)
 
     @property
     def n(self):
@@ -90,30 +106,80 @@ class LaserAtomSystem:
         Returns:
             list of ndarray: A list of upper state density matrices for the time evolution.
         """
-        rho_et = []
-        flipped_rho_t = np.transpose(self.rho_t)  # Flip to loop over all rho
-        for rho in flipped_rho_t:
-            new_rho = np.zeros((self.n*self.n, 1), dtype = complex)  # Placeholder
-            for i, element in enumerate(new_rho):
-                new_rho[i, 0] = rho[i]
-            rho_et.append(getSingleStateMatrix(new_rho, self.n, self.E))
-        return rho_et
+        idx = [e.label-1 for e in self.E]
+        return [rho[np.ix_(idx, idx)] for rho in self.rho_t_matrix]
 
     @property
     def rho_gt(self):
         """ Lower state density matrix for all of the time evolution.
 
         Returns:
-            list of ndarray: A list oflower state density matrices for the time evolution.
+            list of ndarray: A list of lower state density matrices for the time evolution.
         """
-        rho_et = []
-        flipped_rho_t = np.transpose(self.rho_t)  # Flip to loop over all rho
-        for rho in flipped_rho_t:
-            new_rho = np.zeros((self.n*self.n, 1), dtype = complex)  # Placeholder
-            for i, element in enumerate(new_rho):
-                new_rho[i, 0] = rho[i]
-            rho_et.append(getSingleStateMatrix(new_rho, self.n, self.G))
-        return rho_et
+        idx = [g.label-1 for g in self.G]
+        return [rho[np.ix_(idx, idx)] for rho in self.rho_t_matrix]
+
+    @property
+    def rho_t_matrix(self):
+        """ The time evolution as an array of density matrices.
+
+        Returns:
+            ndarray: complex array of shape (len(time), n, n); element [k, i-1, j-1] is rho_ij at time[k].
+        """
+        rho_t = np.asarray(self.rho_t)
+        return rho_t.T.reshape(-1, self.n, self.n)
+
+    def population(self, state):
+        """ Population of a sub-state over the simulation time.
+
+        Parameters:
+            state (State/int): The sub-state or its label.
+
+        Returns:
+            ndarray: Real array of the population at each time.
+        """
+        return np.real(np.asarray(self.Rho_t(state, state)))
+
+    @property
+    def excited_population(self):
+        """ Total population in the excited states E at each time (ndarray)."""
+        return sum(self.population(e) for e in self.E)
+
+    @property
+    def ground_population(self):
+        """ Total population in the ground states G at each time (ndarray)."""
+        return sum(self.population(g) for g in self.G)
+
+    def polarisationDict(self):
+        """ The laser polarisation as spherical amplitudes {q: a_q}."""
+        if(self.polarisation is not None):
+            return asPolarisation(self.polarisation)
+        return fromRabiFactors(self.Q, self.rabi_factors, self.rabi_scaling)
+
+    def toAtomicSystem(self, detuning = None, pulse = None, detuning_t = None, laser_intensity = None,
+                       linewidth = 0.0):
+        """ Builds the equivalent general ``AtomicSystem`` (one laser, decay E -> G, losses tau_f/tau_b).
+
+        Use this to add further lasers, decay channels or dephasing, or to inspect the Hamiltonian.
+
+        Returns:
+            AtomicSystem
+        """
+        from LASED.time_evolution import buildLegacySystem
+        intensity = self.laser_intensity if laser_intensity is None else laser_intensity
+        return buildLegacySystem(self.E, self.G, self.Q, self.tau, self.laser_wavelength, intensity,
+                                 self.tau_f, self.tau_b, detuning, polarisation = self.polarisationDict(),
+                                 envelope = pulse, detuning_t = detuning_t, linewidth = linewidth)
+
+    def steadyState(self, detuning = None, atomic_velocity = None):
+        """ Steady-state density matrix (n x n) for continuous-wave excitation at laser_intensity.
+
+        Returns:
+            ndarray: complex (n x n) density matrix.
+        """
+        if(self.tau_f is not None or self.tau_b is not None):
+            print("Warning: with tau_f/tau_b population leaves the system, so the steady state is trivial.")
+        return self.toAtomicSystem(detuning).steadyState(velocity = atomic_velocity or 0.0)
 
     def __repr__(self):
         E_str = [e.label for e in self.E]
@@ -145,7 +211,7 @@ class LaserAtomSystem:
             j (State/int): Second state index
             value (np.complex): Sets the value of rho_ij to the complex value here
         """
-        if(value > 1):
+        if(abs(value) > 1):
             print("Cannot set an element of a density matrix > 1!")
             return
         else:
@@ -276,7 +342,9 @@ class LaserAtomSystem:
                     print_eq = None, detuning = None, atomic_velocity = None, r_sigma = None,
                     n_beam_averaging = None, doppler_width = None, doppler_detunings = None,
                      pretty_print_eq = None, pretty_print_eq_tex = None,
-                    pretty_print_eq_pdf = None, pretty_print_eq_filename = None):
+                    pretty_print_eq_pdf = None, pretty_print_eq_filename = None,
+                    pulse = None, detuning_t = None, linewidth = 0.0, ensemble = None,
+                    backend = "auto", rtol = 1e-8, atol = 1e-10, max_step = None, n_ctrl = 4001):
         """Evolves the laser-atom system over time.
 
         Produces a list of flattened 2D density matrices which correspond to the time array. This is stored in rho_t.
@@ -286,6 +354,7 @@ class LaserAtomSystem:
             beam_profile_averaging (bool): Turn on averaging over a Gaussian TEM00 laser beam profile. Must have n_beam_averaging to state the number of averages to take over the beam profile and r_sigma to characterise the standard debviation of the Gaussian beam.
             doppler_averaging (bool): Turn on averaging over the doppler profile of the atoms. Must have doppler_width and doppler_detunings as well.
             print_eq (bool): Turn on printing the coupled differential equatiuons numerically.
+            detuning (float): Detuning of the laser from the laser_wavelength frequency in Grad/s.
             atomic_velocity (float): The velocity component of the atoms in the direction of the laser beam in metres/second. This is used for doppler shifting the energy levels.
             r_sigma (float): The radial distance to the 2D standard deviation in millimetres of the Gaussian beam profile of the laser.
             n_beam_averaging (int): The number of times the beam profile will be split to average over. The higher the number, the more accurate the beam profile averaging but it will be slower.
@@ -294,79 +363,69 @@ class LaserAtomSystem:
             pretty_print_eq (bool): Turn on printing of the coupled differential equations symbolically using Sympy. Only available using an IPython environment e.g. Jupyter.
             pretty_print_eq_tex (bool): Produces a .tex file with the equations of motion printed symbolically using Sympy. Must input a filename for the .tex file with the keyword "pretty_print_eq_filename".
             pretty_print_eq_pdf (bool): Produces a .pdf file with the equations of motion printed symbolically using Sympy and pdflatex. Must have pdflatex installed on your system. Must input a filename for the .tex file with the keyword "pretty_print_eq_filename".
+            pulse (callable or Pulse): Complex envelope A(t) (t in ns) multiplying the Rabi frequency, e.g. ``LASED.pulses.gaussian(t0=20, fwhm=5)``. Its phase sets the laser phase.
+            detuning_t (callable): Time-dependent detuning delta(t) in Grad/s added to ``detuning`` (chirps).
+            linewidth (float): Laser linewidth (FWHM) in Grad/s, modelled as laser frequency noise.
+            ensemble (Ensemble): A custom ensemble (velocities/intensities) to average over.
+            backend (str): "auto", "rust", "scipy" or "expm".
+            rtol, atol, max_step, n_ctrl: Integrator settings for time-dependent problems (see ``AtomicSystem.evolve``).
 
             Note:
                 Must have laser_power attribute for Gaussian averaging of the beam and must have laser_intensity attribute when not Gaussian averaging. Also, cannot print equations in doppler or Gaussian averaging.
-        """
-        self.time = time  # Save the time
 
+        Returns:
+            ndarray: rho(t) as a complex array of shape (len(time), n, n). It is also stored in ``rho_t``.
+        """
+        from LASED.time_evolution import legacyDopplerEnsemble, legacyBeamEnsemble
+        from LASED.time_evolution_matrix import timeEvolutionMatrix
+
+        time = np.asarray(time, dtype = float)
+        self.time = time  # Save the time
         n = self.n
-        E = self.E
-        G = self.G
-        Q = self.Q
-        tau = self.tau
-        laser_power = self.laser_power
-        laser_intensity = self.laser_intensity
-        laser_wavelength = self.laser_wavelength
-        rho_0 = self.rho_0
-        tau_f = self.tau_f
-        tau_b = self.tau_b
-        rabi_scaling = self.rabi_scaling
-        rabi_factors = self.rabi_factors
 
         # If rho0 is not populated then set equal ground state populations
-        if(not rho_0.any()):
+        if(not self.rho_0.any()):
             print("Populating ground states equally as the initial condition.")
-            population = 1/len(G)
-            for g in G:
+            population = 1/len(self.G)
+            for g in self.G:
                 self.setRho_0(g, g, population)
 
-        # Resize rho_t
-        self.rho_t = [ [0 for j in range(len(time))] for i in range(self.n*self.n)]
+        averaging = beam_profile_averaging or doppler_averaging
+        intensity = self.laser_intensity
+        ens = ensemble
+        if(beam_profile_averaging):
+            if(not self.laser_power):
+                raise ValueError("Need to have laser_power attribute in LaserAtomSystem to use beam profile averaging! Equate <LaserAtomSystem>.laser_power to the power of the laser in mW.")
+            if(r_sigma is None or n_beam_averaging is None):
+                raise ValueError("Beam profile averaging needs r_sigma (mm) and n_beam_averaging.")
+            intensity, beam = legacyBeamEnsemble(self.laser_power, r_sigma, n_beam_averaging)
+            ens = beam if ens is None else ens*beam
+        if(doppler_averaging):
+            if(doppler_width is None or doppler_detunings is None):
+                raise ValueError("Doppler averaging needs doppler_width and doppler_detunings (Grad/s).")
+            doppler = legacyDopplerEnsemble(doppler_width, doppler_detunings)
+            ens = doppler if ens is None else doppler*ens
+        if(intensity is None):
+            raise ValueError("Need to have laser_intensity attribute in LaserAtomSystem! Equate <LaserAtomSystem>.laser_intensity to the intensity of the laser in mW/mm^2.")
 
-        if((beam_profile_averaging) and (doppler_averaging)):
-            if(laser_power):
-                timeEvolutionGaussianAndDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging,
-                                                        laser_wavelength, doppler_width, doppler_detunings, time, rho_0, self.rho_t,
-                                                        tau_f = tau_f, tau_b = tau_b, detuning = detuning, rabi_scaling = rabi_scaling,
-                                                        rabi_factors = rabi_factors, print_eq = print_eq, atomic_velocity = atomic_velocity,
-                                                        pretty_print_eq = pretty_print_eq, pretty_print_eq_tex = pretty_print_eq_tex,
-                                                        pretty_print_eq_pdf = pretty_print_eq_pdf, pretty_print_eq_filename = pretty_print_eq_filename)
+        if(print_eq or pretty_print_eq or pretty_print_eq_tex or pretty_print_eq_pdf):
+            if(averaging):
+                print("Cannot print equations when beam profile or doppler averaging!")
             else:
-                print("Need to have laser_power attribute in LaserAtomSystem to use beam profile avergaing! Equate <LaserAtomSystem>.laser_power to a power in milliWatts.")
+                pol = self.polarisationDict()
+                timeEvolutionMatrix(n, self.E, self.G, list(pol.keys()), self.Q_decay, self.tau,
+                                    self.laser_wavelength, intensity, tau_f = self.tau_f, tau_b = self.tau_b,
+                                    detuning = detuning, numeric_print = print_eq, rabi_factors = list(pol.values()),
+                                    atomic_velocity = atomic_velocity, pretty_print_eq = pretty_print_eq,
+                                    pretty_print_eq_tex = pretty_print_eq_tex, pretty_print_eq_pdf = pretty_print_eq_pdf,
+                                    pretty_print_eq_filename = pretty_print_eq_filename, polarisation = pol)
 
-        elif(beam_profile_averaging):
-            if(laser_power):
-                timeEvolutionGaussianAveraging(n, E, G, Q, self.Q_decay, tau, laser_power, r_sigma, n_beam_averaging, laser_wavelength,
-                                                time, rho_0, self.rho_t, tau_f = tau_f, tau_b = tau_b, detuning = detuning,
-                                                rabi_scaling = rabi_scaling, rabi_factors = rabi_factors, print_eq = print_eq,
-                                                atomic_velocity = atomic_velocity, pretty_print_eq = pretty_print_eq,
-                                                pretty_print_eq_tex = pretty_print_eq_tex, pretty_print_eq_pdf = pretty_print_eq_pdf,
-                                                pretty_print_eq_filename = pretty_print_eq_filename)
-            else:
-                print("Need to have laser_power attribute in LaserAtomSystem to use beam profile avergaing! Equate <LaserAtomSystem>.laser_power to the power of the laser in mW.")
-
-        elif(doppler_averaging):
-            if(laser_intensity):
-                timeEvolutionDopplerAveraging(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, doppler_width,
-                                                doppler_detunings, time, rho_0, self.rho_t, tau_f = tau_f, tau_b = tau_b,
-                                                detuning = detuning, rabi_scaling = rabi_scaling, rabi_factors = rabi_factors,
-                                                 print_eq = print_eq, atomic_velocity = atomic_velocity, pretty_print_eq = pretty_print_eq,
-                                                 pretty_print_eq_tex = pretty_print_eq_tex, pretty_print_eq_pdf = pretty_print_eq_pdf,
-                                                 pretty_print_eq_filename = pretty_print_eq_filename)
-            else:
-                print("Need to have laser_intensity attribute in LaserAtomSystem! Equate <LaserAtomSystem>.laser_intensity to the intensity of the laser in mW/mm^2.")
-
-        else:
-            if(laser_intensity):
-                timeEvolution(n, E, G, Q, self.Q_decay, tau, laser_intensity, laser_wavelength, time, rho_0, self.rho_t,
-                                tau_f = tau_f, tau_b = tau_b, detuning = detuning, rabi_scaling = rabi_scaling,
-                                rabi_factors = rabi_factors, print_eq = print_eq, atomic_velocity = atomic_velocity,
-                                pretty_print_eq = pretty_print_eq, pretty_print_eq_tex = pretty_print_eq_tex,
-                                pretty_print_eq_pdf = pretty_print_eq_pdf, pretty_print_eq_filename = pretty_print_eq_filename)
-            else:
-                print("Need to have laser_intensity attribute in LaserAtomSystem! Equate <LaserAtomSystem>.laser_intensity to the intensity of the laser in mW/mm^2.")
-
+        system = self.toAtomicSystem(detuning, pulse, detuning_t, laser_intensity = intensity, linewidth = linewidth)
+        rho0 = np.asarray(self.rho_0, dtype = complex).reshape(n, n)
+        rho_t = system.evolve(time, rho0, ensemble = ens, velocity = atomic_velocity or 0.0, backend = backend,
+                              rtol = rtol, atol = atol, max_step = max_step, n_ctrl = n_ctrl)
+        self.rho_t = rho_t.reshape(len(time), n*n).T.copy()
+        return rho_t
 
     def saveToCSV(self, filename, precision = None):
         """Saves rho_t as a csv file.
@@ -378,4 +437,4 @@ class LaserAtomSystem:
         Returns:
             Void.
         """
-        saveRhotAsCSV(self.n, self.E, self.G, self.time, self.rho_t, filename, precision = None)
+        saveRhotAsCSV(self.n, self.E, self.G, self.time, self.rho_t, filename, precision = precision)

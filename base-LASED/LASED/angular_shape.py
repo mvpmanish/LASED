@@ -5,7 +5,13 @@ Date created: 24/03/2022
 
 from LASED.density_matrix import *
 import numpy as np
-from scipy.special import sph_harm
+try:  # SciPy >= 1.15
+    from scipy.special import sph_harm_y as _sph_harm_y
+
+    def sph_harm(m, l, azimuthal, polar):
+        return _sph_harm_y(l, m, polar, azimuthal)
+except ImportError:  # older SciPy
+    from scipy.special import sph_harm
 
 def getFlattenedRhot(rho_t, n):
     """Flatten a density matrix over time rho(t).

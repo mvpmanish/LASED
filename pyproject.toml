@@ -1,0 +1,46 @@
+[build-system]
+requires = ["maturin>=1.7,<2"]
+build-backend = "maturin"
+
+[project]
+name = "LASED"
+version = "2.0.0"
+description = "Laser-Atom interaction Simulator derived from quantum ElectroDynamics: multi-level Lindblad master equations with a Rust backend"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Manish Patel", email = "mvpmanish@gmail.com" }]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.22",
+    "scipy>=1.8",
+    "sympy>=1.8",
+]
+keywords = ["laser-atom", "simulation", "quantum", "optical bloch equations", "lindblad", "neutral atoms", "physics"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
+    "Operating System :: OS Independent",
+    "Natural Language :: English",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7", "qutip>=5"]
+
+[project.urls]
+Homepage = "https://github.com/mvpmanish/LASED"
+Documentation = "https://lased.readthedocs.io/en/latest/"
+Paper = "https://arxiv.org/abs/2203.12535"
+
+[tool.maturin]
+# Mixed Rust/Python project: the Python package lives in base-LASED/LASED and the
+# compiled backend is installed as LASED._lased_rs.
+module-name = "LASED._lased_rs"
+manifest-path = "base-LASED/Cargo.toml"
+python-source = "base-LASED"
+features = ["pyo3/extension-module"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

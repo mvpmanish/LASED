@@ -10,7 +10,8 @@ What is LASED?
 
 LASED stands for Laser-Atom interaction Simulator derived from quantum ElectroDynamics. LASED is a python library which can:
 
-* Calculate the time evolution of an atomic system interacting with a laser.
+* Calculate the time evolution of an atomic system interacting with one or more lasers, including
+  shaped, phase-modulated and chirped pulses and arbitrary (elliptical) polarisation.
 * Generate the equations of motion of an atom-laser system.
 * Rotate an atomic system to a different reference frame.
 * Calculate the time evolution of the angular shape of an atomic state.
@@ -28,6 +29,11 @@ You can easily install LASED by opening up a terminal and running::
 
   pip install LASED
 
+To build from source (this compiles the Rust backend, so you need a Rust toolchain)::
+
+  git clone https://github.com/mvpmanish/LASED && cd LASED
+  pip install maturin && maturin develop --release
+
 The source code can be viewed `here <https://github.com/mvpmanish/LASED>`__
 
 Using LASED
@@ -42,3 +48,7 @@ The second tutorial shows how to simulate decays to other states not in the lase
 The third tutorial simulates a metastable Helium atom with some real data on what the initial state looks like and how to initialise the system to this state.
 
 Each tutorial after this simulates an increasingly more complex atomic system with hyperfine structure.
+
+For time-dependent pulses, several lasers and ensembles see :doc:`timedependent`. The scripts in the
+``examples/`` directory of the repository cover elliptical light, pulse sequences, two-photon Rydberg
+excitation and moving atoms.

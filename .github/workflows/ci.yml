@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build and install (Rust backend)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install ".[test]"
+      - name: Tests
+        run: python -m pytest -q
+      - name: Examples
+        shell: bash
+        run: for f in examples/*.py; do python "$f"; done
+
+  test-pure-python:
+    name: test without the Rust backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tests on the SciPy fallback
+        run: |
+          python -m pip install numpy scipy sympy pytest qutip
+          PYTHONPATH=base-LASED python -m pytest -q
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - run: cargo clippy --manifest-path base-LASED/Cargo.toml --release -- -D warnings

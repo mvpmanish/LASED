@@ -31,8 +31,9 @@ def generateSubStates(label_from, w, L, S, J = None, I = None, F = None):
     if(F == None):
         F = I + J  # Estimate the value of F
         
-    m_F = np.linspace(-1*F, F, 2*F+1, dtype = int)   # Generate substates
-    labels = np.linspace(label_from, label_from+len(m_F)-1, len(m_F), dtype = int)  # The label_from + len(m_F) -1 gives the correct state labelling. If just used +len(m_F) would have one over the number of sub-states
+    n_sub = int(round(2*F+1))
+    m_F = [(-F + k) if (2*F) % 2 else int(round(-F + k)) for k in range(n_sub)]  # -F..F (half-integers allowed)
+    labels = list(range(label_from, label_from + n_sub))
     
     # Generate the states and input into a vector
     for i in range(len(m_F)):
