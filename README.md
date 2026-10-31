@@ -72,19 +72,30 @@ for tutorials.
 
 ## Performance
 
-The equations are assembled from vectorised sparse superoperators with cached Wigner coefficients.
-They are solved with an exact matrix-exponential propagator for continuous-wave problems, or with the
-Rust backend (PyO3, adaptive Dormand–Prince, parallel over ensemble members with rayon) for pulses and
-ensembles. Before solving, LASED drops the density-matrix elements that the initial state cannot reach.
+Almost all of v1's run time went into *building* the equations (Python loops over matrix elements with
+exact sympy Wigner symbols), not solving them. For the He tutorial, building the matrix took 4.1 s and
+LAPACK solved it in 0.15 s. v2 stores the sub-states as arrays and builds the Hamiltonian, jump
+operators and Liouvillian with vectorised Wigner symbols and sparse matrices. Assembling the 48-state Cs
+D2 system takes 13 ms.
+
+Solving:
+
+- **Continuous-wave lasers** use SciPy's exact matrix-exponential propagator (LAPACK). It is the fastest
+  option, faster than the Rust stepper.
+- **Pulses, chirps and moving atoms** use the Rust backend: compiled adaptive Dormand–Prince, run in
+  parallel over the atoms of an ensemble. It is about 3× faster than SciPy for a single solve, and about
+  11× faster for an ensemble on 4 cores.
+- Before solving, LASED drops the density-matrix elements the initial state cannot reach (exact).
 
 | Problem | v1.0 | v2.0 |
 |---|---|---|
-| Ca, Doppler-averaged (Tutorial 1) | 2.5 s | 0.02 s |
-| He J=2→1, σ± light (Tutorial 2) | 16 s | 0.04 s |
-| Cs D2, 48 states (Tutorial 6) | > 35 min (did not finish) | ~3 s |
-| Rb-87 D2 shaped and chirped pulse | not possible | 0.5 s (Rust) vs 83 s (SciPy fallback) |
+| Ca, Doppler-averaged (Tutorial 1) | 2.5 s | 0.014 s |
+| He J=2→1, σ± light (Tutorial 2) | 4.1 s | 0.04 s |
+| Cs D2, 48 states, CW (Tutorial 6) | stopped after 40 min | 0.16 s |
+| Rb-87 D2 shaped and chirped pulse | not possible | 0.35 s (Rust), 1.1 s (SciPy) |
+| Rb-87 D2 pulse, 16 Doppler classes | not possible | 1.5 s (Rust), 17 s (SciPy) |
 
-Timings were measured on a 4-core cloud VM.
+Timings are from an idle 4-core cloud VM. Reproduce them with `python benchmarks/bench_backends.py`.
 
 ## Version History
 
@@ -100,8 +111,11 @@ Timings were measured on a 4-core cloud VM.
   and dephasing (`Dephasing`).
 - **New:** time-dependent pulses, phases and chirps (`LASED.pulses`), moving atoms, ensembles,
   `steadyState()`, Zeeman shifts, and `describe()`.
-- **New:** Rust backend (PyO3/maturin) and `pyproject.toml` packaging; tests including an independent
-  QuTiP cross-check; `AGENTS.md`.
+- **New:** array-based backend. Sub-states are stored as quantum-number arrays (`Basis`), and the dipole
+  matrices, Hamiltonian, jump operators and Liouvillian are built with vectorised Wigner 3j/6j symbols and
+  sparse matrices. The `State`/`LaserAtomSystem` front end is unchanged.
+- **New:** Rust backend (PyO3/maturin) for time-dependent problems and ensembles, and `pyproject.toml`
+  packaging; tests including an independent QuTiP cross-check; `AGENTS.md`.
 
 **v1.0**
 - Can plot the `angularShape` of the excited or lower atomic state's electron cloud for all simulation time.

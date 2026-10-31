@@ -4,6 +4,22 @@ Detailed API
 Submodules
 ----------
 
+LASED.basis module (array storage of the states)
+------------------------------------------------
+
+.. automodule:: LASED.basis
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+LASED.wigner module (vectorised Wigner symbols)
+-----------------------------------------------
+
+.. automodule:: LASED.wigner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 LASED.engine module (multi-level, multi-laser Lindblad engine)
 --------------------------------------------------------------
 

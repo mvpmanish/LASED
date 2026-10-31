@@ -42,6 +42,7 @@ import scipy.linalg as la
 from LASED.constants import PI, C
 from LASED.half_rabi_freq import coupling, halfRabiFreq
 from LASED.polarisation import asPolarisation
+from LASED.basis import Basis
 from LASED import _backend
 
 ComplexFn = Callable[[np.ndarray], np.ndarray]
@@ -360,10 +361,8 @@ class AtomicSystem:
     """
 
     def __init__(self, states, lasers=(), decays=(), losses=(), dephasings=()):
-        self.states = sorted(states, key=lambda s: s.label)
-        labels = [s.label for s in self.states]
-        if labels != list(range(1, len(labels)+1)):
-            raise ValueError(f"State labels must be exactly 1..n with no gaps or duplicates, got {labels}.")
+        self.basis = Basis.fromStates(states)   # quantum numbers stored as arrays
+        self.states = self.basis.states
         self.lasers = list(lasers)
         self.decays = list(decays)
         self.losses = list(losses)
@@ -371,22 +370,28 @@ class AtomicSystem:
 
     @property
     def n(self):
-        return len(self.states)
+        return self.basis.n
 
     def _idx(self, state):
         return state.label - 1
+
+    def stateTable(self):
+        """The sub-states as a table (pandas DataFrame if available): label, w, L, S, J, I, F, m."""
+        return self.basis.table()
 
     # ---------------------------------------------------------------- rotating frame
     def _frame(self):
         """Finds the rotating frame. Returns (f0, d): frame frequencies at zero detuning (n,)
         and d[k, i] = d f_i / d omega_k (the number of photons of laser k "absorbed" to reach state i)."""
         n, nl = self.n, len(self.lasers)
-        adj = [[] for _ in range(n)]
-        for k, laser in enumerate(self.lasers):
-            for l in laser.lower:
-                for u in laser.upper:
-                    adj[self._idx(l)].append((self._idx(u), k, +1))
-                    adj[self._idx(u)].append((self._idx(l), k, -1))
+        lower = [self.basis.indices(laser.lower) for laser in self.lasers]
+        upper = [self.basis.indices(laser.upper) for laser in self.lasers]
+        lasers_from = [[] for _ in range(n)]   # (laser, targets, +-1) reachable from each state
+        for k in range(nl):
+            for i in lower[k]:
+                lasers_from[i].append((k, upper[k], +1))
+            for i in upper[k]:
+                lasers_from[i].append((k, lower[k], -1))
         d = np.zeros((nl, n), dtype=int)
         visited = np.zeros(n, dtype=bool)
         root_of = np.arange(n)
@@ -397,77 +402,72 @@ class AtomicSystem:
             queue = deque([start])
             while queue:
                 i = queue.popleft()
-                for j, k, sgn in adj[i]:
+                for k, targets, sgn in lasers_from[i]:
                     expected = d[:, i].copy()
                     expected[k] += sgn
-                    if not visited[j]:
-                        visited[j] = True
-                        root_of[j] = start
-                        d[:, j] = expected
-                        queue.append(j)
-                    elif not np.array_equal(d[:, j], expected):
+                    seen = targets[visited[targets]]
+                    if not np.all(d[:, seen] == expected[:, None]):
                         raise ValueError(
                             "The lasers form a closed loop, so no rotating frame removes all time dependence. "
                             "If two Laser objects describe the same beam, merge them into one Laser with a "
                             "combined polarisation.")
+                    new = targets[~visited[targets]]
+                    visited[new] = True
+                    root_of[new] = start
+                    d[:, new] = expected[:, None]
+                    queue.extend(new.tolist())
         omegas = np.array([laser.angular_frequency for laser in self.lasers])
-        w = np.array([s.w for s in self.states], dtype=float)
-        f0 = w[root_of] + (d.T @ omegas if nl else 0.0)
+        f0 = self.basis.w[root_of] + (d.T @ omegas if nl else 0.0)
         return f0, d
 
     # ---------------------------------------------------------------- assembly
     def build(self):
         """Assembles the Hamiltonian, collapse operators and Liouvillian superoperators.
 
+        All matrices are built with array operations on the ``Basis`` (no loops over matrix elements).
+
         Returns:
             Model
         """
-        n = self.n
+        n, B = self.n, self.basis
         f0, d = self._frame()
-        w = np.array([s.w for s in self.states], dtype=float)
-        H0 = np.diag(w - f0).astype(complex)
+        H0 = np.diag(B.w - f0).astype(complex)
 
         V, D = [], []
         for k, laser in enumerate(self.lasers):
             pol = asPolarisation(laser.polarisation)
-            half = laser.halfRabi()
+            up, lo = B.indices(laser.upper), B.indices(laser.lower)
+            block = sum(a*B.dipoleBlock(laser.upper, laser.lower, q) for q, a in pol.items() if a != 0)
             Vk = np.zeros((n, n), dtype=complex)
-            for u in laser.upper:
-                for l in laser.lower:
-                    amp = sum(a*coupling(u, l, q) for q, a in pol.items() if a != 0)
-                    Vk[self._idx(u), self._idx(l)] += half*amp
+            Vk[np.ix_(up, lo)] += laser.halfRabi()*np.asarray(block)
             V.append(Vk)
             # H_ii = w_i - f_i and f_i depends on (omega_k + delta_k) through d[k, i]
             D.append(np.diag(-d[k].astype(float)).astype(complex))
 
+        # Spontaneous emission: one jump operator per emitted photon polarisation q (not one per
+        # e -> g path), so that coherences between upper sub-states are transferred to the lower ones.
         collapse = []
         K = np.zeros((n, n), dtype=complex)
         for decay in self.decays:
             rate = decay.branching/decay.tau
-            norms = {}
-            for e in decay.upper:
-                norms[e.label] = sum(coupling(e, g, q)**2 for g in decay.lower for q in (-1, 0, 1))
-            for q in (-1, 0, 1):
-                Cq = np.zeros((n, n), dtype=complex)
-                for e in decay.upper:
-                    if norms[e.label] == 0:
-                        continue
-                    for g in decay.lower:
-                        c = coupling(e, g, q)
-                        if c != 0:
-                            Cq[self._idx(g), self._idx(e)] = np.sqrt(rate/norms[e.label])*c
-                if np.any(Cq):
+            up, lo = B.indices(decay.upper), B.indices(decay.lower)
+            blocks = [B.dipoleBlock(decay.upper, decay.lower, q) for q in (-1, 0, 1)]
+            norms = sum(b**2 for b in blocks).sum(axis=1)        # total coupling strength of each upper state
+            scale = np.where(norms > 0, np.sqrt(rate/np.where(norms > 0, norms, 1)), 0.0)
+            for b in blocks:
+                if np.any(b):
+                    Cq = np.zeros((n, n), dtype=complex)
+                    Cq[np.ix_(lo, up)] = (b*scale[:, None]).T
                     collapse.append(Cq)
-            for e in decay.upper:  # No allowed channel into `lower`: population simply leaves
-                if norms[e.label] == 0:
-                    K[self._idx(e), self._idx(e)] += rate
+            dark = up[norms == 0]                                # no allowed channel into `lower`
+            np.add.at(K, (dark, dark), rate)
         for loss in self.losses:
-            for s in loss.states:
-                K[self._idx(s), self._idx(s)] += 1/loss.tau
+            idx = B.indices(loss.states)
+            np.add.at(K, (idx, idx), 1/loss.tau)
         for deph in self.dephasings:
             P = np.zeros((n, n), dtype=complex)
-            for s in deph.states:
-                P[self._idx(s), self._idx(s)] = 1
+            idx = B.indices(deph.states)
+            P[idx, idx] = 1
             collapse.append(np.sqrt(deph.rate)*P)
         for k, laser in enumerate(self.lasers):
             if laser.linewidth:
@@ -612,7 +612,9 @@ class AtomicSystem:
         time_dependent = len(ctrl_t) > 0
 
         if backend == "auto":
-            if not time_dependent and (ensemble.size == 1 or not _backend.HAVE_RUST):
+            # Constant lasers: the exact propagator (LAPACK) beats any time-stepper, also for ensembles.
+            # Time-dependent lasers: compiled adaptive integration, parallel over ensemble members.
+            if not time_dependent:
                 backend = "expm"
             else:
                 backend = "rust" if _backend.HAVE_RUST else "scipy"
@@ -647,19 +649,39 @@ class AtomicSystem:
     def steadyState(self, velocity=0.0, ensemble=None):
         """Steady-state density matrix of a continuous-wave (time-independent) system.
 
+        Solves L vec(rho) = 0 with one equation replaced by tr(rho) = 1, using a sparse LU
+        factorisation (falling back to least squares if the steady state is not unique).
+
         Returns:
             ndarray: (n x n) density matrix (ensemble-weighted if an ensemble is given).
         """
+        import scipy.sparse.linalg as spla
         ensemble = Ensemble.single(len(self.lasers)) if ensemble is None else ensemble
         n = self.n
+        model = self.build()
+        _, _, alpha, beta = self._coefficients(model, np.array([0.0, 1.0]), ensemble, velocity, 2)
+        if any(laser.time_dependent for laser in self.lasers):
+            raise ValueError("steadyState() needs continuous-wave lasers (no envelope or detuning_t).")
+        trace_row = sp.csr_matrix(np.eye(n).reshape(1, -1).astype(complex))
+        b = np.zeros(n*n, dtype=complex)
+        b[0] = 1
         rho = np.zeros((n, n), dtype=complex)
         for m in range(ensemble.size):
-            L = self.liouvillian(velocity, ensemble.detuning[m], ensemble.rabi_scale[m], sparse=False)
-            A = L.copy()
-            b = np.zeros(n*n, dtype=complex)
-            A[0, :] = np.eye(n).reshape(-1)  # replace one equation by tr(rho) = 1
-            b[0] = 1
-            x, *_ = la.lstsq(A, b)
+            L = model.L0.copy()
+            for j, op in enumerate(model.ops):
+                c = alpha[m, j] + beta[m, j]
+                if c != 0:
+                    L = L + c*op
+            A = sp.vstack([trace_row, L.tocsr()[1:]]).tocsc()   # replace the rho_11 equation by tr(rho) = 1
+            with warnings.catch_warnings():
+                warnings.simplefilter("error", spla.MatrixRankWarning)
+                try:
+                    x = spla.spsolve(A, b)
+                    ok = np.all(np.isfinite(x))
+                except (spla.MatrixRankWarning, RuntimeError):
+                    ok = False
+            if not ok:
+                x, *_ = la.lstsq(A.toarray(), b)
             rho += ensemble.weights[m]*x.reshape(n, n)
         return rho
 

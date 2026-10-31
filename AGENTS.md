@@ -13,8 +13,9 @@ pip install maturin && maturin develop --release
 python -c "import LASED; print(LASED.backendInfo())"   # {'rust': True, 'rust_threads': ...}
 ```
 
-Without the Rust extension, everything still works through the SciPy fallback, but time-dependent
-problems are about 100× slower.
+Without the Rust extension, everything still works through the SciPy fallback. Continuous-wave
+problems are unaffected (they always use SciPy). Pulsed problems are about 3× slower, and pulsed
+ensembles about 10× slower.
 
 ## Units (always)
 
@@ -92,6 +93,8 @@ atom = las.AtomicSystem(S + P + R, lasers=[red, blue],
 rho = atom.evolve(time, rho0=None, ensemble=None, velocity=0.0, backend="auto",
                   rtol=1e-8, atol=1e-10, max_step=None, n_ctrl=4001)    # (T, n, n)
 atom.steadyState(); atom.hamiltonian(t=None, velocity=0.0); atom.liouvillian(); atom.describe()  # JSON-able dict
+atom.stateTable()        # the sub-states as a table (pandas DataFrame if installed)
+atom.build()             # Model: H0, couplings V, detuning generators D, collapse ops, superoperators
 
 # --- Ensembles (run in parallel in Rust); combine with *
 ens = las.dopplerEnsemble(atom.lasers, temperature=10e-6, mass=87*1.6605e-27, n=41) \
@@ -116,9 +119,13 @@ Each of these is a runnable script in `examples/`:
 ## Choosing a backend
 
 `backend="auto"` picks:
-- `"expm"` (exact matrix-exponential propagator) for a constant-laser problem with one atom;
-- `"rust"` (adaptive Dormand–Prince 5(4), parallel over ensemble members) otherwise;
-- `"scipy"` if the Rust extension is missing.
+- `"expm"` (SciPy's exact matrix-exponential propagator) whenever the lasers are constant, including
+  for ensembles. This is the fastest option.
+- `"rust"` (compiled adaptive Dormand–Prince 5(4), parallel over ensemble members) when anything is
+  time-dependent (envelope, `detuning_t`, moving atom).
+- `"scipy"` for time-dependent problems if the Rust extension is missing.
+
+Timings for each backend: `python benchmarks/bench_backends.py`.
 
 Before solving, LASED restricts the problem to the elements of ρ that are reachable from ρ0. This is
 exact, and for π light it is often 10× smaller.
@@ -158,10 +165,12 @@ observable doesn't change.
 ```
 base-LASED/LASED/       Python package
   engine.py             AtomicSystem, Laser, Decay, Loss, Dephasing, Ensemble (the core)
+  basis.py              Basis: the states stored as quantum-number arrays (doubled integers)
+  wigner.py             vectorised Wigner 3j/6j symbols and dipole coupling blocks
   laser_atom_system.py  LaserAtomSystem (classic API, wraps the engine)
   polarisation.py       spherical-basis polarisation helpers and convention
   pulses.py             envelopes, chirps, moving atoms
-  half_rabi_freq.py     coupling() Wigner-Eckart coefficients (cached), halfRabiFreq
+  half_rabi_freq.py     coupling() for one pair of states, couplingExact() (sympy reference), halfRabiFreq
   _backend.py           expm / Rust / SciPy solvers
   symbolic_print.py     sympy equations of motion (same equations as the numerics)
   zeeman.py, rotation.py, angular_shape.py, save_to_csv.py, ...

@@ -142,7 +142,7 @@ def fromRabiFactors(Q, rabi_factors=None, rabi_scaling=None):
 
 
 def asPolarisation(pol):
-    """Coerces a polarisation given as a dict, an int q, or a length-3 sequence (a_-1, a_0, a_+1) into a dict."""
+    """Coerces a polarisation given as a dict, an int q, or a length-3 sequence ``(a_-1, a_0, a_+1)`` into a dict."""
     if isinstance(pol, dict):
         return {int(q): complex(a) for q, a in pol.items()}
     if isinstance(pol, (int, np.integer)):

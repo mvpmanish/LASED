@@ -22,6 +22,9 @@ Zeeman structure and error budgets.
 - [x] Linear Zeeman shifts and Landé g-factors.
 - [x] Rust backend, packaging with `pyproject.toml` and maturin, tests (including against QuTiP),
   `AGENTS.md`.
+- [x] Array-based backend: `Basis` (quantum-number arrays), vectorised Wigner 3j/6j and dipole blocks,
+  no loops over matrix elements; exact SciPy propagator for all continuous-wave problems; sparse
+  steady-state solve; reproducible backend benchmark.
 
 ## Next (ranked by value ÷ effort)
 
@@ -43,6 +46,6 @@ Zeeman structure and error budgets.
    and thermal motion in a trap.
 7. **Raman, optical pumping, readout and imaging.** Mid-circuit-measurement budgets, plus Rabi/Ramsey
    fitting helpers.
-8. **Numerics.** A differentiable JAX backend for pulse optimisation, exact real (Hermitian-packed)
-   storage, Krylov `expm_multiply` for very large systems, and Magnus/exponential integrators for
-   fast-oscillating terms.
+8. **Numerics.** A piecewise-constant (Magnus) propagator for stiff pulsed problems with large hyperfine
+   splittings, a differentiable JAX backend for pulse optimisation, exact real (Hermitian-packed)
+   storage, and Krylov `expm_multiply` for very large systems.

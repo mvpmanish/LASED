@@ -65,6 +65,34 @@ A second, smaller bug was also fixed. Spontaneous emission did not transfer cohe
 sub-states whose excited partners differ in :math:`m`, which happens whenever the light mixes
 :math:`\sigma^+` and :math:`\sigma^-`. Lindblad jump operators include this automatically.
 
+Why one decay operator per photon polarisation
+----------------------------------------------
+
+A tempting shortcut is one jump operator per decay path, :math:`L_{eg} = \sqrt{\Gamma_{eg}}\,|g\rangle\langle e|`.
+It gives the right populations, but it is wrong whenever the levels have Zeeman (or hyperfine)
+structure. A photon emitted with polarisation :math:`q` does not record which of several degenerate
+paths produced it, so those paths interfere. The correct operators are one per polarisation,
+
+.. math::
+
+   C_q = \sqrt{\Gamma} \sum_{e,g} \frac{c(e,g,q)}{\sqrt{N_e}} |g\rangle\langle e|, \qquad q \in \{-1, 0, +1\}.
+
+These transfer coherences between excited sub-states to the ground sub-states. Example: an excited
+superposition :math:`(|e,-\tfrac12\rangle + |e,+\tfrac12\rangle)/\sqrt2` of a :math:`J=\tfrac12\to\tfrac12`
+transition leaves a ground-state coherence :math:`|\rho_{g-,g+}| = 1/6` after it decays. Per-path
+operators predict zero. ``tests/test_backend_storage.py`` checks both. LASED v1 had a version of this
+error for light that mixes :math:`\sigma^+` and :math:`\sigma^-`.
+
+How the operators are stored and built
+--------------------------------------
+
+The user-facing objects are unchanged: ``State`` objects declared with keyword quantum numbers,
+``generateSubStates``, ``LaserAtomSystem``. Internally, an ``AtomicSystem`` converts the states once into
+a :class:`LASED.basis.Basis`, with one integer array per (doubled) quantum number. Dipole coupling blocks
+for every pair of manifolds are then computed in one vectorised call to the Racah formulas
+(:mod:`LASED.wigner`), and :math:`H`, :math:`C_q` and :math:`K` are filled by array indexing. The
+Liouvillian is assembled from them with sparse Kronecker products.
+
 Rotating frame, detuning and Doppler shifts
 -------------------------------------------
 
@@ -72,3 +100,18 @@ The frame frequencies come from a breadth-first search over the graph of lasers.
 lower→upper adds that laser's frequency. Positive ``detuning`` raises the laser frequency. An atom
 with velocity :math:`\mathbf v` sees each laser shifted by :math:`-\mathbf k\cdot\mathbf v`. A closed
 loop of lasers has no time-independent frame and is rejected.
+
+Further reading
+---------------
+
+* D. A. Steck, *Quantum and Atom Optics* (lecture notes), and *Rubidium/Caesium D Line Data*: spherical
+  basis, dipole matrix elements and the optical Bloch equations.
+* M. Auzinsh, D. Budker and S. M. Rochester, *Optically Polarized Atoms* (Oxford, 2010): polarisation,
+  Zeeman coherences and multi-level density matrices.
+* H.-P. Breuer and F. Petruccione, *The Theory of Open Quantum Systems* (Oxford, 2002): the Lindblad form
+  and why it preserves trace and positivity.
+* D. Manzano, "A short introduction to the Lindblad master equation", AIP Advances **10**, 025106 (2020).
+* R. Loudon, *The Quantum Theory of Light* (Oxford): the interaction Hamiltonian and spontaneous emission.
+* J. R. Johansson, P. D. Nation and F. Nori, "QuTiP 2: A Python framework for the dynamics of open quantum
+  systems", Comput. Phys. Commun. **184**, 1234 (2013).
+* S. Stenholm, "The semiclassical theory of laser cooling", Rev. Mod. Phys. **58**, 699 (1986).
